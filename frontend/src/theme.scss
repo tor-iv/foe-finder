@@ -1,4 +1,4 @@
-// Custom Nemesis Theme for Angular Material
+// Custom Foe Finder Theme for Angular Material
 // Updated for Angular Material v20+ (M3 theming system)
 @use '@angular/material' as mat;
 
@@ -20,43 +20,43 @@ html {
   @include mat.all-component-themes($theme);
 }
 
-// Custom Nemesis theme variables
+// Custom Foe Finder theme variables
 :root {
   // Dark background colors
-  --nemesis-bg-primary: #0a0a0f;
-  --nemesis-bg-secondary: #1a1a2e;
-  --nemesis-bg-tertiary: #16213e;
+  --foe-bg-primary: #0a0a0f;
+  --foe-bg-secondary: #1a1a2e;
+  --foe-bg-tertiary: #16213e;
 
   // Accent colors
-  --nemesis-accent-primary: #e94560;
-  --nemesis-accent-secondary: #a855f7;
-  --nemesis-accent-tertiary: #3b82f6;
+  --foe-accent-primary: #e94560;
+  --foe-accent-secondary: #a855f7;
+  --foe-accent-tertiary: #3b82f6;
 
   // Text colors
-  --nemesis-text-primary: #e5e7eb;
-  --nemesis-text-secondary: #9ca3af;
-  --nemesis-text-muted: #6b7280;
+  --foe-text-primary: #e5e7eb;
+  --foe-text-secondary: #b0b5bc;
+  --foe-text-muted: #9ca3af;
 
   // Gradient
-  --nemesis-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #e94560 100%);
-  --nemesis-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  --foe-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #e94560 100%);
+  --foe-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
 
   // Border
-  --nemesis-border: #2d3748;
+  --foe-border: #2d3748;
 
   // Shadow
-  --nemesis-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  --nemesis-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
+  --foe-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --foe-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
 }
 
 // Apply dark theme globally
 body {
-  background-color: var(--nemesis-bg-primary);
-  color: var(--nemesis-text-primary);
+  background-color: var(--foe-bg-primary);
+  color: var(--foe-text-primary);
 }
 
 // Material card styling
 mat-card {
-  background-color: var(--nemesis-bg-secondary) !important;
-  border: 1px solid var(--nemesis-border);
+  background-color: var(--foe-bg-secondary) !important;
+  border: 1px solid var(--foe-border);
 }

@@ -11,9 +11,9 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterLink, MatToolbarModule, MatButtonModule, MatIconModule],
   template: `
-    <mat-toolbar class="nemesis-navbar">
+    <mat-toolbar class="foe-navbar">
       <span class="logo" routerLink="/">
-        <span class="logo-nemesis">NEMESIS</span>
+        <span class="logo-foe">FOE</span>
         <span class="logo-finder">FINDER</span>
       </span>
       <span class="tagline">Find Your Opposite</span>
@@ -30,9 +30,9 @@ import { AuthService } from '../../core/services/auth.service';
     </mat-toolbar>
   `,
   styles: [`
-    .nemesis-navbar {
-      background: var(--nemesis-bg-secondary) !important;
-      border-bottom: 2px solid var(--nemesis-accent-primary);
+    .foe-navbar {
+      background: var(--foe-bg-secondary) !important;
+      border-bottom: 2px solid var(--foe-accent-primary);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
       padding: 0 24px;
     }
@@ -51,23 +51,23 @@ import { AuthService } from '../../core/services/auth.service';
       }
     }
 
-    .logo-nemesis {
-      color: var(--nemesis-accent-primary);
+    .logo-foe {
+      color: var(--foe-accent-primary);
       letter-spacing: 2px;
     }
 
     .logo-finder {
-      color: var(--nemesis-text-primary);
+      color: var(--foe-text-primary);
       font-weight: 300;
       letter-spacing: 1px;
     }
 
     .tagline {
       margin-left: 16px;
-      font-size: 12px;
-      color: var(--nemesis-text-secondary);
+      font-size: 14px;
+      color: var(--foe-text-secondary);
       font-style: italic;
-      border-left: 2px solid var(--nemesis-border);
+      border-left: 2px solid var(--foe-border);
       padding-left: 16px;
     }
 
@@ -78,31 +78,31 @@ import { AuthService } from '../../core/services/auth.service';
     .welcome {
       margin-right: 20px;
       font-size: 14px;
-      color: var(--nemesis-text-secondary);
+      color: var(--foe-text-secondary);
 
       strong {
-        color: var(--nemesis-accent-primary);
+        color: var(--foe-accent-primary);
       }
     }
 
     .nav-btn {
       margin: 0 4px;
-      color: var(--nemesis-text-primary) !important;
+      color: var(--foe-text-primary) !important;
       transition: all 0.3s ease;
 
       &:hover {
-        color: var(--nemesis-accent-primary) !important;
+        color: var(--foe-accent-primary) !important;
         background-color: rgba(233, 69, 96, 0.1) !important;
       }
     }
 
     .logout-btn:hover {
-      color: var(--nemesis-accent-primary) !important;
+      color: var(--foe-accent-primary) !important;
     }
 
     .register-btn {
       margin-left: 8px;
-      background: linear-gradient(135deg, var(--nemesis-accent-primary), var(--nemesis-accent-secondary)) !important;
+      background: linear-gradient(135deg, var(--foe-accent-primary), var(--foe-accent-secondary)) !important;
       font-weight: 600;
       letter-spacing: 0.5px;
     }

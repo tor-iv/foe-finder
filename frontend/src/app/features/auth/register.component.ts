@@ -26,7 +26,7 @@ import { AuthService } from '../../core/services/auth.service';
     <div class="register-container">
       <mat-card class="register-card">
         <mat-card-header>
-          <mat-card-title>Join NemisisFinder</mat-card-title>
+          <mat-card-title>Join Foe Finder</mat-card-title>
           <mat-card-subtitle>Create an account to find your opposite match</mat-card-subtitle>
         </mat-card-header>
 

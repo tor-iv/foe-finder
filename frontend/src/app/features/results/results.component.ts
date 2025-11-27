@@ -71,7 +71,7 @@ import { AuthService } from '../../core/services/auth.service';
               <div class="matching-info">
                 <mat-icon>people</mat-icon>
                 <p>
-                  Now we'll find your <strong>Nemesis</strong> - someone from a completely
+                  Now we'll find your <strong>Foe</strong> - someone from a completely
                   different neighborhood with opposite views!
                 </p>
               </div>
@@ -281,8 +281,8 @@ export class ResultsComponent implements OnInit {
    */
   retakeQuiz(): void {
     // Clear stored neighborhood
-    localStorage.removeItem('nemesis_finder_neighborhood');
-    localStorage.removeItem('nemesis_finder_responses');
+    localStorage.removeItem('foe_finder_neighborhood');
+    localStorage.removeItem('foe_finder_responses');
 
     // Navigate to questionnaire
     this.router.navigate(['/questionnaire']);

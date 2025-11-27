@@ -28,7 +28,7 @@ import { AuthService } from '../../core/services/auth.service';
       <mat-card class="login-card fade-in">
         <mat-card-header>
           <mat-card-title>
-            <span class="title-nemesis">NEMESIS</span>
+            <span class="title-foe">FOE</span>
             <span class="title-finder">FINDER</span>
           </mat-card-title>
           <mat-card-subtitle>Log in to find your opposite match</mat-card-subtitle>
@@ -92,7 +92,7 @@ import { AuthService } from '../../core/services/auth.service';
       align-items: center;
       min-height: calc(100vh - 64px);
       padding: 20px;
-      background: var(--nemesis-bg-primary);
+      background: var(--foe-bg-primary);
       overflow: hidden;
     }
 
@@ -136,18 +136,18 @@ import { AuthService } from '../../core/services/auth.service';
       gap: 8px;
     }
 
-    .title-nemesis {
-      color: var(--nemesis-accent-primary);
+    .title-foe {
+      color: var(--foe-accent-primary);
       letter-spacing: 2px;
     }
 
     .title-finder {
-      color: var(--nemesis-text-primary);
+      color: var(--foe-text-primary);
       font-weight: 300;
     }
 
     mat-card-subtitle {
-      color: var(--nemesis-text-secondary) !important;
+      color: var(--foe-text-secondary) !important;
       font-size: 14px;
     }
 
@@ -165,7 +165,7 @@ import { AuthService } from '../../core/services/auth.service';
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 1px;
-      background: linear-gradient(135deg, var(--nemesis-accent-primary), var(--nemesis-accent-secondary)) !important;
+      background: linear-gradient(135deg, var(--foe-accent-primary), var(--foe-accent-secondary)) !important;
       transition: all 0.3s ease;
 
       &:hover:not([disabled]) {
@@ -179,13 +179,13 @@ import { AuthService } from '../../core/services/auth.service';
     }
 
     .error-message {
-      color: var(--nemesis-accent-primary);
+      color: var(--foe-accent-primary);
       font-size: 14px;
       margin: 16px 0;
       text-align: center;
       padding: 12px;
       background: rgba(233, 69, 96, 0.1);
-      border-left: 3px solid var(--nemesis-accent-primary);
+      border-left: 3px solid var(--foe-accent-primary);
       border-radius: 4px;
     }
 
@@ -193,17 +193,17 @@ import { AuthService } from '../../core/services/auth.service';
       margin-top: 24px;
       text-align: center;
       font-size: 14px;
-      color: var(--nemesis-text-secondary);
+      color: var(--foe-text-secondary);
     }
 
     .register-link a {
-      color: var(--nemesis-accent-primary);
+      color: var(--foe-accent-primary);
       text-decoration: none;
       font-weight: 600;
       transition: all 0.3s ease;
 
       &:hover {
-        color: var(--nemesis-accent-secondary);
+        color: var(--foe-accent-secondary);
         text-decoration: underline;
       }
     }

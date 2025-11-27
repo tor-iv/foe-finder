@@ -1,4 +1,4 @@
-// Shared auth styles for Nemesis theme
+// Shared auth styles for Foe Finder theme
 .register-container {
   position: relative;
   display: flex;
@@ -6,7 +6,7 @@
   align-items: center;
   min-height: calc(100vh - 64px);
   padding: 20px;
-  background: var(--nemesis-bg-primary);
+  background: var(--foe-bg-primary);
   overflow: hidden;
 }
 
@@ -50,18 +50,18 @@ mat-card-title {
   gap: 8px;
 }
 
-.title-nemesis {
-  color: var(--nemesis-accent-secondary);
+.title-foe {
+  color: var(--foe-accent-secondary);
   letter-spacing: 2px;
 }
 
 .title-finder {
-  color: var(--nemesis-text-primary);
+  color: var(--foe-text-primary);
   font-weight: 300;
 }
 
 mat-card-subtitle {
-  color: var(--nemesis-text-secondary) !important;
+  color: var(--foe-text-secondary) !important;
   font-size: 14px;
 }
 
@@ -79,7 +79,7 @@ mat-form-field {
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 1px;
-  background: linear-gradient(135deg, var(--nemesis-accent-secondary), var(--nemesis-accent-tertiary)) !important;
+  background: linear-gradient(135deg, var(--foe-accent-secondary), var(--foe-accent-tertiary)) !important;
   transition: all 0.3s ease;
 
   &:hover:not([disabled]) {
@@ -93,13 +93,13 @@ mat-form-field {
 }
 
 .error-message {
-  color: var(--nemesis-accent-primary);
+  color: var(--foe-accent-primary);
   font-size: 14px;
   margin: 16px 0;
   text-align: center;
   padding: 12px;
   background: rgba(233, 69, 96, 0.1);
-  border-left: 3px solid var(--nemesis-accent-primary);
+  border-left: 3px solid var(--foe-accent-primary);
   border-radius: 4px;
 }
 
@@ -107,16 +107,16 @@ mat-form-field {
   margin-top: 24px;
   text-align: center;
   font-size: 14px;
-  color: var(--nemesis-text-secondary);
+  color: var(--foe-text-secondary);
 
   a {
-    color: var(--nemesis-accent-secondary);
+    color: var(--foe-accent-secondary);
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
 
     &:hover {
-      color: var(--nemesis-accent-tertiary);
+      color: var(--foe-accent-tertiary);
       text-decoration: underline;
     }
   }

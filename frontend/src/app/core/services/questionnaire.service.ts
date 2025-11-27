@@ -30,7 +30,7 @@ export class QuestionnaireService {
   private authService = inject(AuthService);
 
   // Storage key for responses
-  private readonly RESPONSES_KEY = 'nemesis_finder_responses';
+  private readonly RESPONSES_KEY = 'foe_finder_responses';
 
   /**
    * NYC Neighborhoods with their characteristics
@@ -242,7 +242,7 @@ export class QuestionnaireService {
     const neighborhood = this.calculateNeighborhood(answers);
 
     // Store the result
-    localStorage.setItem('nemesis_finder_neighborhood', neighborhood.id);
+    localStorage.setItem('foe_finder_neighborhood', neighborhood.id);
 
     // Mark questionnaire as complete in auth service
     this.authService.markQuestionnaireComplete();
@@ -254,7 +254,7 @@ export class QuestionnaireService {
    * Get the user's last calculated neighborhood
    */
   getStoredNeighborhood(): NYCNeighborhood | null {
-    const neighborhoodId = localStorage.getItem('nemesis_finder_neighborhood');
+    const neighborhoodId = localStorage.getItem('foe_finder_neighborhood');
     if (neighborhoodId) {
       return this.getNeighborhoodById(neighborhoodId) || null;
     }

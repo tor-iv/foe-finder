@@ -1,4 +1,4 @@
-/* Nemesis Theme - Find Your Opposite */
+/* Foe Finder Theme - Find Your Opposite */
 @use './theme';
 
 html, body {
@@ -6,8 +6,8 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Roboto', 'Helvetica Neue', sans-serif;
-  background-color: var(--nemesis-bg-primary);
-  color: var(--nemesis-text-primary);
+  background-color: var(--foe-bg-primary);
+  color: var(--foe-text-primary);
   overflow-x: hidden;
 }
 
@@ -21,29 +21,29 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--nemesis-bg-secondary);
+  background: var(--foe-bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--nemesis-accent-primary);
+  background: var(--foe-accent-primary);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--nemesis-accent-secondary);
+  background: var(--foe-accent-secondary);
 }
 
 // Material overrides for dark theme
 .mat-mdc-card {
-  background-color: var(--nemesis-bg-secondary) !important;
-  color: var(--nemesis-text-primary) !important;
-  box-shadow: var(--nemesis-shadow) !important;
-  border: 1px solid var(--nemesis-border);
+  background-color: var(--foe-bg-secondary) !important;
+  color: var(--foe-text-primary) !important;
+  box-shadow: var(--foe-shadow) !important;
+  border: 1px solid var(--foe-border);
 }
 
 .mat-mdc-form-field {
   .mat-mdc-text-field-wrapper {
-    background-color: var(--nemesis-bg-tertiary) !important;
+    background-color: var(--foe-bg-tertiary) !important;
   }
 }
 

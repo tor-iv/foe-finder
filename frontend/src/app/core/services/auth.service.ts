@@ -31,7 +31,7 @@ export class AuthService {
   private readonly USE_REAL_AUTH = environment.features.useRealAuth;
 
   // Storage key for dummy auth mode
-  private readonly STORAGE_KEY = 'nemesis_finder_user';
+  private readonly STORAGE_KEY = 'foe_finder_user';
 
   // BehaviorSubject allows components to subscribe to auth state changes
   // A BehaviorSubject always has a current value (initially null = no user logged in)

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { QuestionnaireService } from '../../core/services/questionnaire.service';
 import { Question } from '../../core/models/questionnaire.model';
@@ -18,7 +18,7 @@ import { Answer } from '../../core/models/response.model';
     MatCardModule,
     MatButtonModule,
     MatProgressBarModule,
-    MatRadioModule,
+    MatSliderModule,
     MatProgressSpinnerModule
   ],
   template: `
@@ -46,23 +46,20 @@ import { Answer } from '../../core/models/response.model';
               <div class="question-container">
                 <h2 class="question-text">{{ currentQuestion()!.text }}</h2>
 
-                <div class="scale-container">
+                <div class="slider-container">
                   <div class="scale-labels">
                     <span class="scale-label">{{ currentQuestion()!.scaleMinLabel }}</span>
                     <span class="scale-label">{{ currentQuestion()!.scaleMaxLabel }}</span>
                   </div>
 
-                  <div class="scale-options">
-                    @for (option of scaleOptions; track option) {
-                      <button
-                        mat-raised-button
-                        class="scale-button"
-                        [class.selected]="answers()[currentQuestion()!.id] === option"
-                        (click)="selectAnswer(option)"
-                      >
-                        {{ option }}
-                      </button>
-                    }
+                  <mat-slider min="1" max="7" step="1" discrete showTickMarks class="opinion-slider">
+                    <input matSliderThumb
+                           [value]="answers()[currentQuestion()!.id] || 4"
+                           (valueChange)="selectAnswer($event)">
+                  </mat-slider>
+
+                  <div class="slider-value">
+                    {{ answers()[currentQuestion()!.id] || 4 }}
                   </div>
                 </div>
 
@@ -166,14 +163,15 @@ import { Answer } from '../../core/models/response.model';
       color: #333;
     }
 
-    .scale-container {
+    .slider-container {
       margin: 40px 0;
+      padding: 0 10px;
     }
 
     .scale-labels {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       font-size: 14px;
       color: #666;
     }
@@ -182,23 +180,16 @@ import { Answer } from '../../core/models/response.model';
       font-weight: 500;
     }
 
-    .scale-options {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
+    .opinion-slider {
+      width: 100%;
     }
 
-    .scale-button {
-      flex: 1;
-      min-width: 50px;
-      height: 50px;
-      font-size: 18px;
-      font-weight: 500;
-    }
-
-    .scale-button.selected {
-      background-color: #667eea;
-      color: white;
+    .slider-value {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 32px;
+      font-weight: bold;
+      color: #667eea;
     }
 
     .navigation-buttons {
@@ -236,14 +227,8 @@ import { Answer } from '../../core/models/response.model';
     }
 
     @media (max-width: 600px) {
-      .scale-options {
-        flex-wrap: wrap;
-      }
-
-      .scale-button {
-        min-width: 40px;
-        height: 40px;
-        font-size: 16px;
+      .slider-value {
+        font-size: 28px;
       }
     }
   `]
@@ -253,7 +238,6 @@ export class QuestionnaireComponent implements OnInit {
   private router = inject(Router);
 
   questions: Question[] = [];
-  scaleOptions = [1, 2, 3, 4, 5, 6, 7];
 
   currentQuestionIndex = signal(0);
   answers = signal<Record<number, number>>({});

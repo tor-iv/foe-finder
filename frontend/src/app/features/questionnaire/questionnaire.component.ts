@@ -55,7 +55,7 @@ import { Answer } from '../../core/models/response.model';
                   <mat-slider min="0" max="100" class="opinion-slider">
                     <input matSliderThumb
                            [value]="getSliderValue()"
-                           (valueChange)="selectAnswer($event)">
+                           (change)="onSliderChange($event)">
                   </mat-slider>
 
                 </div>
@@ -251,7 +251,8 @@ export class QuestionnaireComponent implements OnInit {
     return ((this.currentQuestionIndex() + 1) / this.questions.length) * 100;
   };
 
-  selectAnswer(value: number) {
+  onSliderChange(event: Event) {
+    const value = +(event.target as HTMLInputElement).value;
     const currentAnswers = { ...this.answers() };
     currentAnswers[this.currentQuestion().id] = value;
     this.answers.set(currentAnswers);

@@ -102,94 +102,172 @@ export class QuestionnaireService {
   ];
 
   /**
-   * Sample questionnaire questions
+   * Questionnaire questions - fun, niche takes for 20-somethings
    *
    * Each question uses a 1-7 scale where:
    * 1 = Strongly Disagree
    * 7 = Strongly Agree
-   *
-   * Questions are designed to reveal personality traits that map to neighborhoods
    */
   private sampleQuestions: Question[] = [
     {
       id: 1,
-      text: 'Government should play a major role in regulating businesses',
-      category: 'politics',
+      text: 'Typing "..." is more threatening than a period',
+      category: 'social',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 1
     },
     {
       id: 2,
-      text: 'Traditional family values are essential to society',
-      category: 'values',
+      text: "I've screenshot texts to send to the group chat",
+      category: 'social',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 2
     },
     {
       id: 3,
-      text: 'I prefer spontaneous activities over planned ones',
-      category: 'lifestyle',
+      text: 'Couples who share a social media account are hiding something',
+      category: 'opinions',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 3
     },
     {
       id: 4,
-      text: 'Environmental protection should be prioritized over economic growth',
-      category: 'politics',
+      text: 'People who back into parking spots are trying too hard',
+      category: 'opinions',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 4
     },
     {
       id: 5,
-      text: 'I enjoy trying new and exotic foods',
-      category: 'preferences',
+      text: "I've rewatched the same show 5+ times instead of starting something new",
+      category: 'lifestyle',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 5
     },
     {
       id: 6,
-      text: 'People should rely more on themselves than on government assistance',
-      category: 'politics',
+      text: "Watching someone's story without following them is research, not stalking",
+      category: 'social',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 6
     },
     {
       id: 7,
-      text: 'Art and culture are essential parts of a good life',
-      category: 'values',
+      text: "I've rehearsed a conversation in the shower",
+      category: 'lifestyle',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 7
     },
     {
       id: 8,
-      text: 'I prefer city living to rural living',
-      category: 'lifestyle',
+      text: "Leaving someone on 'delivered' is a power move",
+      category: 'social',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 8
     },
     {
       id: 9,
-      text: 'Science and reason should guide most decisions',
-      category: 'values',
+      text: "I've judged someone's bookshelf",
+      category: 'opinions',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 9
     },
     {
       id: 10,
-      text: 'I enjoy quiet evenings at home more than social gatherings',
-      category: 'preferences',
+      text: "People who say 'let's hang soon!' never mean it",
+      category: 'social',
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 10
+    },
+    {
+      id: 11,
+      text: "I've pretended my phone died to avoid a situation",
+      category: 'lifestyle',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 11
+    },
+    {
+      id: 12,
+      text: 'Eating alone in public is underrated',
+      category: 'opinions',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 12
+    },
+    {
+      id: 13,
+      text: "I've bought something just because the packaging was cute",
+      category: 'lifestyle',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 13
+    },
+    {
+      id: 14,
+      text: 'Main character syndrome is fine actually',
+      category: 'opinions',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 14
+    },
+    {
+      id: 15,
+      text: 'Read receipts should be illegal',
+      category: 'social',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 15
+    },
+    {
+      id: 16,
+      text: 'I think about texts I sent 3 years ago',
+      category: 'lifestyle',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 16
+    },
+    {
+      id: 17,
+      text: "I've deleted an app just to avoid someone",
+      category: 'social',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 17
+    },
+    {
+      id: 18,
+      text: 'Watching TV on 1.5x speed is valid',
+      category: 'opinions',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 18
+    },
+    {
+      id: 19,
+      text: "I've said 'let's do this again' knowing I never would",
+      category: 'lifestyle',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 19
+    },
+    {
+      id: 20,
+      text: 'Standing at concerts is overrated',
+      category: 'opinions',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 20
     }
   ];
 
@@ -353,5 +431,54 @@ export class QuestionnaireService {
    */
   hasUserCompletedQuestionnaire(): boolean {
     return localStorage.getItem(this.RESPONSES_KEY) !== null;
+  }
+
+  /**
+   * Get the user's stored responses
+   */
+  getStoredResponses(): { questionId: number; value: number }[] | null {
+    const stored = localStorage.getItem(this.RESPONSES_KEY);
+    if (!stored) return null;
+
+    try {
+      const response = JSON.parse(stored);
+      return response.answers || null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Get the user's "hot takes" - their most extreme opinions
+   *
+   * Returns the top N answers that are furthest from neutral (4)
+   * Only includes strong opinions (values 1, 2, 6, or 7)
+   */
+  getHotTakes(count: number = 3): { question: string; value: number; stance: 'strongly_agree' | 'agree' | 'disagree' | 'strongly_disagree' }[] {
+    const responses = this.getStoredResponses();
+    if (!responses) return [];
+
+    // Calculate "extremeness" - distance from neutral (4)
+    const withExtremeness = responses
+      .map(r => {
+        const question = this.sampleQuestions.find(q => q.id === r.questionId);
+        return {
+          question: question?.text || '',
+          value: r.value,
+          extremeness: Math.abs(r.value - 4)
+        };
+      })
+      .filter(r => r.question && r.extremeness >= 2); // Only strong opinions (1,2 or 6,7)
+
+    // Sort by extremeness (most extreme first)
+    withExtremeness.sort((a, b) => b.extremeness - a.extremeness);
+
+    // Take top N and determine stance
+    return withExtremeness.slice(0, count).map(r => ({
+      question: r.question,
+      value: r.value,
+      stance: r.value >= 6 ? (r.value === 7 ? 'strongly_agree' : 'agree')
+                          : (r.value === 1 ? 'strongly_disagree' : 'disagree')
+    }));
   }
 }

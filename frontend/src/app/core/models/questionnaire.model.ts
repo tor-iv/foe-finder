@@ -11,7 +11,7 @@ export interface Questionnaire {
 export interface Question {
   id: number;
   text: string;
-  category: 'politics' | 'lifestyle' | 'values' | 'preferences';
+  category: 'social' | 'lifestyle' | 'opinions';
   scaleMinLabel: string;  // e.g., "Strongly Disagree"
   scaleMaxLabel: string;  // e.g., "Strongly Agree"
   order: number;

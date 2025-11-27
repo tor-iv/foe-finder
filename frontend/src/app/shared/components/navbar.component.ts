@@ -32,42 +32,48 @@ import { AuthService } from '../../core/services/auth.service';
   styles: [`
     .foe-navbar {
       background: var(--foe-bg-secondary) !important;
-      border-bottom: 2px solid var(--foe-accent-primary);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      border-bottom: var(--foe-border-width) solid var(--foe-border);
+      box-shadow: 0 4px 0 var(--foe-border);
       padding: 0 24px;
+      font-family: 'Space Mono', monospace;
     }
 
     .logo {
-      font-size: 24px;
-      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: baseline;
-      gap: 4px;
-      transition: all 0.3s ease;
+      gap: 2px;
+      transition: all 0.1s ease;
+      text-shadow: 2px 2px 0px var(--foe-bg-tertiary);
 
       &:hover {
-        transform: scale(1.05);
+        transform: translate(-2px, -2px);
+        text-shadow: 4px 4px 0px var(--foe-bg-tertiary);
       }
     }
 
     .logo-foe {
       color: var(--foe-accent-primary);
-      letter-spacing: 2px;
+      letter-spacing: -1px;
     }
 
     .logo-finder {
       color: var(--foe-text-primary);
-      font-weight: 300;
-      letter-spacing: 1px;
+      font-weight: 700;
+      letter-spacing: -1px;
     }
 
     .tagline {
       margin-left: 16px;
-      font-size: 14px;
+      font-size: 12px;
       color: var(--foe-text-secondary);
-      font-style: italic;
-      border-left: 2px solid var(--foe-border);
+      font-style: normal;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-left: 3px solid var(--foe-border);
       padding-left: 16px;
     }
 
@@ -77,38 +83,58 @@ import { AuthService } from '../../core/services/auth.service';
 
     .welcome {
       margin-right: 20px;
-      font-size: 14px;
+      font-size: 12px;
       color: var(--foe-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
 
       strong {
-        color: var(--foe-accent-primary);
+        color: var(--foe-text-primary);
+        background: var(--foe-accent-primary);
+        padding: 2px 6px;
       }
     }
 
     .nav-btn {
       margin: 0 4px;
       color: var(--foe-text-primary) !important;
-      transition: all 0.3s ease;
+      border: 2px solid transparent !important;
+      border-radius: 0 !important;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 1px;
+      transition: all 0.1s ease;
 
       &:hover {
-        color: var(--foe-accent-light) !important;
-        background-color: rgba(107, 33, 168, 0.1) !important;
+        color: var(--foe-text-primary) !important;
+        background-color: var(--foe-bg-tertiary) !important;
+        border: 2px solid var(--foe-border) !important;
       }
     }
 
     .logout-btn:hover {
-      color: var(--foe-accent-primary) !important;
+      background-color: var(--foe-error) !important;
+      color: white !important;
+      border-color: var(--foe-border) !important;
     }
 
     .register-btn {
       margin-left: 8px;
       background: var(--foe-accent-primary) !important;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      transition: all 0.3s ease;
+      color: var(--foe-text-primary) !important;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 12px;
+      border: 3px solid var(--foe-border) !important;
+      border-radius: 0 !important;
+      box-shadow: 3px 3px 0px var(--foe-border);
+      transition: all 0.1s ease;
 
       &:hover {
         background: var(--foe-accent-light) !important;
+        box-shadow: 1px 1px 0px var(--foe-border);
+        transform: translate(2px, 2px);
       }
     }
 
@@ -122,7 +148,7 @@ import { AuthService } from '../../core/services/auth.service';
       }
 
       .logo {
-        font-size: 18px;
+        font-size: 20px;
       }
     }
   `]

@@ -37,7 +37,7 @@ interface HotTake {
         <mat-card class="results-card">
           <mat-card-header>
             <mat-card-title class="hot-takes-title">
-              🎯 Your Hot Takes
+              Your Hot Takes
             </mat-card-title>
           </mat-card-header>
 
@@ -91,26 +91,35 @@ interface HotTake {
       min-height: calc(100vh - 64px);
       padding: 20px;
       background: var(--foe-bg-primary);
+      font-family: 'Space Mono', monospace;
     }
 
     .results-card, .no-results-card {
       max-width: 600px;
       width: 100%;
       background: var(--foe-bg-secondary) !important;
-      border: 1px solid var(--foe-border);
+      border: var(--foe-border-width) solid var(--foe-border) !important;
+      border-radius: 0 !important;
+      box-shadow: var(--foe-shadow-lg) !important;
     }
 
     mat-card-header {
       display: flex;
       justify-content: center;
       margin-bottom: 20px;
+      border-bottom: 3px solid var(--foe-border);
+      padding-bottom: 16px;
     }
 
     .hot-takes-title {
-      font-size: 28px;
-      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      font-size: 32px;
+      font-weight: 900;
       text-align: center;
       color: var(--foe-text-primary);
+      text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
+      text-transform: uppercase;
+      letter-spacing: -1px;
     }
 
     .hot-takes-list {
@@ -122,47 +131,47 @@ interface HotTake {
 
     .hot-take-item {
       background: var(--foe-bg-tertiary);
-      border-radius: 12px;
       padding: 16px;
-      border-left: 4px solid var(--foe-accent-primary);
+      border: 3px solid var(--foe-border);
+      border-left: 6px solid var(--foe-accent-primary);
     }
 
     .take-question {
-      font-size: 16px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 700;
       color: var(--foe-text-primary);
-      margin: 0 0 8px 0;
-      font-style: italic;
+      margin: 0 0 12px 0;
+      font-style: normal;
     }
 
     .take-stance {
       display: inline-block;
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 12px;
-      font-weight: 600;
+      padding: 6px 12px;
+      font-size: 10px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
+      border: 2px solid var(--foe-border);
     }
 
-    /* Purple tints for stance badges - lighter = agree, darker = disagree */
+    /* Neon green tints for stance badges */
     .take-stance.strongly_agree {
-      background: rgba(107, 33, 168, 0.15);
-      color: var(--foe-accent-light);
-    }
-
-    .take-stance.agree {
-      background: rgba(107, 33, 168, 0.1);
-      color: var(--foe-text-secondary);
-    }
-
-    .take-stance.strongly_disagree {
       background: var(--foe-accent-primary);
       color: var(--foe-text-primary);
     }
 
+    .take-stance.agree {
+      background: var(--foe-bg-secondary);
+      color: var(--foe-text-primary);
+    }
+
+    .take-stance.strongly_disagree {
+      background: var(--foe-text-primary);
+      color: var(--foe-bg-secondary);
+    }
+
     .take-stance.disagree {
-      background: rgba(107, 33, 168, 0.3);
+      background: var(--foe-bg-tertiary);
       color: var(--foe-text-primary);
     }
 
@@ -170,9 +179,9 @@ interface HotTake {
       display: flex;
       gap: 16px;
       padding: 24px;
-      background: rgba(107, 33, 168, 0.1);
-      border-radius: 12px;
-      border: 1px solid rgba(107, 33, 168, 0.3);
+      background: var(--foe-bg-tertiary);
+      border: 3px solid var(--foe-border);
+      border-left: 6px solid var(--foe-accent-primary);
       margin-top: 24px;
     }
 
@@ -186,22 +195,30 @@ interface HotTake {
     }
 
     .foe-title {
+      font-family: 'Inter', sans-serif;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 900;
       color: var(--foe-text-primary);
       margin: 0 0 8px 0;
+      text-transform: uppercase;
     }
 
     .foe-subtitle {
-      font-size: 14px;
+      font-size: 12px;
       color: var(--foe-text-secondary);
       margin: 0 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .foe-eta {
-      font-size: 14px;
-      color: var(--foe-accent-light);
-      font-weight: 500;
+      font-size: 12px;
+      color: var(--foe-text-primary);
+      background: var(--foe-accent-primary);
+      padding: 4px 8px;
+      display: inline-block;
+      font-weight: 700;
+      text-transform: uppercase;
       margin: 0;
     }
 
@@ -209,6 +226,22 @@ interface HotTake {
       display: flex;
       justify-content: center;
       padding: 16px;
+      border-top: 3px solid var(--foe-border);
+    }
+
+    mat-card-actions button {
+      font-family: 'Space Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+      border: 2px solid var(--foe-border) !important;
+      border-radius: 0 !important;
+      background: var(--foe-bg-tertiary) !important;
+      color: var(--foe-text-primary) !important;
+
+      &:hover {
+        background: var(--foe-accent-primary) !important;
+      }
     }
 
     .no-results-card {
@@ -217,18 +250,43 @@ interface HotTake {
     }
 
     .no-results-card h2 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
       color: var(--foe-text-primary);
       margin-bottom: 16px;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
     }
 
     .no-results-card p {
       color: var(--foe-text-secondary);
       margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 12px;
+    }
+
+    .no-results-card button {
+      background: var(--foe-accent-primary) !important;
+      color: var(--foe-text-primary) !important;
+      border: 3px solid var(--foe-border) !important;
+      border-radius: 0 !important;
+      box-shadow: var(--foe-shadow-sm) !important;
+      font-family: 'Space Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+
+      &:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0px var(--foe-border) !important;
+        background: var(--foe-accent-light) !important;
+      }
     }
 
     @media (max-width: 600px) {
       .hot-takes-title {
-        font-size: 22px;
+        font-size: 24px;
       }
 
       .foe-hunting-box {

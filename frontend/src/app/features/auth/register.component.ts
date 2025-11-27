@@ -109,12 +109,17 @@ import { AuthService } from '../../core/services/auth.service';
       align-items: center;
       min-height: calc(100vh - 64px);
       padding: 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--foe-bg-primary);
+      font-family: 'Space Mono', monospace;
     }
 
     .register-card {
-      max-width: 400px;
+      max-width: 450px;
       width: 100%;
+      background: var(--foe-bg-secondary) !important;
+      border: var(--foe-border-width) solid var(--foe-border) !important;
+      border-radius: 0 !important;
+      box-shadow: var(--foe-shadow) !important;
     }
 
     mat-card-header {
@@ -122,12 +127,25 @@ import { AuthService } from '../../core/services/auth.service';
       flex-direction: column;
       align-items: center;
       margin-bottom: 20px;
+      border-bottom: 3px solid var(--foe-border);
+      padding-bottom: 16px;
     }
 
     mat-card-title {
-      font-size: 24px;
-      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
       margin-bottom: 8px;
+      text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
+      text-transform: uppercase;
+      letter-spacing: -1px;
+    }
+
+    mat-card-subtitle {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--foe-text-secondary) !important;
     }
 
     .full-width {
@@ -140,30 +158,65 @@ import { AuthService } from '../../core/services/auth.service';
 
     .submit-button {
       margin-top: 16px;
-      height: 48px;
+      height: 52px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: var(--foe-accent-primary) !important;
+      color: var(--foe-text-primary) !important;
+      border: var(--foe-border-width) solid var(--foe-border) !important;
+      border-radius: 0 !important;
+      box-shadow: var(--foe-shadow) !important;
+      transition: all 0.1s ease;
+
+      &:hover:not([disabled]) {
+        transform: translate(4px, 4px);
+        box-shadow: 2px 2px 0px var(--foe-border) !important;
+        background: var(--foe-accent-light) !important;
+      }
+
+      &[disabled] {
+        opacity: 0.5;
+        background: var(--foe-bg-tertiary) !important;
+      }
     }
 
     .error-message {
-      color: #f44336;
-      font-size: 14px;
+      color: var(--foe-error);
+      font-size: 12px;
       margin: 16px 0;
       text-align: center;
+      padding: 12px;
+      background: var(--foe-error-bg);
+      border: 3px solid var(--foe-error);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .login-link {
       margin-top: 20px;
       text-align: center;
-      font-size: 14px;
+      font-size: 12px;
+      color: var(--foe-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .login-link a {
-      color: #667eea;
+      color: var(--foe-text-primary);
       text-decoration: none;
-      font-weight: 500;
-    }
+      font-weight: 700;
+      background: var(--foe-accent-primary);
+      padding: 4px 8px;
+      border: 2px solid var(--foe-border);
+      transition: all 0.1s ease;
 
-    .login-link a:hover {
-      text-decoration: underline;
+      &:hover {
+        background: var(--foe-accent-light);
+        transform: translate(-1px, -1px);
+        box-shadow: 2px 2px 0px var(--foe-border);
+      }
     }
 
     mat-spinner {

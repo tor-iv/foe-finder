@@ -94,21 +94,11 @@ import { AuthService } from '../../core/services/auth.service';
       padding: 20px;
       background: var(--foe-bg-primary);
       overflow: hidden;
+      font-family: 'Space Mono', monospace;
     }
 
     .background-glow {
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, rgba(233, 69, 96, 0.15) 0%, transparent 70%);
-      animation: pulse 8s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.3; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(1.1); }
+      display: none; /* Remove glow for retro look */
     }
 
     .login-card {
@@ -116,8 +106,10 @@ import { AuthService } from '../../core/services/auth.service';
       width: 100%;
       position: relative;
       z-index: 1;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(233, 69, 96, 0.2);
+      background: var(--foe-bg-secondary) !important;
+      border: var(--foe-border-width) solid var(--foe-border) !important;
+      border-radius: 0 !important;
+      box-shadow: var(--foe-shadow) !important;
     }
 
     mat-card-header {
@@ -126,29 +118,35 @@ import { AuthService } from '../../core/services/auth.service';
       align-items: center;
       margin-bottom: 30px;
       padding-top: 20px;
+      border-bottom: 3px solid var(--foe-border);
     }
 
     mat-card-title {
-      font-size: 32px;
-      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      font-size: 36px;
+      font-weight: 900;
       margin-bottom: 12px;
       display: flex;
-      gap: 8px;
+      gap: 4px;
+      text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
     }
 
     .title-foe {
       color: var(--foe-accent-primary);
-      letter-spacing: 2px;
+      letter-spacing: -1px;
     }
 
     .title-finder {
       color: var(--foe-text-primary);
-      font-weight: 300;
+      font-weight: 900;
+      letter-spacing: -1px;
     }
 
     mat-card-subtitle {
       color: var(--foe-text-secondary) !important;
-      font-size: 14px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
     }
 
     .full-width {
@@ -162,49 +160,63 @@ import { AuthService } from '../../core/services/auth.service';
     .submit-button {
       margin-top: 24px;
       height: 52px;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      background: linear-gradient(135deg, var(--foe-accent-primary), var(--foe-accent-secondary)) !important;
-      transition: all 0.3s ease;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: var(--foe-accent-primary) !important;
+      color: var(--foe-text-primary) !important;
+      border: var(--foe-border-width) solid var(--foe-border) !important;
+      border-radius: 0 !important;
+      box-shadow: var(--foe-shadow) !important;
+      transition: all 0.1s ease;
 
       &:hover:not([disabled]) {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4) !important;
+        transform: translate(4px, 4px);
+        box-shadow: 2px 2px 0px var(--foe-border) !important;
+        background: var(--foe-accent-light) !important;
       }
 
       &[disabled] {
-        opacity: 0.6;
+        opacity: 0.5;
+        background: var(--foe-bg-tertiary) !important;
       }
     }
 
     .error-message {
-      color: var(--foe-accent-primary);
-      font-size: 14px;
+      color: var(--foe-error);
+      font-size: 12px;
       margin: 16px 0;
       text-align: center;
       padding: 12px;
-      background: rgba(233, 69, 96, 0.1);
-      border-left: 3px solid var(--foe-accent-primary);
-      border-radius: 4px;
+      background: var(--foe-error-bg);
+      border: 3px solid var(--foe-error);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .register-link {
       margin-top: 24px;
       text-align: center;
-      font-size: 14px;
+      font-size: 12px;
       color: var(--foe-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .register-link a {
-      color: var(--foe-accent-primary);
+      color: var(--foe-text-primary);
       text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
+      font-weight: 700;
+      background: var(--foe-accent-primary);
+      padding: 4px 8px;
+      border: 2px solid var(--foe-border);
+      transition: all 0.1s ease;
 
       &:hover {
-        color: var(--foe-accent-secondary);
-        text-decoration: underline;
+        background: var(--foe-accent-light);
+        transform: translate(-1px, -1px);
+        box-shadow: 2px 2px 0px var(--foe-border);
       }
     }
 

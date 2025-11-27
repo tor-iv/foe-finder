@@ -1,11 +1,14 @@
-/* Foe Finder Theme - Find Your Opposite */
+/* Foe Finder Theme - "90s Bored Satire" Aesthetic */
 @use './theme';
+
+// Google Fonts - Space Mono (utilitarian) + Inter (heavy headers)
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  font-family: 'Space Mono', monospace;
   background-color: var(--foe-bg-primary);
   color: var(--foe-text-primary);
   overflow-x: hidden;
@@ -15,51 +18,133 @@ html, body {
   box-sizing: border-box;
 }
 
-// Custom scrollbar
+// Tiled background pattern (90s web aesthetic)
+.tiled-bg {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--foe-bg-tertiary) 0,
+    var(--foe-bg-tertiary) 1px,
+    transparent 0,
+    transparent 8px
+  );
+  background-size: 8px 8px;
+}
+
+// Custom scrollbar - brutalist style
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--foe-bg-secondary);
+  background: var(--foe-bg-tertiary);
+  border: 2px solid var(--foe-border);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--foe-accent-primary);
-  border-radius: 5px;
+  border: 2px solid var(--foe-border);
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--foe-accent-light);
 }
 
-// Material overrides for dark theme
+// Retro header typography
+.pixel-header {
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  text-shadow: var(--foe-header-shadow);
+  line-height: 0.9;
+}
+
+// Neon button - signature retro CTA
+.neon-button {
+  background-color: var(--foe-accent-primary) !important;
+  color: var(--foe-text-primary) !important;
+  border: var(--foe-border-width) solid var(--foe-text-primary) !important;
+  box-shadow: var(--foe-shadow) !important;
+  border-radius: var(--foe-radius) !important;
+  transition: all 0.1s !important;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-family: 'Space Mono', monospace;
+
+  &:hover {
+    box-shadow: 2px 2px 0px var(--foe-text-primary) !important;
+    transform: translate(4px, 4px);
+    background-color: var(--foe-accent-light) !important;
+  }
+
+  &:active {
+    box-shadow: none !important;
+    transform: translate(6px, 6px);
+  }
+}
+
+// Material overrides for retro brutalist theme
 .mat-mdc-card {
   background-color: var(--foe-bg-secondary) !important;
   color: var(--foe-text-primary) !important;
   box-shadow: var(--foe-shadow) !important;
-  border: 1px solid var(--foe-border);
+  border: var(--foe-border-width) solid var(--foe-border) !important;
+  border-radius: var(--foe-radius) !important;
 }
 
 .mat-mdc-form-field {
   .mat-mdc-text-field-wrapper {
     background-color: var(--foe-bg-tertiary) !important;
+    border: var(--foe-border-width-sm) solid var(--foe-border) !important;
+    border-radius: var(--foe-radius) !important;
+  }
+
+  .mdc-floating-label {
+    font-family: 'Space Mono', monospace !important;
+  }
+
+  input, textarea {
+    font-family: 'Space Mono', monospace !important;
   }
 }
 
 .mat-mdc-raised-button {
-  box-shadow: var(--foe-shadow-purple) !important;
+  box-shadow: var(--foe-shadow-sm) !important;
+  border: var(--foe-border-width-sm) solid var(--foe-border) !important;
+  border-radius: var(--foe-radius) !important;
+  font-family: 'Space Mono', monospace !important;
+  text-transform: uppercase;
 
   &:hover {
-    box-shadow: 0 6px 20px rgba(107, 33, 168, 0.5) !important;
+    box-shadow: 2px 2px 0px var(--foe-border) !important;
+    transform: translate(1px, 1px);
   }
 }
 
-// Animation for page transitions
+// Slider overrides for retro look
+.mat-mdc-slider {
+  .mdc-slider__track {
+    border: 2px solid var(--foe-border);
+    border-radius: 0 !important;
+    height: 8px !important;
+  }
+
+  .mdc-slider__thumb {
+    border-radius: 0 !important;
+    border: 3px solid var(--foe-border) !important;
+  }
+
+  .mdc-slider__track--active_fill {
+    background-color: var(--foe-accent-primary) !important;
+    border-color: var(--foe-accent-primary) !important;
+  }
+}
+
+// Animation for page transitions (kept but more abrupt)
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -68,5 +153,18 @@ html, body {
 }
 
 .fade-in {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Utility classes
+.retro-border {
+  border: var(--foe-border-width) solid var(--foe-border);
+}
+
+.retro-shadow {
+  box-shadow: var(--foe-shadow);
+}
+
+.accent-border {
+  border-color: var(--foe-accent-primary);
 }

@@ -1,13 +1,13 @@
 // Custom Foe Finder Theme for Angular Material
-// Updated for Angular Material v20+ (M3 theming system)
+// "90s Bored Satire" aesthetic - Retro brutalist design
 @use '@angular/material' as mat;
 
 // Create a custom theme using the new M3 theming system
-// Dark theme with royal purple as primary color
+// LIGHT theme with neon green accent
 $theme: mat.define-theme((
   color: (
-    theme-type: dark,
-    primary: mat.$violet-palette,
+    theme-type: light,
+    primary: mat.$green-palette,
   ),
   density: (
     scale: 0,
@@ -20,44 +20,76 @@ html {
 }
 
 // Custom Foe Finder theme variables
-// Simplified palette: Deep Purple + Black/White neutrals
+// "Bored Satire" palette: Drained grays + Neon green accent
 :root {
-  // Backgrounds (black to dark gray spectrum)
-  --foe-bg-primary: #0a0a0a;       // Main background (near black)
-  --foe-bg-secondary: #141414;      // Cards, containers
-  --foe-bg-tertiary: #1f1f1f;       // Form fields, nested elements
+  // Backgrounds (light drained grays)
+  --foe-bg-primary: #e0e0e0;       // Main background (drained off-white)
+  --foe-bg-secondary: #ffffff;      // Cards, containers (white)
+  --foe-bg-tertiary: #c0c0c0;       // Form fields, nested elements (muted gray)
 
-  // Primary accent (royal purple spectrum)
-  --foe-accent-primary: #6B21A8;    // Main purple
-  --foe-accent-light: #9333EA;      // Lighter purple for hover states
-  --foe-accent-dark: #581C87;       // Darker purple for pressed states
+  // Primary accent (neon green spectrum)
+  --foe-accent-primary: #39ff14;    // Sickly neon green
+  --foe-accent-light: #00ff00;      // Brighter green for hover states
+  --foe-accent-dark: #32d612;       // Darker green for pressed states
 
-  // Text (white to gray spectrum)
-  --foe-text-primary: #ffffff;      // Main text (pure white)
-  --foe-text-secondary: #a3a3a3;    // Secondary text (gray)
-  --foe-text-muted: #737373;        // Muted text (darker gray)
+  // Text (dark on light)
+  --foe-text-primary: #333333;      // Main text (dark gray)
+  --foe-text-secondary: #555555;    // Secondary text
+  --foe-text-muted: #777777;        // Muted text
 
-  // Borders
-  --foe-border: #262626;            // Subtle dark border
-  --foe-border-accent: #6B21A8;     // Purple accent border
+  // Borders (chunky dark borders)
+  --foe-border: #333333;            // Strong dark border
+  --foe-border-accent: #39ff14;     // Neon green accent border
 
-  // Shadows
-  --foe-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  --foe-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
-  --foe-shadow-purple: 0 4px 15px rgba(107, 33, 168, 0.3);
+  // Shadows (hard retro shadows - no blur)
+  --foe-shadow: 6px 6px 0px #333333;
+  --foe-shadow-lg: 10px 10px 0px #333333;
+  --foe-shadow-sm: 3px 3px 0px #333333;
+  --foe-shadow-accent: 4px 4px 0px #39ff14;
+
+  // Retro-specific variables
+  --foe-border-width: 4px;
+  --foe-border-width-sm: 3px;
+  --foe-radius: 0px;                // No rounded corners - brutalist
+  --foe-header-shadow: 3px 3px 0px #c0c0c0;
 
   // Error state (keeping red for UX convention)
   --foe-error: #dc2626;
+  --foe-error-bg: #fecaca;
 }
 
-// Apply dark theme globally
+// Apply light theme globally
 body {
   background-color: var(--foe-bg-primary);
   color: var(--foe-text-primary);
 }
 
-// Material card styling
+// Material card styling - Retro brutalist
 mat-card {
   background-color: var(--foe-bg-secondary) !important;
-  border: 1px solid var(--foe-border);
+  border: var(--foe-border-width) solid var(--foe-border) !important;
+  border-radius: var(--foe-radius) !important;
+  box-shadow: var(--foe-shadow) !important;
+}
+
+// Global Material overrides for brutalist aesthetic
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-flat-button {
+  border-radius: var(--foe-radius) !important;
+}
+
+.mat-mdc-card {
+  border-radius: var(--foe-radius) !important;
+}
+
+.mat-mdc-form-field {
+  .mdc-text-field {
+    border-radius: var(--foe-radius) !important;
+  }
+}
+
+.mat-mdc-slider {
+  --mdc-slider-handle-shape: 0px;
 }

@@ -1,129 +1,24 @@
 // Custom Nemesis Theme for Angular Material
+// Updated for Angular Material v20+ (M3 theming system)
 @use '@angular/material' as mat;
 
-// Include the common styles for Angular Material
-@include mat.core();
-
-// Define the Nemesis color palette
-$nemesis-primary: (
-  50: #e8eaf6,
-  100: #c5cbe9,
-  200: #9fa8da,
-  300: #7985cb,
-  400: #5c6bc0,
-  500: #3f51b5,  // Main primary
-  600: #394aae,
-  700: #3140a5,
-  800: #29379d,
-  900: #1b278d,
-  A100: #c6cbff,
-  A200: #939dff,
-  A400: #606eff,
-  A700: #4757ff,
-  contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: white,
-    400: white,
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-    A100: rgba(black, 0.87),
-    A200: white,
-    A400: white,
-    A700: white,
-  )
-);
-
-$nemesis-accent: (
-  50: #fce4ec,
-  100: #f8bbd0,
-  200: #f48fb1,
-  300: #f06292,
-  400: #ec407a,
-  500: #e91e63,  // Main accent (pink/red)
-  600: #d81b60,
-  700: #c2185b,
-  800: #ad1457,
-  900: #880e4f,
-  A100: #ff80ab,
-  A200: #ff4081,
-  A400: #f50057,
-  A700: #c51162,
-  contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: rgba(black, 0.87),
-    400: white,
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-    A100: rgba(black, 0.87),
-    A200: white,
-    A400: white,
-    A700: white,
-  )
-);
-
-$nemesis-warn: (
-  50: #ffebee,
-  100: #ffcdd2,
-  200: #ef9a9a,
-  300: #e57373,
-  400: #ef5350,
-  500: #f44336,  // Main warn
-  600: #e53935,
-  700: #d32f2f,
-  800: #c62828,
-  900: #b71c1c,
-  A100: #ff8a80,
-  A200: #ff5252,
-  A400: #ff1744,
-  A700: #d50000,
-  contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: rgba(black, 0.87),
-    400: white,
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-    A100: rgba(black, 0.87),
-    A200: white,
-    A400: white,
-    A700: white,
-  )
-);
-
-// Create the theme palettes
-$primary: mat.define-palette($nemesis-primary, 500);
-$accent: mat.define-palette($nemesis-accent, 500, A200, A700);
-$warn: mat.define-palette($nemesis-warn);
-
-// Create the dark theme
-$nemesis-theme: mat.define-dark-theme((
+// Create a custom theme using the new M3 theming system
+// We use a dark theme with custom colors
+$theme: mat.define-theme((
   color: (
-    primary: $primary,
-    accent: $accent,
-    warn: $warn,
+    theme-type: dark,
+    primary: mat.$violet-palette,
+    tertiary: mat.$red-palette
   ),
-  typography: mat.define-typography-config(
-    $font-family: '"Roboto", "Helvetica Neue", sans-serif',
-  ),
-  density: 0,
+  density: (
+    scale: 0,
+  )
 ));
 
-// Include theme styles for core and each component
-@include mat.all-component-themes($nemesis-theme);
+// Apply the theme to all components
+html {
+  @include mat.all-component-themes($theme);
+}
 
 // Custom Nemesis theme variables
 :root {
@@ -152,4 +47,16 @@ $nemesis-theme: mat.define-dark-theme((
   // Shadow
   --nemesis-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   --nemesis-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
+}
+
+// Apply dark theme globally
+body {
+  background-color: var(--nemesis-bg-primary);
+  color: var(--nemesis-text-primary);
+}
+
+// Material card styling
+mat-card {
+  background-color: var(--nemesis-bg-secondary) !important;
+  border: 1px solid var(--nemesis-border);
 }

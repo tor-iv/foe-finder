@@ -8,7 +8,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-This is an **early-stage project** with only conceptual documentation. No implementation code exists yet. The repository contains a README.md outlining the vision and planned approach.
+🔄 **In Active Development** - Angular foundation with Rust matching engine
+✅ **Implemented**: User authentication, questionnaire system, Firebase integration, basic Rust matcher
+⏳ **In Progress**: Ionic migration for mobile support (see IONIC_MIGRATION.md)
+⏳ **Next**: Cloud Functions integration, match display UI, native mobile features
 
 ## Learning Goals & Educational Approach
 
@@ -71,6 +74,13 @@ When implementing a component:
 
 The goal is to build a functional application while ensuring the developer deeply understands every line of code written.
 
+### TODO(human) Pattern
+Code files may contain `TODO(human)` comments marking areas where the developer should implement specific functionality as a learning exercise. When you encounter these:
+- Explain the context and what needs to be implemented
+- Provide guidance on the approach and trade-offs
+- Wait for the developer to implement before proceeding
+- Example: `frontend/src/app/core/models/match.model.ts` contains a TODO(human) for the Match interface
+
 ## Architecture
 
 ### Technology Stack
@@ -113,6 +123,21 @@ The core algorithm calculates opinion differences:
 - Matching score = sum of absolute differences between user responses
 - Goal: Match users with maximum total difference (most opposite opinions)
 - Implementation: Rust for performance and safety in handling large-scale matching
+
+### Rust Matching Engine Structure
+Located in `rust-matcher/src/`:
+- **lib.rs**: WebAssembly bindings and public API for JavaScript interop
+- **matching.rs**: Core matching algorithm implementation (maximum weight perfect matching)
+- **scoring.rs**: Score calculation logic (absolute difference computation, normalization)
+
+### Frontend Architecture (Angular)
+Located in `frontend/src/app/`:
+- **core/**: Singleton services, guards, and data models
+  - `services/`: AuthService, QuestionnaireService (Firebase integration)
+  - `guards/`: AuthGuard (route protection)
+  - `models/`: User, Questionnaire, Response, Match interfaces
+- **features/**: Feature modules (auth, questionnaire, profile)
+- **shared/**: Reusable UI components (navbar, etc.)
 
 ## Development Commands
 
@@ -214,14 +239,34 @@ firebase deploy --only functions
 
 ### Testing
 ```bash
-# Unit tests
+# Navigate to frontend directory first
+cd frontend
+
+# Unit tests (Jasmine + Karma)
 npm test
 
-# E2E tests (web)
-npm run e2e
+# Watch mode for TDD
+npm run watch
 
-# Lint
-npm run lint
+# Note: E2E tests not yet configured
+# Linting not yet configured (planned)
+```
+
+### Angular Development (current state)
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Development server (before Ionic migration)
+npm start
+# Access at http://localhost:4200
+
+# Production build
+npm run build
+# Output in dist/frontend/browser/
+
+# Watch mode (rebuilds on file changes)
+npm run watch
 ```
 
 ### Cloud Functions (TypeScript)
@@ -244,14 +289,26 @@ firebase functions:log
 
 ### Rust Matching Engine
 ```bash
-# Build as WebAssembly
+# Navigate to rust-matcher directory
+cd rust-matcher
+
+# Build as WebAssembly (for browser)
 wasm-pack build --target web
 
-# Test
+# Run tests
 cargo test
+
+# Run tests with output
+cargo test -- --nocapture
 
 # Build for Node.js (Cloud Functions integration)
 wasm-pack build --target nodejs
+
+# Build optimized release
+cargo build --release
+
+# Check code without building
+cargo check
 ```
 
 ## Key Development Priorities
@@ -315,6 +372,32 @@ wasm-pack build --target nodejs
    - Match history with ion-list components
    - Swipe gestures for match interactions (ion-gesture)
    - Native device features (camera for profile photos)
+
+## Important Development Notes
+
+### Code Organization
+- **Standalone Components**: Angular app uses standalone components (no NgModules in features)
+- **Dependency Injection**: Services are provided in root (`providedIn: 'root'`)
+- **Routing**: Uses function-based route configuration in `app.routes.ts`
+- **TypeScript Strict Mode**: The project uses TypeScript 5.9+ with strict type checking
+
+### File Naming Conventions
+- Components: `component-name.component.ts`
+- Services: `service-name.service.ts`
+- Models: `model-name.model.ts`
+- Guards: `guard-name.guard.ts`
+
+### Git Workflow
+- Main branch: `main`
+- Build artifacts (Rust `target/`, `node_modules/`) are gitignored
+- Ionic/Capacitor native projects (`ios/`, `android/`) are gitignored
+
+### Related Documentation
+For detailed guides, see:
+- **IONIC_MIGRATION.md**: Complete guide for converting Angular to Ionic + Capacitor
+- **FIREBASE_IMPLEMENTATION_PLAN.md**: Firebase setup and integration steps
+- **GETTING_STARTED.md**: Initial setup instructions
+- **README.md**: Project overview and features
 
 ## Philosophy
 

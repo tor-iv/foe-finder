@@ -32,7 +32,6 @@ import { Answer } from '../../core/models/response.model';
         </mat-card-header>
 
         <mat-card-content>
-          @if (!submitted()) {
             <div class="progress-container">
               <div class="progress-text">
                 Question {{ currentQuestionIndex() + 1 }} of {{ questions.length }}
@@ -102,15 +101,6 @@ import { Answer } from '../../core/models/response.model';
                 </div>
               </div>
             }
-          } @else {
-            <div class="success-message">
-              <h2>Thank you for completing the questionnaire!</h2>
-              <p>We'll notify you when we find your opposite match.</p>
-              <button mat-raised-button color="primary" (click)="goToProfile()">
-                Go to Profile
-              </button>
-            </div>
-          }
 
           @if (errorMessage()) {
             <div class="error-message">
@@ -267,7 +257,6 @@ export class QuestionnaireComponent implements OnInit {
 
   currentQuestionIndex = signal(0);
   answers = signal<Record<number, number>>({});
-  submitted = signal(false);
   submitting = signal(false);
   errorMessage = signal('');
 
@@ -321,16 +310,15 @@ export class QuestionnaireComponent implements OnInit {
         value: this.answers()[q.id]
       }));
 
+      // Submit and get neighborhood result
       await this.questionnaireService.submitResponse(answerArray);
-      this.submitted.set(true);
+
+      // Navigate to results page to show the neighborhood match
+      await this.router.navigate(['/results']);
     } catch (error: any) {
       this.errorMessage.set(error.message || 'Failed to submit questionnaire. Please try again.');
     } finally {
       this.submitting.set(false);
     }
-  }
-
-  goToProfile() {
-    this.router.navigate(['/profile']);
   }
 }

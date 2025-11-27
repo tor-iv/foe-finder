@@ -1,12 +1,22 @@
-# NemisisFinder
+# FoeFinder
 
-**Find your opposite match.** Connect with people who see the world differently.
+🌐 **[foefinder.me](https://foefinder.me)** *(open to name suggestions!)*
 
-## Concept
+**Find your worst possible match.**
 
-Based on the idea that opposites attract, or at the very least that interacting with those with opposite opinions and different perspectives has value, NemisisFinder aims to connect people with completely different viewpoints.
+## Why This Exists
 
-Unlike traditional matching apps that find similarities, we match users who have the **greatest differences** in their responses to thought-provoking questions.
+There are too many apps dedicated to "finding connection" — Instagram, Facebook, dating apps, social networks — and somehow they've left us more disconnected than ever. We're trapped in echo chambers, algorithmic bubbles showing us only what we already believe, matching us with people who think exactly like we do.
+
+I'm flipping the script.
+
+FoeFinder is a social experiment: take a quiz, find your **worst possible match** — the person who disagrees with you on almost everything. The hope? That maybe, just maybe, connecting with your "opposite" actually brings us together in ways that finding our clones never could.
+
+Sometimes the best conversations happen with people who challenge us.
+
+## The Concept
+
+Unlike traditional matching apps that find similarities, FoeFinder matches users who have the **greatest differences** in their responses to thought-provoking questions. Based on the idea that opposites attract — or at least that engaging with different perspectives has value.
 
 ## How It Works
 
@@ -147,7 +157,7 @@ This is currently a personal project. Contributions welcome once the MVP is comp
 
 ## Philosophy
 
-We believe that engaging with different perspectives has value. The matching strategy intentionally creates connections between people with divergent viewpoints to foster meaningful dialogue across differences.
+In a world of algorithmic echo chambers, we're betting that real connection comes from friction, not frictionlessness. The best relationships — friendships, debates, even rivalries — often happen between people who see the world differently. FoeFinder is an experiment in breaking bubbles.
 
 ## License
 

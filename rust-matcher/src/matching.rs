@@ -134,67 +134,14 @@ impl<S: ScoringStrategy> GreedyMatcher<S> {
         self.greedy_select(users, pairs)
     }
 
-    /// Calculate scores for all possible user pairs
-    ///
-    /// This function creates a vector of (index1, index2, score) tuples
-    /// for every possible pairing of users.
-    ///
-    /// # Arguments
-    /// * `users` - Borrowed slice of users
-    ///
-    /// # Returns
-    /// * Vec<(usize, usize, f64)> - All pairs with their scores
-    ///   - First usize: index of first user in `users` slice
-    ///   - Second usize: index of second user in `users` slice
-    ///   - f64: opposition score from scorer
-    ///
-    /// # Example
-    /// ```text
-    /// users = [user_a, user_b, user_c]
-    ///
-    /// Output:
-    /// [
-    ///   (0, 1, 42.5),  // user_a with user_b
-    ///   (0, 2, 38.0),  // user_a with user_c
-    ///   (1, 2, 51.2),  // user_b with user_c
-    /// ]
-    /// ```
-    ///
-    /// # TODO(human): Your Implementation! 🎯
-    ///
-    /// **Context**: We need to compare every user with every other user
-    /// and calculate their opposition score. This is the foundation of
-    /// the matching algorithm.
-    ///
-    /// **Your Task**: Implement this function using nested loops
-    ///
-    /// **Requirements**:
-    /// 1. Use nested for loops to iterate over all pairs
-    /// 2. Outer loop: `for i in 0..users.len()`
-    /// 3. Inner loop: `for j in (i+1)..users.len()` (avoid duplicates!)
-    /// 4. For each pair, borrow the users: `&users[i]` and `&users[j]`
-    /// 5. Calculate score: `self.scorer.calculate_score(&users[i], &users[j])`
-    /// 6. Push tuple to pairs vector: `pairs.push((i, j, score))`
-    ///
-    /// **Hints**:
-    /// - Create an empty Vec at the start: `let mut pairs = Vec::new();`
-    /// - Why `j in (i+1)..users.len()`? To avoid comparing user with itself
-    ///   and to avoid duplicates (we don't need both (0,1) and (1,0))
-    /// - Use `&users[i]` to BORROW (not move) the user
-    /// - Return the pairs vector at the end
-    ///
-    /// **Estimated lines**: 5-8 lines
-    ///
-    /// **Learning Focus**:
-    /// - Nested loops in Rust
-    /// - Borrowing with `&` to access data without ownership
-    /// - Using `self` to access struct fields
-    /// - Working with Vec and push()
     fn calculate_all_pairs(&self, users: &[User]) -> Vec<(usize, usize, f64)> {
-        // TODO(human): Implement nested loop to calculate all pair scores
-        // Start here! 👇
-
-        todo!("Calculate all pairs - you got this!")
+        let mut pairs = Vec::new();
+        for i in 0..users.len() {
+            for j in (i + 1)..users.len() {
+                let score = self.scorer.calculate_score(&users[i], &users[j]);
+                pairs.push((i, j, score));  // Push tuple
+            }
+        }
     }
 
     /// Greedily select pairs from sorted candidates

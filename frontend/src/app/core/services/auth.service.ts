@@ -1,56 +1,132 @@
 import { Injectable, inject, signal } from '@angular/core';
-import {
-  Auth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  user,
-  User as FirebaseUser,
-  updateProfile
-} from '@angular/fire/auth';
-import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../models/user.model';
+import { SupabaseService } from './supabase.service';
+import { environment } from '../../../environments/environment';
 
+/**
+ * AuthService - Handles user authentication
+ *
+ * This service supports two modes controlled by environment.features.useRealAuth:
+ *
+ * 1. DUMMY MODE (useRealAuth = false):
+ *    - Uses localStorage to store user data
+ *    - No real authentication - any email/password works
+ *    - Perfect for development and testing without Supabase setup
+ *
+ * 2. REAL MODE (useRealAuth = true):
+ *    - Uses Supabase authentication
+ *    - Requires valid Supabase credentials in environment.ts
+ *    - Full email/password authentication with session management
+ *
+ * To switch modes, change environment.features.useRealAuth in environment.ts
+ */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private auth = inject(Auth);
-  private firestore = inject(Firestore);
+  private supabaseService = inject(SupabaseService);
   private router = inject(Router);
 
-  user$ = user(this.auth);
+  // Feature flag: when true, use Supabase; when false, use localStorage
+  private readonly USE_REAL_AUTH = environment.features.useRealAuth;
+
+  // Storage key for dummy auth mode
+  private readonly STORAGE_KEY = 'nemesis_finder_user';
+
+  // BehaviorSubject allows components to subscribe to auth state changes
+  // A BehaviorSubject always has a current value (initially null = no user logged in)
+  private userSubject = new BehaviorSubject<User | null>(null);
+
+  // Public observable for components to subscribe to
+  // The $ suffix is a convention indicating this is an Observable
+  user$: Observable<User | null> = this.userSubject.asObservable();
+
+  // Signal for reactive UI updates (modern Angular approach)
   currentUser = signal<User | null>(null);
 
   constructor() {
-    // Subscribe to auth state changes
-    this.user$.subscribe(async (firebaseUser) => {
-      if (firebaseUser) {
-        const userDoc = await this.getUserDocument(firebaseUser.uid);
-        this.currentUser.set(userDoc);
-      } else {
-        this.currentUser.set(null);
-      }
-    });
+    // Initialize auth state from storage or Supabase session
+    this.initializeAuth();
   }
 
+  /**
+   * Initialize authentication state
+   *
+   * In dummy mode: Load user from localStorage
+   * In real mode: Set up Supabase auth state listener
+   */
+  private async initializeAuth(): Promise<void> {
+    if (this.USE_REAL_AUTH) {
+      // Real mode: Listen to Supabase auth state changes
+      // onAuthStateChange fires whenever the user logs in, out, or token refreshes
+      this.supabaseService.client.auth.onAuthStateChange(async (event, session) => {
+        if (session?.user) {
+          const user = this.mapSupabaseUserToUser(session.user);
+          this.setUser(user);
+        } else {
+          this.setUser(null);
+        }
+      });
+
+      // Check for existing session
+      const { data: { session } } = await this.supabaseService.client.auth.getSession();
+      if (session?.user) {
+        const user = this.mapSupabaseUserToUser(session.user);
+        this.setUser(user);
+      }
+    } else {
+      // Dummy mode: Load user from localStorage
+      const storedUser = localStorage.getItem(this.STORAGE_KEY);
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser) as User;
+          this.setUser(user);
+        } catch (e) {
+          // Invalid JSON, clear it
+          localStorage.removeItem(this.STORAGE_KEY);
+        }
+      }
+    }
+  }
+
+  /**
+   * Register a new user
+   *
+   * @param email - User's email address
+   * @param password - User's password (min 6 characters recommended)
+   * @param displayName - Name to display in the app
+   */
   async register(email: string, password: string, displayName: string): Promise<void> {
-    try {
-      const credential = await createUserWithEmailAndPassword(
-        this.auth,
+    if (this.USE_REAL_AUTH) {
+      // Real mode: Use Supabase authentication
+      const { data, error } = await this.supabaseService.client.auth.signUp({
         email,
-        password
-      );
+        password,
+        options: {
+          data: {
+            display_name: displayName
+          }
+        }
+      });
 
-      // Update Firebase Auth profile
-      await updateProfile(credential.user, { displayName });
+      if (error) {
+        throw new Error(this.getErrorMessage(error.message));
+      }
 
-      // Create user document in Firestore
-      const userRef = doc(this.firestore, `users/${credential.user.uid}`);
-      const userData: User = {
-        uid: credential.user.uid,
-        email: email,
-        displayName: displayName,
+      if (data.user) {
+        const user = this.mapSupabaseUserToUser(data.user, displayName);
+        this.setUser(user);
+        await this.router.navigate(['/questionnaire']);
+      }
+    } else {
+      // Dummy mode: Create a mock user and store in localStorage
+      // Generate a random ID to simulate a real user ID
+      const uid = 'user_' + Math.random().toString(36).substring(2, 15);
+
+      const user: User = {
+        uid,
+        email,
+        displayName,
         createdAt: new Date(),
         updatedAt: new Date(),
         hasCompletedQuestionnaire: false,
@@ -61,76 +137,169 @@ export class AuthService {
         }
       };
 
-      await setDoc(userRef, userData);
+      // Save to localStorage
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+      this.setUser(user);
 
-      // Navigate to questionnaire after successful registration
+      // Navigate to questionnaire after registration
       await this.router.navigate(['/questionnaire']);
-    } catch (error: any) {
-      console.error('Registration error:', error);
-      throw new Error(this.getErrorMessage(error.code));
     }
   }
 
+  /**
+   * Log in an existing user
+   *
+   * @param email - User's email address
+   * @param password - User's password
+   */
   async login(email: string, password: string): Promise<void> {
-    try {
-      await signInWithEmailAndPassword(this.auth, email, password);
+    if (this.USE_REAL_AUTH) {
+      // Real mode: Use Supabase authentication
+      const { data, error } = await this.supabaseService.client.auth.signInWithPassword({
+        email,
+        password
+      });
 
-      // Check if user has completed questionnaire
-      const user = this.currentUser();
-      if (user && !user.hasCompletedQuestionnaire) {
+      if (error) {
+        throw new Error(this.getErrorMessage(error.message));
+      }
+
+      if (data.user) {
+        const user = this.mapSupabaseUserToUser(data.user);
+        this.setUser(user);
+
+        // Navigate based on questionnaire completion
+        if (!user.hasCompletedQuestionnaire) {
+          await this.router.navigate(['/questionnaire']);
+        } else {
+          await this.router.navigate(['/profile']);
+        }
+      }
+    } else {
+      // Dummy mode: Accept any email/password combination
+      // Check if user already exists in localStorage
+      const storedUser = localStorage.getItem(this.STORAGE_KEY);
+
+      if (storedUser) {
+        // User exists - restore their session
+        const user = JSON.parse(storedUser) as User;
+
+        // Only allow login if email matches (basic validation)
+        if (user.email !== email) {
+          throw new Error('No account found with this email.');
+        }
+
+        this.setUser(user);
+      } else {
+        // Create a new user for this email (auto-register on login for simplicity)
+        const uid = 'user_' + Math.random().toString(36).substring(2, 15);
+        const user: User = {
+          uid,
+          email,
+          displayName: email.split('@')[0], // Use part before @ as display name
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          hasCompletedQuestionnaire: false,
+          isMatched: false,
+          preferences: {
+            notifications: true,
+            emailUpdates: true
+          }
+        };
+
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+        this.setUser(user);
+      }
+
+      // Navigate based on questionnaire completion
+      const currentUser = this.currentUser();
+      if (currentUser && !currentUser.hasCompletedQuestionnaire) {
         await this.router.navigate(['/questionnaire']);
       } else {
         await this.router.navigate(['/profile']);
       }
-    } catch (error: any) {
-      console.error('Login error:', error);
-      throw new Error(this.getErrorMessage(error.code));
     }
   }
 
+  /**
+   * Log out the current user
+   */
   async logout(): Promise<void> {
-    try {
-      await signOut(this.auth);
-      await this.router.navigate(['/login']);
-    } catch (error) {
-      console.error('Logout error:', error);
-      throw error;
+    if (this.USE_REAL_AUTH) {
+      // Real mode: Sign out from Supabase
+      await this.supabaseService.client.auth.signOut();
+    } else {
+      // Dummy mode: Clear localStorage
+      localStorage.removeItem(this.STORAGE_KEY);
     }
+
+    this.setUser(null);
+    await this.router.navigate(['/login']);
   }
 
-  private async getUserDocument(uid: string): Promise<User | null> {
-    try {
-      const userRef = doc(this.firestore, `users/${uid}`);
-      const userSnap = await getDoc(userRef);
+  /**
+   * Update the user's questionnaire completion status
+   */
+  markQuestionnaireComplete(): void {
+    const user = this.currentUser();
+    if (user) {
+      user.hasCompletedQuestionnaire = true;
+      user.updatedAt = new Date();
 
-      if (userSnap.exists()) {
-        return userSnap.data() as User;
+      if (!this.USE_REAL_AUTH) {
+        // Dummy mode: Update localStorage
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
       }
-      return null;
-    } catch (error) {
-      console.error('Error fetching user document:', error);
-      return null;
+
+      this.setUser(user);
     }
   }
 
-  private getErrorMessage(errorCode: string): string {
-    switch (errorCode) {
-      case 'auth/email-already-in-use':
-        return 'This email is already registered. Please log in instead.';
-      case 'auth/invalid-email':
-        return 'Invalid email address.';
-      case 'auth/operation-not-allowed':
-        return 'Email/password accounts are not enabled.';
-      case 'auth/weak-password':
-        return 'Password is too weak. Please use at least 6 characters.';
-      case 'auth/user-not-found':
-        return 'No account found with this email.';
-      case 'auth/wrong-password':
-        return 'Incorrect password.';
-      case 'auth/invalid-credential':
-        return 'Invalid email or password.';
-      default:
-        return 'An error occurred. Please try again.';
+  /**
+   * Helper to set user in both BehaviorSubject and signal
+   */
+  private setUser(user: User | null): void {
+    this.userSubject.next(user);
+    this.currentUser.set(user);
+  }
+
+  /**
+   * Map Supabase user to our User model
+   */
+  private mapSupabaseUserToUser(supabaseUser: any, displayName?: string): User {
+    return {
+      uid: supabaseUser.id,
+      email: supabaseUser.email || '',
+      displayName: displayName || supabaseUser.user_metadata?.display_name || supabaseUser.email?.split('@')[0] || 'User',
+      createdAt: new Date(supabaseUser.created_at),
+      updatedAt: new Date(),
+      hasCompletedQuestionnaire: supabaseUser.user_metadata?.hasCompletedQuestionnaire || false,
+      isMatched: supabaseUser.user_metadata?.isMatched || false,
+      preferences: {
+        notifications: true,
+        emailUpdates: true
+      }
+    };
+  }
+
+  /**
+   * Convert error messages to user-friendly text
+   */
+  private getErrorMessage(errorMessage: string): string {
+    // Handle common Supabase error messages
+    if (errorMessage.includes('Invalid login credentials')) {
+      return 'Invalid email or password.';
     }
+    if (errorMessage.includes('Email not confirmed')) {
+      return 'Please confirm your email before logging in.';
+    }
+    if (errorMessage.includes('User already registered')) {
+      return 'This email is already registered. Please log in instead.';
+    }
+    if (errorMessage.includes('Password should be')) {
+      return 'Password is too weak. Please use at least 6 characters.';
+    }
+
+    return errorMessage || 'An error occurred. Please try again.';
   }
 }

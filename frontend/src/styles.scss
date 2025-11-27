@@ -30,7 +30,7 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--foe-accent-secondary);
+  background: var(--foe-accent-light);
 }
 
 // Material overrides for dark theme
@@ -48,10 +48,10 @@ html, body {
 }
 
 .mat-mdc-raised-button {
-  box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3) !important;
+  box-shadow: var(--foe-shadow-purple) !important;
 
   &:hover {
-    box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5) !important;
+    box-shadow: 0 6px 20px rgba(107, 33, 168, 0.5) !important;
   }
 }
 

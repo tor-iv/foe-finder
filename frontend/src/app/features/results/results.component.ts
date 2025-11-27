@@ -90,12 +90,14 @@ interface HotTake {
       align-items: center;
       min-height: calc(100vh - 64px);
       padding: 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--foe-bg-primary);
     }
 
     .results-card, .no-results-card {
       max-width: 600px;
       width: 100%;
+      background: var(--foe-bg-secondary) !important;
+      border: 1px solid var(--foe-border);
     }
 
     mat-card-header {
@@ -108,6 +110,7 @@ interface HotTake {
       font-size: 28px;
       font-weight: 600;
       text-align: center;
+      color: var(--foe-text-primary);
     }
 
     .hot-takes-list {
@@ -118,16 +121,16 @@ interface HotTake {
     }
 
     .hot-take-item {
-      background: #f8f9fa;
+      background: var(--foe-bg-tertiary);
       border-radius: 12px;
       padding: 16px;
-      border-left: 4px solid #667eea;
+      border-left: 4px solid var(--foe-accent-primary);
     }
 
     .take-question {
       font-size: 16px;
       font-weight: 500;
-      color: #333;
+      color: var(--foe-text-primary);
       margin: 0 0 8px 0;
       font-style: italic;
     }
@@ -142,33 +145,34 @@ interface HotTake {
       letter-spacing: 0.5px;
     }
 
+    /* Purple tints for stance badges - lighter = agree, darker = disagree */
     .take-stance.strongly_agree {
-      background: #d4edda;
-      color: #155724;
+      background: rgba(107, 33, 168, 0.15);
+      color: var(--foe-accent-light);
     }
 
     .take-stance.agree {
-      background: #e8f5e9;
-      color: #2e7d32;
+      background: rgba(107, 33, 168, 0.1);
+      color: var(--foe-text-secondary);
     }
 
     .take-stance.strongly_disagree {
-      background: #f8d7da;
-      color: #721c24;
+      background: var(--foe-accent-primary);
+      color: var(--foe-text-primary);
     }
 
     .take-stance.disagree {
-      background: #ffebee;
-      color: #c62828;
+      background: rgba(107, 33, 168, 0.3);
+      color: var(--foe-text-primary);
     }
 
     .foe-hunting-box {
       display: flex;
       gap: 16px;
       padding: 24px;
-      background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+      background: rgba(107, 33, 168, 0.1);
       border-radius: 12px;
-      border: 1px solid #667eea40;
+      border: 1px solid rgba(107, 33, 168, 0.3);
       margin-top: 24px;
     }
 
@@ -184,19 +188,19 @@ interface HotTake {
     .foe-title {
       font-size: 18px;
       font-weight: 600;
-      color: #333;
+      color: var(--foe-text-primary);
       margin: 0 0 8px 0;
     }
 
     .foe-subtitle {
       font-size: 14px;
-      color: #555;
+      color: var(--foe-text-secondary);
       margin: 0 0 12px 0;
     }
 
     .foe-eta {
       font-size: 14px;
-      color: #764ba2;
+      color: var(--foe-accent-light);
       font-weight: 500;
       margin: 0;
     }
@@ -213,12 +217,12 @@ interface HotTake {
     }
 
     .no-results-card h2 {
-      color: #333;
+      color: var(--foe-text-primary);
       margin-bottom: 16px;
     }
 
     .no-results-card p {
-      color: #666;
+      color: var(--foe-text-secondary);
       margin-bottom: 24px;
     }
 

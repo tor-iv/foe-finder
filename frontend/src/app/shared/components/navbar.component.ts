@@ -91,8 +91,8 @@ import { AuthService } from '../../core/services/auth.service';
       transition: all 0.3s ease;
 
       &:hover {
-        color: var(--foe-accent-primary) !important;
-        background-color: rgba(233, 69, 96, 0.1) !important;
+        color: var(--foe-accent-light) !important;
+        background-color: rgba(107, 33, 168, 0.1) !important;
       }
     }
 
@@ -102,9 +102,14 @@ import { AuthService } from '../../core/services/auth.service';
 
     .register-btn {
       margin-left: 8px;
-      background: linear-gradient(135deg, var(--foe-accent-primary), var(--foe-accent-secondary)) !important;
+      background: var(--foe-accent-primary) !important;
       font-weight: 600;
       letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: var(--foe-accent-light) !important;
+      }
     }
 
     @media (max-width: 768px) {

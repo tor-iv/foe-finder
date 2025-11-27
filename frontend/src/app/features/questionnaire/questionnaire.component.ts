@@ -115,12 +115,14 @@ import { Answer } from '../../core/models/response.model';
       align-items: center;
       min-height: calc(100vh - 64px);
       padding: 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--foe-bg-primary);
     }
 
     .questionnaire-card {
       max-width: 800px;
       width: 100%;
+      background: var(--foe-bg-secondary) !important;
+      border: 1px solid var(--foe-border);
     }
 
     mat-card-header {
@@ -134,11 +136,13 @@ import { Answer } from '../../core/models/response.model';
       font-size: 28px;
       font-weight: 500;
       margin-bottom: 8px;
+      color: var(--foe-text-primary);
     }
 
     mat-card-subtitle {
       text-align: center;
       font-size: 16px;
+      color: var(--foe-text-secondary) !important;
     }
 
     .progress-container {
@@ -148,7 +152,7 @@ import { Answer } from '../../core/models/response.model';
     .progress-text {
       margin-bottom: 8px;
       font-weight: 500;
-      color: #666;
+      color: var(--foe-text-muted);
     }
 
     .question-container {
@@ -160,7 +164,7 @@ import { Answer } from '../../core/models/response.model';
       font-weight: 500;
       margin-bottom: 30px;
       text-align: center;
-      color: #333;
+      color: var(--foe-text-primary);
     }
 
     .slider-container {
@@ -173,7 +177,7 @@ import { Answer } from '../../core/models/response.model';
       justify-content: space-between;
       margin-bottom: 15px;
       font-size: 14px;
-      color: #666;
+      color: var(--foe-text-secondary);
     }
 
     .scale-label {
@@ -189,7 +193,7 @@ import { Answer } from '../../core/models/response.model';
       margin-top: 20px;
       font-size: 32px;
       font-weight: bold;
-      color: #667eea;
+      color: var(--foe-accent-primary);
     }
 
     .navigation-buttons {
@@ -204,22 +208,24 @@ import { Answer } from '../../core/models/response.model';
     }
 
     .success-message h2 {
-      color: #4caf50;
+      color: var(--foe-accent-primary);
       margin-bottom: 16px;
     }
 
     .success-message p {
       font-size: 16px;
       margin-bottom: 24px;
+      color: var(--foe-text-secondary);
     }
 
     .error-message {
-      color: #f44336;
+      color: var(--foe-error);
       text-align: center;
       margin-top: 20px;
       padding: 12px;
-      background-color: #ffebee;
+      background-color: rgba(220, 38, 38, 0.1);
       border-radius: 4px;
+      border-left: 3px solid var(--foe-error);
     }
 
     mat-spinner {

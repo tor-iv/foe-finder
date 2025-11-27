@@ -16,7 +16,7 @@
   left: -50%;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(107, 33, 168, 0.15) 0%, transparent 70%);
   animation: pulse 8s ease-in-out infinite alternate;
 }
 
@@ -31,7 +31,7 @@
   position: relative;
   z-index: 1;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(107, 33, 168, 0.3);
 }
 
 mat-card-header {
@@ -51,7 +51,7 @@ mat-card-title {
 }
 
 .title-foe {
-  color: var(--foe-accent-secondary);
+  color: var(--foe-accent-primary);
   letter-spacing: 2px;
 }
 
@@ -79,12 +79,13 @@ mat-form-field {
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 1px;
-  background: linear-gradient(135deg, var(--foe-accent-secondary), var(--foe-accent-tertiary)) !important;
+  background: var(--foe-accent-primary) !important;
   transition: all 0.3s ease;
 
   &:hover:not([disabled]) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4) !important;
+    background: var(--foe-accent-light) !important;
+    box-shadow: 0 8px 25px rgba(107, 33, 168, 0.4) !important;
   }
 
   &[disabled] {
@@ -93,13 +94,13 @@ mat-form-field {
 }
 
 .error-message {
-  color: var(--foe-accent-primary);
+  color: var(--foe-error);
   font-size: 14px;
   margin: 16px 0;
   text-align: center;
   padding: 12px;
-  background: rgba(233, 69, 96, 0.1);
-  border-left: 3px solid var(--foe-accent-primary);
+  background: rgba(220, 38, 38, 0.1);
+  border-left: 3px solid var(--foe-error);
   border-radius: 4px;
 }
 
@@ -110,13 +111,13 @@ mat-form-field {
   color: var(--foe-text-secondary);
 
   a {
-    color: var(--foe-accent-secondary);
+    color: var(--foe-accent-primary);
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
 
     &:hover {
-      color: var(--foe-accent-tertiary);
+      color: var(--foe-accent-light);
       text-decoration: underline;
     }
   }

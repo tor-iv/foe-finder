@@ -3,12 +3,11 @@
 @use '@angular/material' as mat;
 
 // Create a custom theme using the new M3 theming system
-// We use a dark theme with custom colors
+// Dark theme with royal purple as primary color
 $theme: mat.define-theme((
   color: (
     theme-type: dark,
     primary: mat.$violet-palette,
-    tertiary: mat.$red-palette
   ),
   density: (
     scale: 0,
@@ -21,32 +20,34 @@ html {
 }
 
 // Custom Foe Finder theme variables
+// Simplified palette: Deep Purple + Black/White neutrals
 :root {
-  // Dark background colors
-  --foe-bg-primary: #0a0a0f;
-  --foe-bg-secondary: #1a1a2e;
-  --foe-bg-tertiary: #16213e;
+  // Backgrounds (black to dark gray spectrum)
+  --foe-bg-primary: #0a0a0a;       // Main background (near black)
+  --foe-bg-secondary: #141414;      // Cards, containers
+  --foe-bg-tertiary: #1f1f1f;       // Form fields, nested elements
 
-  // Accent colors
-  --foe-accent-primary: #e94560;
-  --foe-accent-secondary: #a855f7;
-  --foe-accent-tertiary: #3b82f6;
+  // Primary accent (royal purple spectrum)
+  --foe-accent-primary: #6B21A8;    // Main purple
+  --foe-accent-light: #9333EA;      // Lighter purple for hover states
+  --foe-accent-dark: #581C87;       // Darker purple for pressed states
 
-  // Text colors
-  --foe-text-primary: #e5e7eb;
-  --foe-text-secondary: #b0b5bc;
-  --foe-text-muted: #9ca3af;
+  // Text (white to gray spectrum)
+  --foe-text-primary: #ffffff;      // Main text (pure white)
+  --foe-text-secondary: #a3a3a3;    // Secondary text (gray)
+  --foe-text-muted: #737373;        // Muted text (darker gray)
 
-  // Gradient
-  --foe-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #e94560 100%);
-  --foe-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  // Borders
+  --foe-border: #262626;            // Subtle dark border
+  --foe-border-accent: #6B21A8;     // Purple accent border
 
-  // Border
-  --foe-border: #2d3748;
-
-  // Shadow
+  // Shadows
   --foe-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   --foe-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
+  --foe-shadow-purple: 0 4px 15px rgba(107, 33, 168, 0.3);
+
+  // Error state (keeping red for UX convention)
+  --foe-error: #dc2626;
 }
 
 // Apply dark theme globally

@@ -52,14 +52,20 @@ import { Answer } from '../../core/models/response.model';
                     <span class="scale-label">{{ currentQuestion()!.scaleMaxLabel }}</span>
                   </div>
 
-                  <mat-slider min="1" max="7" step="1" discrete showTickMarks class="opinion-slider">
+                  <mat-slider min="0" max="100" class="opinion-slider">
                     <input matSliderThumb
-                           [value]="answers()[currentQuestion()!.id] || 4"
+                           [value]="getSliderValue()"
                            (valueChange)="selectAnswer($event)">
                   </mat-slider>
 
-                  <div class="slider-value">
-                    {{ answers()[currentQuestion()!.id] || 4 }}
+                  <div class="slider-indicator">
+                    @if (getSliderPosition() === 0) {
+                      <span class="neutral-text">Neutral</span>
+                    } @else {
+                      <span class="lean-text" [class.lean-left]="getSliderPosition() < 0">
+                        {{ getLearnLabel() }}
+                      </span>
+                    }
                   </div>
                 </div>
 
@@ -188,12 +194,25 @@ import { Answer } from '../../core/models/response.model';
       width: 100%;
     }
 
-    .slider-value {
+    .slider-indicator {
       text-align: center;
       margin-top: 20px;
-      font-size: 32px;
-      font-weight: bold;
-      color: var(--foe-accent-primary);
+      font-size: 18px;
+      font-weight: 500;
+      min-height: 28px;
+    }
+
+    .neutral-text {
+      color: var(--foe-text-muted);
+      font-style: italic;
+    }
+
+    .lean-text {
+      color: var(--foe-accent-light);
+    }
+
+    .lean-text.lean-left {
+      color: var(--foe-text-secondary);
     }
 
     .navigation-buttons {
@@ -268,6 +287,37 @@ export class QuestionnaireComponent implements OnInit {
     this.answers.set(currentAnswers);
   }
 
+  // Returns the current slider value (0-100), defaults to 50 (center)
+  getSliderValue(): number {
+    const questionId = this.currentQuestion()?.id;
+    if (questionId === undefined) return 50;
+    return this.answers()[questionId] ?? 50;
+  }
+
+  // Returns position from -50 (fully left) to +50 (fully right), 0 = center
+  getSliderPosition(): number {
+    return this.getSliderValue() - 50;
+  }
+
+  // Returns a label like "60% Strongly Agree" or "30% Strongly Disagree"
+  getLearnLabel(): string {
+    const position = this.getSliderPosition();
+    const percentage = Math.abs(position) * 2; // Convert to 0-100%
+    const question = this.currentQuestion();
+
+    if (position > 0) {
+      return `${percentage}% ${question?.scaleMaxLabel || 'Agree'}`;
+    } else {
+      return `${percentage}% ${question?.scaleMinLabel || 'Disagree'}`;
+    }
+  }
+
+  // Convert 0-100 slider scale to 1-7 backend scale
+  private convertToBackendScale(value: number): number {
+    // 0 → 1, 50 → 4, 100 → 7
+    return Math.round((value / 100) * 6) + 1;
+  }
+
   nextQuestion() {
     if (this.currentQuestionIndex() < this.questions.length - 1) {
       this.currentQuestionIndex.set(this.currentQuestionIndex() + 1);
@@ -294,10 +344,10 @@ export class QuestionnaireComponent implements OnInit {
     this.errorMessage.set('');
 
     try {
-      // Convert answers to array format
+      // Convert answers to array format (0-100 slider scale → 1-7 backend scale)
       const answerArray: Answer[] = this.questions.map(q => ({
         questionId: q.id,
-        value: this.answers()[q.id]
+        value: this.convertToBackendScale(this.answers()[q.id])
       }));
 
       // Submit and get neighborhood result

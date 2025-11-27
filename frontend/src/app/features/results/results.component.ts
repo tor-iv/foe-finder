@@ -84,74 +84,120 @@ interface HotTake {
     </div>
   `,
   styles: [`
+    /* =============================================
+       RESULTS - Mobile-First Responsive Styles
+       ============================================= */
+
     .results-container {
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: calc(100vh - 64px);
-      padding: 20px;
+      align-items: flex-start;
+      min-height: calc(100vh - var(--foe-navbar-height));
+      padding: var(--foe-space-md);
       background: var(--foe-bg-primary);
       font-family: 'Space Mono', monospace;
     }
 
+    @media (min-width: 768px) {
+      .results-container {
+        align-items: center;
+      }
+    }
+
     .results-card, .no-results-card {
-      max-width: 600px;
+      max-width: var(--foe-container-md);
       width: 100%;
       background: var(--foe-bg-secondary) !important;
-      border: var(--foe-border-width) solid var(--foe-border) !important;
+      border: var(--foe-border-width-responsive) solid var(--foe-border) !important;
       border-radius: 0 !important;
-      box-shadow: var(--foe-shadow-lg) !important;
+      box-shadow: var(--foe-shadow-responsive) !important;
     }
 
     mat-card-header {
       display: flex;
       justify-content: center;
-      margin-bottom: 20px;
+      margin-bottom: var(--foe-space-md);
       border-bottom: 3px solid var(--foe-border);
-      padding-bottom: 16px;
+      padding-bottom: var(--foe-space-md);
     }
 
     .hot-takes-title {
       font-family: 'Inter', sans-serif;
-      font-size: 32px;
+      font-size: var(--foe-text-xl);
       font-weight: 900;
       text-align: center;
       color: var(--foe-text-primary);
-      text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
+      text-shadow: 2px 2px 0px var(--foe-bg-tertiary);
       text-transform: uppercase;
       letter-spacing: -1px;
+    }
+
+    @media (min-width: 768px) {
+      .hot-takes-title {
+        font-size: var(--foe-text-3xl);
+        text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
+      }
     }
 
     .hot-takes-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: var(--foe-space-sm);
+      margin-bottom: var(--foe-space-lg);
+    }
+
+    @media (min-width: 768px) {
+      .hot-takes-list {
+        gap: var(--foe-space-md);
+      }
     }
 
     .hot-take-item {
       background: var(--foe-bg-tertiary);
-      padding: 16px;
-      border: 3px solid var(--foe-border);
-      border-left: 6px solid var(--foe-accent-primary);
+      padding: var(--foe-space-sm);
+      border: 2px solid var(--foe-border);
+      border-left: 4px solid var(--foe-accent-primary);
+    }
+
+    @media (min-width: 768px) {
+      .hot-take-item {
+        padding: var(--foe-space-md);
+        border-width: 3px;
+        border-left-width: 6px;
+      }
     }
 
     .take-question {
-      font-size: 14px;
+      font-size: var(--foe-text-sm);
       font-weight: 700;
       color: var(--foe-text-primary);
-      margin: 0 0 12px 0;
+      margin: 0 0 var(--foe-space-sm) 0;
       font-style: normal;
+      line-height: 1.4;
+    }
+
+    @media (min-width: 768px) {
+      .take-question {
+        font-size: var(--foe-text-base);
+      }
     }
 
     .take-stance {
       display: inline-block;
-      padding: 6px 12px;
-      font-size: 10px;
+      padding: 4px 8px;
+      font-size: 9px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       border: 2px solid var(--foe-border);
+    }
+
+    @media (min-width: 768px) {
+      .take-stance {
+        padding: 6px 12px;
+        font-size: var(--foe-text-xs);
+        letter-spacing: 1px;
+      }
     }
 
     /* Neon green tints for stance badges */
@@ -175,19 +221,39 @@ interface HotTake {
       color: var(--foe-text-primary);
     }
 
+    /* Foe hunting box - stacked on mobile */
     .foe-hunting-box {
       display: flex;
-      gap: 16px;
-      padding: 24px;
+      flex-direction: column;
+      text-align: center;
+      gap: var(--foe-space-sm);
+      padding: var(--foe-space-md);
       background: var(--foe-bg-tertiary);
-      border: 3px solid var(--foe-border);
-      border-left: 6px solid var(--foe-accent-primary);
-      margin-top: 24px;
+      border: 2px solid var(--foe-border);
+      border-left: 4px solid var(--foe-accent-primary);
+      margin-top: var(--foe-space-lg);
+    }
+
+    @media (min-width: 480px) {
+      .foe-hunting-box {
+        flex-direction: row;
+        text-align: left;
+        gap: var(--foe-space-md);
+        padding: var(--foe-space-lg);
+        border-width: 3px;
+        border-left-width: 6px;
+      }
     }
 
     .foe-icon {
-      font-size: 40px;
+      font-size: 32px;
       flex-shrink: 0;
+    }
+
+    @media (min-width: 768px) {
+      .foe-icon {
+        font-size: 40px;
+      }
     }
 
     .foe-message {
@@ -196,23 +262,37 @@ interface HotTake {
 
     .foe-title {
       font-family: 'Inter', sans-serif;
-      font-size: 18px;
+      font-size: var(--foe-text-base);
       font-weight: 900;
       color: var(--foe-text-primary);
-      margin: 0 0 8px 0;
+      margin: 0 0 var(--foe-space-xs) 0;
       text-transform: uppercase;
+    }
+
+    @media (min-width: 768px) {
+      .foe-title {
+        font-size: var(--foe-text-lg);
+        margin: 0 0 var(--foe-space-sm) 0;
+      }
     }
 
     .foe-subtitle {
-      font-size: 12px;
+      font-size: var(--foe-text-xs);
       color: var(--foe-text-secondary);
-      margin: 0 0 12px 0;
+      margin: 0 0 var(--foe-space-sm) 0;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
+      line-height: 1.4;
+    }
+
+    @media (min-width: 768px) {
+      .foe-subtitle {
+        letter-spacing: 1px;
+      }
     }
 
     .foe-eta {
-      font-size: 12px;
+      font-size: var(--foe-text-xs);
       color: var(--foe-text-primary);
       background: var(--foe-accent-primary);
       padding: 4px 8px;
@@ -225,77 +305,88 @@ interface HotTake {
     mat-card-actions {
       display: flex;
       justify-content: center;
-      padding: 16px;
+      padding: var(--foe-space-md);
       border-top: 3px solid var(--foe-border);
     }
 
     mat-card-actions button {
       font-family: 'Space Mono', monospace;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       font-weight: 700;
       border: 2px solid var(--foe-border) !important;
       border-radius: 0 !important;
       background: var(--foe-bg-tertiary) !important;
       color: var(--foe-text-primary) !important;
+      min-height: 48px;
+    }
 
-      &:hover {
+    @media (min-width: 768px) {
+      mat-card-actions button {
+        letter-spacing: 2px;
+      }
+
+      mat-card-actions button:hover {
         background: var(--foe-accent-primary) !important;
       }
     }
 
     .no-results-card {
       text-align: center;
-      padding: 40px 20px;
+      padding: var(--foe-space-xl) var(--foe-space-md);
     }
 
     .no-results-card h2 {
       font-family: 'Inter', sans-serif;
+      font-size: var(--foe-text-xl);
       font-weight: 900;
       color: var(--foe-text-primary);
-      margin-bottom: 16px;
+      margin-bottom: var(--foe-space-md);
       text-transform: uppercase;
-      text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
+      text-shadow: 2px 2px 0px var(--foe-bg-tertiary);
+    }
+
+    @media (min-width: 768px) {
+      .no-results-card h2 {
+        font-size: var(--foe-text-2xl);
+        text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
+      }
     }
 
     .no-results-card p {
       color: var(--foe-text-secondary);
-      margin-bottom: 24px;
+      margin-bottom: var(--foe-space-lg);
       text-transform: uppercase;
       letter-spacing: 1px;
-      font-size: 12px;
+      font-size: var(--foe-text-xs);
+      line-height: 1.5;
     }
 
     .no-results-card button {
       background: var(--foe-accent-primary) !important;
       color: var(--foe-text-primary) !important;
-      border: 3px solid var(--foe-border) !important;
+      border: 2px solid var(--foe-border) !important;
       border-radius: 0 !important;
-      box-shadow: var(--foe-shadow-sm) !important;
+      box-shadow: var(--foe-shadow-responsive) !important;
       font-family: 'Space Mono', monospace;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       font-weight: 700;
+      min-height: 48px;
+      width: 100%;
+    }
 
-      &:hover {
+    @media (min-width: 480px) {
+      .no-results-card button {
+        width: auto;
+        letter-spacing: 2px;
+        border-width: 3px !important;
+      }
+
+      .no-results-card button:hover {
         transform: translate(2px, 2px);
         box-shadow: 1px 1px 0px var(--foe-border) !important;
         background: var(--foe-accent-light) !important;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .hot-takes-title {
-        font-size: 24px;
-      }
-
-      .foe-hunting-box {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .foe-icon {
-        font-size: 32px;
       }
     }
   `]

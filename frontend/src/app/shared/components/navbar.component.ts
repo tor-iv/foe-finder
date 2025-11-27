@@ -30,17 +30,30 @@ import { AuthService } from '../../core/services/auth.service';
     </mat-toolbar>
   `,
   styles: [`
+    /* =============================================
+       NAVBAR - Mobile-First Responsive Styles
+       ============================================= */
+
     .foe-navbar {
       background: var(--foe-bg-secondary) !important;
-      border-bottom: var(--foe-border-width) solid var(--foe-border);
-      box-shadow: 0 4px 0 var(--foe-border);
-      padding: 0 24px;
+      border-bottom: var(--foe-border-width-responsive) solid var(--foe-border);
+      box-shadow: 0 3px 0 var(--foe-border);
+      padding: 0 var(--foe-space-sm);
       font-family: 'Space Mono', monospace;
+      height: var(--foe-navbar-height);
     }
 
+    @media (min-width: 768px) {
+      .foe-navbar {
+        padding: 0 var(--foe-space-lg);
+        box-shadow: 0 4px 0 var(--foe-border);
+      }
+    }
+
+    /* Logo - mobile first */
     .logo {
       font-family: 'Inter', sans-serif;
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 900;
       cursor: pointer;
       display: flex;
@@ -48,8 +61,14 @@ import { AuthService } from '../../core/services/auth.service';
       gap: 2px;
       transition: all 0.1s ease;
       text-shadow: 2px 2px 0px var(--foe-bg-tertiary);
+    }
 
-      &:hover {
+    @media (min-width: 768px) {
+      .logo {
+        font-size: 28px;
+      }
+
+      .logo:hover {
         transform: translate(-2px, -2px);
         text-shadow: 4px 4px 0px var(--foe-bg-tertiary);
       }
@@ -66,7 +85,9 @@ import { AuthService } from '../../core/services/auth.service';
       letter-spacing: -1px;
     }
 
+    /* Tagline - hidden on mobile, visible on tablet+ */
     .tagline {
+      display: none;
       margin-left: 16px;
       font-size: 12px;
       color: var(--foe-text-secondary);
@@ -77,11 +98,19 @@ import { AuthService } from '../../core/services/auth.service';
       padding-left: 16px;
     }
 
+    @media (min-width: 768px) {
+      .tagline {
+        display: block;
+      }
+    }
+
     .spacer {
       flex: 1 1 auto;
     }
 
+    /* Welcome message - hidden on mobile/tablet, visible on desktop */
     .welcome {
+      display: none;
       margin-right: 20px;
       font-size: 12px;
       color: var(--foe-text-secondary);
@@ -95,17 +124,35 @@ import { AuthService } from '../../core/services/auth.service';
       }
     }
 
+    @media (min-width: 1024px) {
+      .welcome {
+        display: block;
+      }
+    }
+
+    /* Nav buttons - mobile first (smaller, touch-friendly) */
     .nav-btn {
-      margin: 0 4px;
+      margin: 0 2px;
       color: var(--foe-text-primary) !important;
       border: 2px solid transparent !important;
       border-radius: 0 !important;
       text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: 1px;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      padding: 6px 8px;
+      min-height: 44px; /* Touch target */
       transition: all 0.1s ease;
+    }
 
-      &:hover {
+    @media (min-width: 768px) {
+      .nav-btn {
+        margin: 0 4px;
+        font-size: 12px;
+        letter-spacing: 1px;
+        padding: 8px 16px;
+      }
+
+      .nav-btn:hover {
         color: var(--foe-text-primary) !important;
         background-color: var(--foe-bg-tertiary) !important;
         border: 2px solid var(--foe-border) !important;
@@ -118,37 +165,37 @@ import { AuthService } from '../../core/services/auth.service';
       border-color: var(--foe-border) !important;
     }
 
+    /* Register button - mobile first */
     .register-btn {
-      margin-left: 8px;
+      margin-left: 4px;
       background: var(--foe-accent-primary) !important;
       color: var(--foe-text-primary) !important;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
-      font-size: 12px;
-      border: 3px solid var(--foe-border) !important;
+      font-size: 10px;
+      padding: 6px 10px;
+      min-height: 44px; /* Touch target */
+      border: 2px solid var(--foe-border) !important;
       border-radius: 0 !important;
-      box-shadow: 3px 3px 0px var(--foe-border);
+      box-shadow: 2px 2px 0px var(--foe-border);
       transition: all 0.1s ease;
+    }
 
-      &:hover {
+    @media (min-width: 768px) {
+      .register-btn {
+        margin-left: 8px;
+        font-size: 12px;
+        letter-spacing: 1px;
+        padding: 8px 16px;
+        border-width: 3px !important;
+        box-shadow: 3px 3px 0px var(--foe-border);
+      }
+
+      .register-btn:hover {
         background: var(--foe-accent-light) !important;
         box-shadow: 1px 1px 0px var(--foe-border);
         transform: translate(2px, 2px);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .tagline {
-        display: none;
-      }
-
-      .welcome {
-        display: none;
-      }
-
-      .logo {
-        font-size: 20px;
       }
     }
   `]

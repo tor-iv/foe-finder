@@ -61,66 +61,88 @@ import { AuthService } from '../../core/services/auth.service';
     </div>
   `,
   styles: [`
+    /* =============================================
+       PROFILE - Mobile-First Responsive Styles
+       ============================================= */
+
     .profile-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: calc(100vh - 64px);
-      padding: 20px;
+      min-height: calc(100vh - var(--foe-navbar-height));
+      padding: var(--foe-space-md);
       background: var(--foe-bg-primary);
       font-family: 'Space Mono', monospace;
     }
 
     .profile-card {
-      max-width: 600px;
+      max-width: var(--foe-container-md);
       width: 100%;
       background: var(--foe-bg-secondary) !important;
-      border: var(--foe-border-width) solid var(--foe-border) !important;
+      border: var(--foe-border-width-responsive) solid var(--foe-border) !important;
       border-radius: 0 !important;
-      box-shadow: var(--foe-shadow) !important;
+      box-shadow: var(--foe-shadow-responsive) !important;
     }
 
     mat-card-header {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: var(--foe-space-md);
       border-bottom: 3px solid var(--foe-border);
-      padding-bottom: 16px;
+      padding-bottom: var(--foe-space-md);
     }
 
     mat-card-title {
       font-family: 'Inter', sans-serif;
-      font-size: 28px;
+      font-size: var(--foe-text-xl);
       font-weight: 900;
       text-transform: uppercase;
-      text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
+      text-shadow: 2px 2px 0px var(--foe-bg-tertiary);
       letter-spacing: -1px;
     }
 
-    .profile-info {
-      margin: 20px 0;
+    @media (min-width: 768px) {
+      mat-card-title {
+        font-size: 28px;
+        text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
+      }
     }
 
+    .profile-info {
+      margin: var(--foe-space-md) 0;
+    }
+
+    /* Info rows - stack on mobile, side-by-side on larger screens */
     .info-row {
       display: flex;
-      justify-content: space-between;
-      padding: 16px;
+      flex-direction: column;
+      gap: var(--foe-space-xs);
+      padding: var(--foe-space-sm);
       border-bottom: 2px solid var(--foe-border);
       background: var(--foe-bg-tertiary);
-      margin-bottom: 8px;
+      margin-bottom: var(--foe-space-sm);
+    }
+
+    @media (min-width: 480px) {
+      .info-row {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: var(--foe-space-md);
+      }
     }
 
     .info-row strong {
       color: var(--foe-text-secondary);
       text-transform: uppercase;
-      font-size: 12px;
+      font-size: var(--foe-text-xs);
       letter-spacing: 1px;
     }
 
     .info-row span {
       color: var(--foe-text-primary);
       font-weight: 700;
+      font-size: var(--foe-text-sm);
     }
 
     .status.completed,
@@ -129,37 +151,56 @@ import { AuthService } from '../../core/services/auth.service';
       background: var(--foe-accent-primary);
       padding: 4px 8px;
       font-weight: 700;
+      display: inline-block;
     }
 
     .alert {
       background-color: var(--foe-bg-tertiary);
-      border: 3px solid var(--foe-border);
-      border-left: 6px solid var(--foe-accent-primary);
-      padding: 20px;
-      margin-top: 20px;
+      border: 2px solid var(--foe-border);
+      border-left: 4px solid var(--foe-accent-primary);
+      padding: var(--foe-space-md);
+      margin-top: var(--foe-space-md);
       text-align: center;
     }
 
+    @media (min-width: 768px) {
+      .alert {
+        border-width: 3px;
+        border-left-width: 6px;
+        padding: var(--foe-space-lg);
+      }
+    }
+
     .alert p {
-      margin-bottom: 16px;
+      margin-bottom: var(--foe-space-md);
       text-transform: uppercase;
       letter-spacing: 1px;
-      font-size: 12px;
+      font-size: var(--foe-text-xs);
       color: var(--foe-text-secondary);
     }
 
     .alert button {
       background: var(--foe-accent-primary) !important;
       color: var(--foe-text-primary) !important;
-      border: 3px solid var(--foe-border) !important;
+      border: 2px solid var(--foe-border) !important;
       border-radius: 0 !important;
-      box-shadow: var(--foe-shadow-sm) !important;
+      box-shadow: var(--foe-shadow-responsive) !important;
       font-family: 'Space Mono', monospace;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       font-weight: 700;
+      min-height: 48px;
+      width: 100%;
+    }
 
-      &:hover {
+    @media (min-width: 480px) {
+      .alert button {
+        width: auto;
+        letter-spacing: 2px;
+        border-width: 3px !important;
+      }
+
+      .alert button:hover {
         transform: translate(2px, 2px);
         box-shadow: 1px 1px 0px var(--foe-border) !important;
         background: var(--foe-accent-light) !important;
@@ -168,18 +209,26 @@ import { AuthService } from '../../core/services/auth.service';
 
     .info-message {
       background-color: var(--foe-bg-tertiary);
-      border: 3px solid var(--foe-border);
-      padding: 20px;
-      margin-top: 20px;
+      border: 2px solid var(--foe-border);
+      padding: var(--foe-space-md);
+      margin-top: var(--foe-space-md);
       text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      .info-message {
+        border-width: 3px;
+        padding: var(--foe-space-lg);
+      }
     }
 
     .info-message p {
       text-transform: uppercase;
       letter-spacing: 1px;
-      font-size: 12px;
+      font-size: var(--foe-text-xs);
       color: var(--foe-text-secondary);
       margin: 0;
+      line-height: 1.5;
     }
   `]
 })

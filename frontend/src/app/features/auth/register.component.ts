@@ -103,37 +103,41 @@ import { AuthService } from '../../core/services/auth.service';
     </div>
   `,
   styles: [`
+    /* =============================================
+       REGISTER - Mobile-First Responsive Styles
+       ============================================= */
+
     .register-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: calc(100vh - 64px);
-      padding: 20px;
+      min-height: calc(100vh - var(--foe-navbar-height));
+      padding: var(--foe-space-md);
       background: var(--foe-bg-primary);
       font-family: 'Space Mono', monospace;
     }
 
     .register-card {
-      max-width: 450px;
+      max-width: var(--foe-container-sm);
       width: 100%;
       background: var(--foe-bg-secondary) !important;
-      border: var(--foe-border-width) solid var(--foe-border) !important;
+      border: var(--foe-border-width-responsive) solid var(--foe-border) !important;
       border-radius: 0 !important;
-      box-shadow: var(--foe-shadow) !important;
+      box-shadow: var(--foe-shadow-responsive) !important;
     }
 
     mat-card-header {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: var(--foe-space-md);
       border-bottom: 3px solid var(--foe-border);
-      padding-bottom: 16px;
+      padding-bottom: var(--foe-space-md);
     }
 
     mat-card-title {
       font-family: 'Inter', sans-serif;
-      font-size: 28px;
+      font-size: var(--foe-text-xl);
       font-weight: 900;
       margin-bottom: 8px;
       text-shadow: 3px 3px 0px var(--foe-bg-tertiary);
@@ -141,11 +145,24 @@ import { AuthService } from '../../core/services/auth.service';
       letter-spacing: -1px;
     }
 
+    @media (min-width: 768px) {
+      mat-card-title {
+        font-size: 28px;
+      }
+    }
+
     mat-card-subtitle {
-      font-size: 12px;
+      font-size: var(--foe-text-xs);
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       color: var(--foe-text-secondary) !important;
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      mat-card-subtitle {
+        letter-spacing: 2px;
+      }
     }
 
     .full-width {
@@ -153,51 +170,66 @@ import { AuthService } from '../../core/services/auth.service';
     }
 
     mat-form-field {
-      margin-bottom: 16px;
+      margin-bottom: var(--foe-space-md);
     }
 
     .submit-button {
-      margin-top: 16px;
-      height: 52px;
-      font-size: 14px;
+      margin-top: var(--foe-space-md);
+      height: 48px;
+      min-height: 48px; /* Touch target */
+      font-size: var(--foe-text-base);
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       text-transform: uppercase;
       background: var(--foe-accent-primary) !important;
       color: var(--foe-text-primary) !important;
-      border: var(--foe-border-width) solid var(--foe-border) !important;
+      border: var(--foe-border-width-responsive) solid var(--foe-border) !important;
       border-radius: 0 !important;
-      box-shadow: var(--foe-shadow) !important;
+      box-shadow: var(--foe-shadow-responsive) !important;
       transition: all 0.1s ease;
+    }
 
-      &:hover:not([disabled]) {
+    @media (min-width: 768px) {
+      .submit-button {
+        height: 52px;
+        letter-spacing: 2px;
+      }
+
+      .submit-button:hover:not([disabled]) {
         transform: translate(4px, 4px);
         box-shadow: 2px 2px 0px var(--foe-border) !important;
         background: var(--foe-accent-light) !important;
       }
+    }
 
-      &[disabled] {
-        opacity: 0.5;
-        background: var(--foe-bg-tertiary) !important;
-      }
+    .submit-button[disabled] {
+      opacity: 0.5;
+      background: var(--foe-bg-tertiary) !important;
     }
 
     .error-message {
       color: var(--foe-error);
-      font-size: 12px;
-      margin: 16px 0;
+      font-size: var(--foe-text-xs);
+      margin: var(--foe-space-md) 0;
       text-align: center;
-      padding: 12px;
+      padding: var(--foe-space-sm);
       background: var(--foe-error-bg);
-      border: 3px solid var(--foe-error);
+      border: 2px solid var(--foe-error);
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
+    @media (min-width: 768px) {
+      .error-message {
+        padding: 12px;
+        border-width: 3px;
+      }
+    }
+
     .login-link {
-      margin-top: 20px;
+      margin-top: var(--foe-space-lg);
       text-align: center;
-      font-size: 12px;
+      font-size: var(--foe-text-xs);
       color: var(--foe-text-secondary);
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -211,8 +243,10 @@ import { AuthService } from '../../core/services/auth.service';
       padding: 4px 8px;
       border: 2px solid var(--foe-border);
       transition: all 0.1s ease;
+    }
 
-      &:hover {
+    @media (min-width: 768px) {
+      .login-link a:hover {
         background: var(--foe-accent-light);
         transform: translate(-1px, -1px);
         box-shadow: 2px 2px 0px var(--foe-border);

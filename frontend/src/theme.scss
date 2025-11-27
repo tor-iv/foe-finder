@@ -56,6 +56,60 @@ html {
   // Error state (keeping red for UX convention)
   --foe-error: #dc2626;
   --foe-error-bg: #fecaca;
+
+  // =============================================
+  // RESPONSIVE SYSTEM (Mobile-First)
+  // =============================================
+
+  // Responsive Spacing Scale
+  --foe-space-xs: 4px;
+  --foe-space-sm: 8px;
+  --foe-space-md: 16px;
+  --foe-space-lg: 24px;
+  --foe-space-xl: 32px;
+
+  // Responsive Typography Scale
+  --foe-text-xs: 10px;
+  --foe-text-sm: 12px;
+  --foe-text-base: 14px;
+  --foe-text-lg: 16px;
+  --foe-text-xl: 18px;
+  --foe-text-2xl: 24px;
+  --foe-text-3xl: 32px;
+
+  // Responsive Brutalist Elements (scaled down for mobile)
+  --foe-border-width-responsive: 3px;
+  --foe-shadow-responsive: 4px 4px 0px #333333;
+
+  // Layout Tokens
+  --foe-navbar-height: 56px;
+  --foe-container-sm: 450px;
+  --foe-container-md: 600px;
+  --foe-container-lg: 800px;
+}
+
+// Desktop overrides (768px+)
+@media (min-width: 768px) {
+  :root {
+    // Larger spacing on desktop
+    --foe-space-md: 20px;
+    --foe-space-lg: 32px;
+    --foe-space-xl: 48px;
+
+    // Larger typography on desktop
+    --foe-text-base: 16px;
+    --foe-text-lg: 18px;
+    --foe-text-xl: 20px;
+    --foe-text-2xl: 28px;
+    --foe-text-3xl: 36px;
+
+    // Full brutalist elements on desktop
+    --foe-border-width-responsive: 4px;
+    --foe-shadow-responsive: 6px 6px 0px #333333;
+
+    // Taller navbar on desktop
+    --foe-navbar-height: 64px;
+  }
 }
 
 // Apply light theme globally

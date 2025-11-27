@@ -58,15 +58,6 @@ import { Answer } from '../../core/models/response.model';
                            (valueChange)="selectAnswer($event)">
                   </mat-slider>
 
-                  <div class="slider-indicator">
-                    @if (getSliderPosition() === 0) {
-                      <span class="neutral-text">Neutral</span>
-                    } @else {
-                      <span class="lean-text" [class.lean-left]="getSliderPosition() < 0">
-                        {{ getLearnLabel() }}
-                      </span>
-                    }
-                  </div>
                 </div>
 
                 <div class="navigation-buttons">
@@ -194,27 +185,6 @@ import { Answer } from '../../core/models/response.model';
       width: 100%;
     }
 
-    .slider-indicator {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: 500;
-      min-height: 28px;
-    }
-
-    .neutral-text {
-      color: var(--foe-text-muted);
-      font-style: italic;
-    }
-
-    .lean-text {
-      color: var(--foe-accent-light);
-    }
-
-    .lean-text.lean-left {
-      color: var(--foe-text-secondary);
-    }
-
     .navigation-buttons {
       display: flex;
       justify-content: space-between;
@@ -292,24 +262,6 @@ export class QuestionnaireComponent implements OnInit {
     const questionId = this.currentQuestion()?.id;
     if (questionId === undefined) return 50;
     return this.answers()[questionId] ?? 50;
-  }
-
-  // Returns position from -50 (fully left) to +50 (fully right), 0 = center
-  getSliderPosition(): number {
-    return this.getSliderValue() - 50;
-  }
-
-  // Returns a label like "60% Strongly Agree" or "30% Strongly Disagree"
-  getLearnLabel(): string {
-    const position = this.getSliderPosition();
-    const percentage = Math.abs(position) * 2; // Convert to 0-100%
-    const question = this.currentQuestion();
-
-    if (position > 0) {
-      return `${percentage}% ${question?.scaleMaxLabel || 'Agree'}`;
-    } else {
-      return `${percentage}% ${question?.scaleMinLabel || 'Disagree'}`;
-    }
   }
 
   // Convert 0-100 slider scale to 1-7 backend scale

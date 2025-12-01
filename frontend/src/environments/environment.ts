@@ -15,16 +15,15 @@ export const environment = {
   production: false,
 
   // Supabase configuration
-  // Replace these with your actual Supabase project values
   supabase: {
-    url: 'https://your-project-id.supabase.co',
-    anonKey: 'your-anon-key-here'
+    url: 'https://olwudfnezboliuftwvtj.supabase.co',
+    // TODO: Replace with your anon key from Supabase Dashboard → Settings → API
+    anonKey: 'YOUR_ANON_KEY_HERE'
   },
 
   // Feature flags
   features: {
-    // Set to true when ready to use real Supabase authentication
-    // When false, auth uses localStorage (dummy mode for development)
-    useRealAuth: false
+    // Set to true to use real Supabase authentication
+    useRealAuth: true
   }
 };

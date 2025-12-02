@@ -1,4 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, inject, signal, ChangeDetectionStrategy, NgZone } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -54,8 +56,7 @@ import { Answer } from '../../core/models/response.model';
 
                   <mat-slider min="0" max="100" class="opinion-slider">
                     <input matSliderThumb
-                           [value]="getSliderValue()"
-                           (input)="onSliderChange($event)">
+                           #sliderInput>
                   </mat-slider>
 
                 </div>
@@ -266,6 +267,8 @@ import { Answer } from '../../core/models/response.model';
       padding: var(--foe-space-md);
       background: var(--foe-bg-tertiary);
       border: 2px solid var(--foe-border);
+      /* PERFORMANCE: Isolates repaints to this container only */
+      contain: layout paint;
     }
 
     @media (min-width: 768px) {
@@ -337,7 +340,9 @@ import { Answer } from '../../core/models/response.model';
         border-radius: 0 !important;
         background-color: var(--foe-accent-primary) !important;
         border: 2px solid var(--foe-border) !important;
-        box-shadow: 2px 2px 0px var(--foe-border) !important;
+        /* PERFORMANCE: outline is much cheaper than box-shadow during drag */
+        outline: 1px solid rgba(51, 51, 51, 0.3);
+        outline-offset: 2px;
       }
     }
 
@@ -351,7 +356,8 @@ import { Answer } from '../../core/models/response.model';
           width: 24px !important;
           height: 24px !important;
           border-width: 3px !important;
-          box-shadow: 3px 3px 0px var(--foe-border) !important;
+          outline-width: 2px;
+          outline-offset: 3px;
         }
       }
     }
@@ -480,13 +486,21 @@ import { Answer } from '../../core/models/response.model';
     mat-spinner {
       margin: 0 auto;
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class QuestionnaireComponent implements OnInit {
+export class QuestionnaireComponent implements OnInit, OnDestroy, AfterViewInit {
   private questionnaireService = inject(QuestionnaireService);
   private router = inject(Router);
+  private ngZone = inject(NgZone);
+
+  @ViewChild('sliderInput') sliderInput!: ElementRef<HTMLInputElement>;
 
   questions: Question[] = [];
+
+  // Debounce slider input - only update state after user stops dragging
+  private sliderInput$ = new Subject<{ questionId: number; value: number }>();
+  private sliderSubscription: Subscription | null = null;
 
   currentQuestionIndex = signal(0);
   answers = signal<Record<number, number>>({});
@@ -495,6 +509,55 @@ export class QuestionnaireComponent implements OnInit {
 
   ngOnInit() {
     this.questions = this.questionnaireService.getQuestions();
+
+    // Debounce slider updates - only save after user pauses for 150ms
+    this.sliderSubscription = this.sliderInput$.pipe(
+      debounceTime(150)
+    ).subscribe(({ questionId, value }) => {
+      const currentAnswers = { ...this.answers() };
+      currentAnswers[questionId] = value;
+      this.answers.set(currentAnswers);
+    });
+  }
+
+  ngAfterViewInit() {
+    // Set initial slider value after view is ready
+    this.updateSliderPosition();
+
+    // PERFORMANCE: Run slider input events OUTSIDE Angular zone
+    // This prevents change detection from running on every drag pixel
+    this.ngZone.runOutsideAngular(() => {
+      const inputEl = this.sliderInput?.nativeElement;
+      if (inputEl) {
+        // High-frequency input events run outside zone (no change detection)
+        inputEl.addEventListener('input', this.handleSliderInput.bind(this));
+
+        // Change event runs inside zone to update state
+        inputEl.addEventListener('change', (e: Event) => {
+          this.ngZone.run(() => this.onSliderChange(e));
+        });
+      }
+    });
+  }
+
+  // Bound handler for slider input (runs outside Angular zone)
+  private handleSliderInput(event: Event) {
+    const value = +(event.target as HTMLInputElement).value;
+    const questionId = this.currentQuestion().id;
+    this.sliderInput$.next({ questionId, value });
+  }
+
+  ngOnDestroy() {
+    this.sliderSubscription?.unsubscribe();
+  }
+
+  // Set slider position without Angular binding (fully native, no lag)
+  private updateSliderPosition() {
+    if (this.sliderInput?.nativeElement) {
+      const questionId = this.currentQuestion()?.id;
+      const value = questionId !== undefined ? (this.answers()[questionId] ?? 50) : 50;
+      this.sliderInput.nativeElement.value = String(value);
+    }
   }
 
   currentQuestion = () => {
@@ -505,18 +568,13 @@ export class QuestionnaireComponent implements OnInit {
     return ((this.currentQuestionIndex() + 1) / this.questions.length) * 100;
   };
 
+  // Fires once when user releases - ensures final value is saved (called from ngZone.run)
   onSliderChange(event: Event) {
     const value = +(event.target as HTMLInputElement).value;
+    const questionId = this.currentQuestion().id;
     const currentAnswers = { ...this.answers() };
-    currentAnswers[this.currentQuestion().id] = value;
+    currentAnswers[questionId] = value;
     this.answers.set(currentAnswers);
-  }
-
-  // Returns the current slider value (0-100), defaults to 50 (center)
-  getSliderValue(): number {
-    const questionId = this.currentQuestion()?.id;
-    if (questionId === undefined) return 50;
-    return this.answers()[questionId] ?? 50;
   }
 
   // Convert 0-100 slider scale to 1-7 backend scale
@@ -528,12 +586,15 @@ export class QuestionnaireComponent implements OnInit {
   nextQuestion() {
     if (this.currentQuestionIndex() < this.questions.length - 1) {
       this.currentQuestionIndex.set(this.currentQuestionIndex() + 1);
+      // Use Promise microtask for cleaner timing than setTimeout
+      Promise.resolve().then(() => this.updateSliderPosition());
     }
   }
 
   previousQuestion() {
     if (this.currentQuestionIndex() > 0) {
       this.currentQuestionIndex.set(this.currentQuestionIndex() - 1);
+      Promise.resolve().then(() => this.updateSliderPosition());
     }
   }
 

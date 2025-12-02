@@ -1,24 +1,23 @@
 /**
  * Development environment configuration
  *
- * This file contains environment-specific settings. During build,
- * Angular can replace this with environment.prod.ts for production builds.
+ * Environment variables are loaded from .env file via @ngx-env/builder.
+ * Create a .env file in the frontend folder with:
+ *   NG_APP_SUPABASE_URL=https://your-project.supabase.co
+ *   NG_APP_SUPABASE_ANON_KEY=your-anon-key
  *
- * To set up Supabase:
- * 1. Go to https://supabase.com and create a project
- * 2. Go to Project Settings > API
- * 3. Copy the Project URL and anon/public key
- * 4. Replace the placeholder values below
+ * See .env.example for a template.
  */
+
+declare const process: { env: Record<string, string> };
 
 export const environment = {
   production: false,
 
-  // Supabase configuration
+  // Supabase configuration - loaded from .env
   supabase: {
-    url: 'https://olwudfnezboliuftwvtj.supabase.co',
-    // TODO: Replace with your anon key from Supabase Dashboard → Settings → API
-    anonKey: 'YOUR_ANON_KEY_HERE'
+    url: process.env['NG_APP_SUPABASE_URL'] || '',
+    anonKey: process.env['NG_APP_SUPABASE_ANON_KEY'] || ''
   },
 
   // Feature flags

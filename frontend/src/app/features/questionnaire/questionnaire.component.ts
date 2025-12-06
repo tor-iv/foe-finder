@@ -556,7 +556,11 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, AfterViewInit 
     if (this.sliderInput?.nativeElement) {
       const questionId = this.currentQuestion()?.id;
       const value = questionId !== undefined ? (this.answers()[questionId] ?? 50) : 50;
-      this.sliderInput.nativeElement.value = String(value);
+      const inputEl = this.sliderInput.nativeElement;
+      inputEl.value = String(value);
+      // Dispatch input event to sync Angular Material's internal thumb state
+      // This fixes mobile "stuck" slider when navigating between questions
+      inputEl.dispatchEvent(new Event('input', { bubbles: true }));
     }
   }
 
@@ -586,15 +590,15 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, AfterViewInit 
   nextQuestion() {
     if (this.currentQuestionIndex() < this.questions.length - 1) {
       this.currentQuestionIndex.set(this.currentQuestionIndex() + 1);
-      // Use Promise microtask for cleaner timing than setTimeout
-      Promise.resolve().then(() => this.updateSliderPosition());
+      // RAF aligns with browser paint cycle - more reliable for mobile touch UI
+      requestAnimationFrame(() => this.updateSliderPosition());
     }
   }
 
   previousQuestion() {
     if (this.currentQuestionIndex() > 0) {
       this.currentQuestionIndex.set(this.currentQuestionIndex() - 1);
-      Promise.resolve().then(() => this.updateSliderPosition());
+      requestAnimationFrame(() => this.updateSliderPosition());
     }
   }
 

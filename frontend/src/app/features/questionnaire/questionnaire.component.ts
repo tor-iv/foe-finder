@@ -269,6 +269,8 @@ import { Answer } from '../../core/models/response.model';
       border: 2px solid var(--foe-border);
       /* PERFORMANCE: Isolates repaints to this container only */
       contain: layout paint;
+      /* PERFORMANCE: Promote to GPU compositing layer */
+      transform: translateZ(0);
     }
 
     @media (min-width: 768px) {
@@ -315,6 +317,8 @@ import { Answer } from '../../core/models/response.model';
 
     .opinion-slider {
       width: 100%;
+      /* PERFORMANCE: Tell browser this is horizontal-only interaction */
+      touch-action: pan-x;
     }
 
     /* Slider thumb - larger for touch on mobile */
@@ -343,6 +347,8 @@ import { Answer } from '../../core/models/response.model';
         /* PERFORMANCE: outline is much cheaper than box-shadow during drag */
         outline: 1px solid rgba(51, 51, 51, 0.3);
         outline-offset: 2px;
+        /* PERFORMANCE: GPU layer for smooth thumb movement */
+        will-change: transform;
       }
     }
 
@@ -530,7 +536,8 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, AfterViewInit 
       const inputEl = this.sliderInput?.nativeElement;
       if (inputEl) {
         // High-frequency input events run outside zone (no change detection)
-        inputEl.addEventListener('input', this.handleSliderInput.bind(this));
+        // PERFORMANCE: passive=true tells browser we won't preventDefault, so it can respond immediately
+        inputEl.addEventListener('input', this.handleSliderInput.bind(this), { passive: true });
 
         // Change event runs inside zone to update state
         inputEl.addEventListener('change', (e: Event) => {

@@ -10,3 +10,18 @@ body {
   margin: 0;
   padding: 0;
 }
+
+// Countdown banner - sticky below navbar
+.countdown-banner {
+  position: sticky;
+  top: var(--foe-navbar-height);
+  z-index: 100;
+  padding: var(--foe-space-sm);
+  background: var(--foe-bg-primary);
+}
+
+@media (min-width: 768px) {
+  .countdown-banner {
+    padding: var(--foe-space-md);
+  }
+}

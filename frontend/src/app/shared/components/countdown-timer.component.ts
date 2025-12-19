@@ -199,8 +199,8 @@ export class CountdownTimerComponent implements OnInit, OnDestroy {
   private ngZone = inject(NgZone);
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
-  // Target date: January 25th, 2025 at midnight (local time)
-  private targetDate = new Date('2025-01-25T00:00:00');
+  // Target date: Valentine's Day 2026 at midnight (local time)
+  private targetDate = new Date('2026-02-14T00:00:00');
 
   // Signals for reactive countdown display
   days = signal('00');

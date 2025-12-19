@@ -6,8 +6,5 @@
 <!-- Main app content - only shown after age verification -->
 @if (ageVerified()) {
   <app-navbar></app-navbar>
-  <div class="countdown-banner">
-    <app-countdown-timer></app-countdown-timer>
-  </div>
   <router-outlet />
 }

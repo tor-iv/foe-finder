@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { QuestionnaireService } from '../../core/services/questionnaire.service';
+import { CountdownTimerComponent } from '../../shared/components/countdown-timer.component';
 
 /**
  * Hot Take type - represents a user's extreme opinion
@@ -29,10 +30,12 @@ interface HotTake {
     MatCardModule,
     MatButtonModule,
     MatChipsModule,
-    MatIconModule
+    MatIconModule,
+    CountdownTimerComponent
   ],
   template: `
     <div class="results-container">
+      <app-countdown-timer class="countdown-section"></app-countdown-timer>
       @if (hotTakes().length > 0) {
         <mat-card class="results-card">
           <mat-card-header>
@@ -90,18 +93,19 @@ interface HotTake {
 
     .results-container {
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      gap: var(--foe-space-md);
       min-height: calc(100vh - var(--foe-navbar-height));
       padding: var(--foe-space-md);
       background: var(--foe-bg-primary);
       font-family: 'Space Mono', monospace;
     }
 
-    @media (min-width: 768px) {
-      .results-container {
-        align-items: center;
-      }
+    .countdown-section {
+      width: 100%;
+      max-width: var(--foe-container-md);
     }
 
     .results-card, .no-results-card {

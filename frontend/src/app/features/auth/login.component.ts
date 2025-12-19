@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/services/auth.service';
+import { CountdownTimerComponent } from '../../shared/components/countdown-timer.component';
 
 @Component({
   selector: 'app-login',
@@ -20,11 +21,13 @@ import { AuthService } from '../../core/services/auth.service';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    CountdownTimerComponent
   ],
   template: `
     <div class="login-container">
       <div class="background-glow"></div>
+      <app-countdown-timer class="countdown-section"></app-countdown-timer>
       <mat-card class="login-card fade-in">
         <mat-card-header>
           <mat-card-title>
@@ -92,13 +95,20 @@ import { AuthService } from '../../core/services/auth.service';
     .login-container {
       position: relative;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      justify-content: flex-start;
       align-items: center;
+      gap: var(--foe-space-md);
       min-height: calc(100vh - var(--foe-navbar-height));
       padding: var(--foe-space-md);
       background: var(--foe-bg-primary);
       overflow: hidden;
       font-family: 'Space Mono', monospace;
+    }
+
+    .countdown-section {
+      width: 100%;
+      max-width: var(--foe-container-sm);
     }
 
     .background-glow {

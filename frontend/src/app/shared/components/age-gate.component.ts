@@ -110,12 +110,16 @@ import { FormsModule } from '@angular/forms';
       font-family: 'Inter', sans-serif;
       font-size: 24px;
       font-weight: 900;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
     }
 
     @media (min-width: 768px) {
       .age-gate-header {
         font-size: 32px;
         padding: var(--foe-space-lg);
+        gap: 10px;
       }
     }
 

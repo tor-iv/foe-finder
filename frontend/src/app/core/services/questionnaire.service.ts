@@ -274,6 +274,86 @@ export class QuestionnaireService {
       scaleMinLabel: 'Strongly Disagree',
       scaleMaxLabel: 'Strongly Agree',
       order: 20
+    },
+    {
+      id: 21,
+      text: 'Dating apps have actually improved dating',
+      category: 'opinions',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 21
+    },
+    {
+      id: 22,
+      text: "It's okay to end things over text",
+      category: 'social',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 22
+    },
+    {
+      id: 23,
+      text: 'Going to bed before 11pm is peak adulthood',
+      category: 'lifestyle',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 23
+    },
+    {
+      id: 24,
+      text: 'Voice notes over 30 seconds are inconsiderate',
+      category: 'social',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 24
+    },
+    {
+      id: 25,
+      text: 'Brunch is just expensive breakfast with permission to drink',
+      category: 'opinions',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 25
+    },
+    {
+      id: 26,
+      text: 'Therapy speak has ruined normal conversations',
+      category: 'social',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 26
+    },
+    {
+      id: 27,
+      text: "You should be embarrassed if you can't cook by 25",
+      category: 'opinions',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 27
+    },
+    {
+      id: 28,
+      text: 'Remote work is making us worse at being people',
+      category: 'opinions',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 28
+    },
+    {
+      id: 29,
+      text: 'Being single in your late 20s is underrated',
+      category: 'lifestyle',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 29
+    },
+    {
+      id: 30,
+      text: 'LinkedIn is just Facebook for people in denial',
+      category: 'social',
+      scaleMinLabel: 'Strongly Disagree',
+      scaleMaxLabel: 'Strongly Agree',
+      order: 30
     }
   ];
 

@@ -6,7 +6,7 @@ A collection of hot take questions for mid-20s NYC users. All questions use the 
 
 ## Current Questions (In Use)
 
-These are the 20 questions currently in `questionnaire.service.ts`:
+These are the 30 questions currently in `questionnaire.service.ts`:
 
 1. Typing "..." is more threatening than a period
 2. I've screenshot texts to send to the group chat
@@ -28,6 +28,16 @@ These are the 20 questions currently in `questionnaire.service.ts`:
 18. Watching TV on 1.5x speed is valid
 19. I've said 'let's do this again' knowing I never would
 20. Standing at concerts is overrated
+21. Dating apps have actually improved dating
+22. It's okay to end things over text
+23. Going to bed before 11pm is peak adulthood
+24. Voice notes over 30 seconds are inconsiderate
+25. Brunch is just expensive breakfast with permission to drink
+26. Therapy speak has ruined normal conversations
+27. You should be embarrassed if you can't cook by 25
+28. Remote work is making us worse at being people
+29. Being single in your late 20s is underrated
+30. LinkedIn is just Facebook for people in denial
 
 ---
 
@@ -53,21 +63,16 @@ These are the 20 questions currently in `questionnaire.service.ts`:
 |----------|----------|-------------------|
 | Hustle culture is just glorified burnout | opinions | Grind vs balance |
 | It's fine to not have your life figured out at 28 | opinions | Reassuring vs concerning |
-| Remote work is making us worse at being people | opinions | Productivity vs connection |
 | Networking events are just awkward drinking | social | Necessary evil debate |
 | Side hustles are a scam that benefits employers | opinions | Entrepreneurship vs exploitation |
 | Salary transparency should be mandatory | opinions | Privacy vs equity |
 | Job hopping every 2 years is smart, not disloyal | opinions | Career strategy debate |
-| LinkedIn is just Facebook for people in denial | social | Professional vs cringe |
 | Unpaid internships should be illegal | opinions | Access vs opportunity |
 
 ### Dating & Social Takes
 
 | Question | Category | Why It's Divisive |
 |----------|----------|-------------------|
-| Dating apps have actually improved dating | opinions | Controversial! |
-| It's okay to end things over text | social | Etiquette divide |
-| Being single in your late 20s is underrated | lifestyle | Independence vs settling |
 | First dates should have a hard 90-minute limit | social | Boundaries vs spontaneity |
 | You can tell everything about someone from their Spotify | opinions | Judgy vs true |
 | Splitting the bill on dates is the only fair option | social | Traditional vs modern |
@@ -78,11 +83,7 @@ These are the 20 questions currently in `questionnaire.service.ts`:
 
 | Question | Category | Why It's Divisive |
 |----------|----------|-------------------|
-| Brunch is just expensive breakfast with permission to drink | opinions | Cynical vs fun |
-| Therapy speak has ruined normal conversations | social | Valid criticism vs dismissive |
 | Astrology is harmless fun, not a personality | opinions | Believers vs skeptics |
-| Going to bed before 11pm is peak adulthood | lifestyle | Grandma energy debate |
-| You should be embarrassed if you can't cook by 25 | opinions | Life skills vs classist |
 | Gym selfies are always cringe | opinions | Motivation vs vanity |
 | Plants are just pets for people who want less commitment | opinions | Accurate or mean |
 | True crime obsession is kind of weird when you think about it | opinions | Valid point |
@@ -91,7 +92,6 @@ These are the 20 questions currently in `questionnaire.service.ts`:
 
 | Question | Category | Why It's Divisive |
 |----------|----------|-------------------|
-| Voice notes over 30 seconds are inconsiderate | social | Convenience vs effort |
 | Posting your relationship online is asking for trouble | social | Privacy vs sharing |
 | BeReal is just as performative as Instagram | opinions | Meta-criticism |
 | People who don't use emojis are intimidating | social | Tone vs overthinking |

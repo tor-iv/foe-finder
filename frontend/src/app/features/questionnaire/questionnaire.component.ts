@@ -632,8 +632,8 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, AfterViewInit 
       // Submit and get neighborhood result
       await this.questionnaireService.submitResponse(answerArray);
 
-      // Navigate to results page to show the neighborhood match
-      await this.router.navigate(['/results']);
+      // Navigate to record-intro page for optional audio introduction
+      await this.router.navigate(['/record-intro']);
     } catch (error: any) {
       this.errorMessage.set(error.message || 'Failed to submit questionnaire. Please try again.');
     } finally {

@@ -56,6 +56,12 @@ export const routes: Routes = [
     canActivate: [authGuard, emailVerifiedGuard]
   },
   {
+    path: 'record-intro',
+    loadComponent: () =>
+      import('./features/audio-intro/record-intro.component').then(m => m.RecordIntroComponent),
+    canActivate: [authGuard, emailVerifiedGuard]
+  },
+  {
     path: 'results',
     loadComponent: () =>
       import('./features/results/results.component').then(m => m.ResultsComponent),

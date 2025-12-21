@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { AuthService } from './auth.service';
 import { SupabaseService } from './supabase.service';
 import { QuestionnaireService } from './questionnaire.service';
+import { AudioIntroService, AudioIntro } from './audio-intro.service';
 
 /**
  * Represents a difference between two users on a specific question
@@ -22,6 +23,12 @@ export interface MatchWithDetails {
   opponent: {
     id: string;
     displayName: string;
+    hasAudioIntro: boolean;
+    audioIntro?: {
+      audioUrl: string | null;
+      transcription: string | null;
+      transcriptionStatus: 'pending' | 'processing' | 'completed' | 'failed';
+    };
   };
   oppositionScore: number;
   topDifferences: QuestionDifference[];
@@ -41,6 +48,7 @@ export class MatchService {
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
   private questionnaireService = inject(QuestionnaireService);
+  private audioIntroService = inject(AudioIntroService);
 
   // Signal to track if matching has occurred
   hasMatch = signal<boolean>(false);
@@ -87,12 +95,22 @@ export class MatchService {
       // Determine which user is the "opponent"
       const opponentId = data.user1_id === user.uid ? data.user2_id : data.user1_id;
 
-      // Fetch opponent's display name from profiles
+      // Fetch opponent's display name and audio intro status from profiles
       const { data: profileData } = await this.supabaseService.client
         .from('profiles')
-        .select('display_name')
+        .select('display_name, has_audio_intro')
         .eq('id', opponentId)
         .single();
+
+      // Fetch opponent's audio intro if they have one
+      let audioIntroData: AudioIntro | null = null;
+      if (profileData?.has_audio_intro) {
+        try {
+          audioIntroData = await this.audioIntroService.getAudioIntroForUser(opponentId);
+        } catch (e) {
+          console.warn('Could not fetch opponent audio intro:', e);
+        }
+      }
 
       // Get question texts for top differences
       const questions = this.questionnaireService.getQuestions();
@@ -111,7 +129,13 @@ export class MatchService {
         id: data.id,
         opponent: {
           id: opponentId,
-          displayName: profileData?.display_name || 'Your Foe'
+          displayName: profileData?.display_name || 'Your Foe',
+          hasAudioIntro: profileData?.has_audio_intro || false,
+          audioIntro: audioIntroData ? {
+            audioUrl: audioIntroData.audioUrl || null,
+            transcription: audioIntroData.transcription,
+            transcriptionStatus: audioIntroData.transcriptionStatus
+          } : undefined
         },
         oppositionScore: data.opposition_score,
         topDifferences,

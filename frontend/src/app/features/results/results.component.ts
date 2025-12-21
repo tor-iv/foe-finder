@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { QuestionnaireService } from '../../core/services/questionnaire.service';
 import { MatchService, MatchWithDetails } from '../../core/services/match.service';
 import { CountdownTimerComponent } from '../../shared/components/countdown-timer.component';
+import { AudioPlayerComponent } from '../../shared/components/audio-player.component';
 
 /**
  * Hot Take type - represents a user's extreme opinion
@@ -34,7 +35,8 @@ interface HotTake {
     MatChipsModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    CountdownTimerComponent
+    CountdownTimerComponent,
+    AudioPlayerComponent
   ],
   template: `
     <div class="results-container">
@@ -68,9 +70,27 @@ interface HotTake {
                   <h3 class="match-title">Your Foe Has Been Found</h3>
                 </div>
                 <div class="opponent-info">
-                  <p class="opponent-name">{{ match()!.opponent.displayName }}</p>
+                  <p class="opponent-name">
+                    {{ match()!.opponent.displayName }}
+                    @if (match()!.opponent.hasAudioIntro) {
+                      <span class="audio-badge" title="Has audio intro">
+                        <mat-icon>mic</mat-icon>
+                      </span>
+                    }
+                  </p>
                   <p class="opposition-score">Opposition Score: {{ match()!.oppositionScore | number:'1.0-0' }}%</p>
                 </div>
+
+                <!-- Opponent's Audio Intro -->
+                @if (match()!.opponent.hasAudioIntro && match()!.opponent.audioIntro) {
+                  <app-audio-player
+                    [audioUrl]="match()!.opponent.audioIntro!.audioUrl"
+                    [transcription]="match()!.opponent.audioIntro!.transcription"
+                    [transcriptionStatus]="match()!.opponent.audioIntro!.transcriptionStatus"
+                    [displayName]="match()!.opponent.displayName"
+                    [hasAudioIntro]="true">
+                  </app-audio-player>
+                }
                 <div class="differences-list">
                   <p class="differences-title">Where You Clash Most:</p>
                   @for (diff of match()!.topDifferences; track diff.questionId) {
@@ -490,6 +510,31 @@ interface HotTake {
       font-weight: 900;
       color: var(--foe-text-primary);
       margin: 0 0 var(--foe-space-xs) 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--foe-space-sm);
+    }
+
+    .audio-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--foe-accent-primary);
+      border: 2px solid var(--foe-border);
+      padding: 4px;
+    }
+
+    .audio-badge mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: var(--foe-text-primary);
+    }
+
+    app-audio-player {
+      display: block;
+      margin-bottom: var(--foe-space-md);
     }
 
     .opposition-score {

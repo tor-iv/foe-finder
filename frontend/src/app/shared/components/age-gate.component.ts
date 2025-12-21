@@ -1,6 +1,7 @@
 import { Component, inject, signal, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AgeVerificationService } from '../../core/services/age-verification.service';
 
 /**
  * Age Gate Component
@@ -8,14 +9,9 @@ import { FormsModule } from '@angular/forms';
  * Displays a modal overlay requiring users to verify they are 21 or older.
  * Uses a date picker for birthday input and calculates age to verify eligibility.
  *
- * The verification state is stored in localStorage so users don't need to
- * re-verify on subsequent visits.
- *
- * Key patterns demonstrated:
- * - signal() for reactive form state
- * - EventEmitter for parent component communication
- * - localStorage for persistence
- * - Date arithmetic for age calculation
+ * Verification is stored via AgeVerificationService:
+ * - localStorage for anonymous users (same device persistence)
+ * - Supabase profiles for logged-in users (cross-device persistence)
  */
 @Component({
   selector: 'app-age-gate',
@@ -258,6 +254,8 @@ import { FormsModule } from '@angular/forms';
   `]
 })
 export class AgeGateComponent {
+  private ageVerificationService = inject(AgeVerificationService);
+
   @Output() verified = new EventEmitter<void>();
 
   birthDate: string = '';
@@ -276,37 +274,14 @@ export class AgeGateComponent {
       return;
     }
 
-    // Calculate age from birthdate
-    const today = new Date();
-    const birth = new Date(this.birthDate);
-
-    // Get the difference in years
-    let age = today.getFullYear() - birth.getFullYear();
-
-    // Check if birthday hasn't occurred yet this year
-    // Compare month first, then day if same month
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-
-    const isOldEnough = age >= 21;
+    const isOldEnough = this.ageVerificationService.verifyAge(this.birthDate);
 
     if (isOldEnough) {
-      // Store verification in localStorage
-      localStorage.setItem('foe-age-verified', 'true');
-      localStorage.setItem('foe-age-verified-date', new Date().toISOString());
+      // Also sync to Supabase if user happens to be logged in
+      this.ageVerificationService.storeForCurrentUser();
       this.verified.emit();
     } else {
       this.errorMessage.set('You must be 21 or older to enter');
     }
-  }
-
-  /**
-   * Static helper to check if user has already verified their age
-   * Can be called from parent components or guards
-   */
-  static isVerified(): boolean {
-    return localStorage.getItem('foe-age-verified') === 'true';
   }
 }

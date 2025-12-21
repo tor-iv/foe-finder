@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { SupabaseService } from './supabase.service';
+import { AgeVerificationService } from './age-verification.service';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -26,6 +27,7 @@ import { environment } from '../../../environments/environment';
 export class AuthService {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
+  private ageVerificationService = inject(AgeVerificationService);
 
   // Feature flag: when true, use Supabase; when false, use localStorage
   private readonly USE_REAL_AUTH = environment.features.useRealAuth;
@@ -71,6 +73,9 @@ export class AuthService {
           }
           const user = this.mapSupabaseUserToUser(session.user);
           this.setUser(user);
+
+          // Sync age verification on auth state changes (e.g., email verification callback)
+          await this.ageVerificationService.syncToSupabaseOnLogin(session.user.id);
         } else {
           this.setUser(null);
         }
@@ -81,6 +86,9 @@ export class AuthService {
       if (session?.user && session.user.email_confirmed_at) {
         const user = this.mapSupabaseUserToUser(session.user);
         this.setUser(user);
+
+        // Sync age verification on session restore
+        await this.ageVerificationService.syncToSupabaseOnLogin(session.user.id);
       }
     } else {
       // Dummy mode: Load user from localStorage
@@ -136,6 +144,10 @@ export class AuthService {
           // Email already confirmed (e.g., email confirmation disabled in Supabase)
           const user = this.mapSupabaseUserToUser(data.user, displayName);
           this.setUser(user);
+
+          // Sync age verification to Supabase
+          await this.ageVerificationService.syncToSupabaseOnLogin(data.user.id);
+
           await this.router.navigate(['/questionnaire']);
         }
       }
@@ -189,6 +201,9 @@ export class AuthService {
       if (data.user) {
         const user = this.mapSupabaseUserToUser(data.user);
         this.setUser(user);
+
+        // Sync age verification (restores from Supabase if verified on another device)
+        await this.ageVerificationService.syncToSupabaseOnLogin(data.user.id);
 
         // Navigate based on questionnaire completion
         if (!user.hasCompletedQuestionnaire) {

@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar.component';
 import { AgeGateComponent } from './shared/components/age-gate.component';
+import { AgeVerificationService } from './core/services/age-verification.service';
 
 @Component({
   selector: 'app-root',
@@ -9,16 +10,14 @@ import { AgeGateComponent } from './shared/components/age-gate.component';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App implements OnInit {
-  // Track whether user has passed age verification
-  ageVerified = signal(false);
+export class App {
+  private ageVerificationService = inject(AgeVerificationService);
 
-  ngOnInit() {
-    // Check localStorage for existing verification
-    this.ageVerified.set(AgeGateComponent.isVerified());
-  }
+  // Bind directly to service's signal for reactive updates
+  ageVerified = this.ageVerificationService.ageVerified;
 
   onAgeVerified() {
-    this.ageVerified.set(true);
+    // Signal is already updated by the service
+    // This handler can be used for additional actions if needed
   }
 }

@@ -5,6 +5,7 @@ export interface User {
   photoURL?: string;
   createdAt: Date;
   updatedAt: Date;
+  emailVerified: boolean;
   hasCompletedQuestionnaire: boolean;
   isMatched: boolean;
   preferences?: {

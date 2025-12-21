@@ -79,6 +79,10 @@ import { CountdownTimerComponent } from '../../shared/components/countdown-timer
             </button>
           </form>
 
+          <div class="forgot-password-link">
+            <a routerLink="/forgot-password">Forgot password?</a>
+          </div>
+
           <div class="register-link">
             Don't have an account?
             <a routerLink="/register">Register here</a>
@@ -236,8 +240,26 @@ import { CountdownTimerComponent } from '../../shared/components/countdown-timer
       }
     }
 
-    .register-link {
+    .forgot-password-link {
       margin-top: var(--foe-space-lg);
+      text-align: center;
+      font-size: var(--foe-text-xs);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .forgot-password-link a {
+      color: var(--foe-text-secondary);
+      text-decoration: none;
+      transition: color 0.1s ease;
+    }
+
+    .forgot-password-link a:hover {
+      color: var(--foe-text-primary);
+    }
+
+    .register-link {
+      margin-top: var(--foe-space-md);
       text-align: center;
       font-size: var(--foe-text-xs);
       color: var(--foe-text-secondary);

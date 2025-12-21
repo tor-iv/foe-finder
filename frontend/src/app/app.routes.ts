@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { emailVerifiedGuard } from './core/guards/email-verified.guard';
 
 /**
  * Application Routes Configuration
@@ -36,13 +37,23 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/register.component').then(m => m.RegisterComponent)
   },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./features/auth/forgot-password.component').then(m => m.ForgotPasswordComponent)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./features/auth/reset-password.component').then(m => m.ResetPasswordComponent)
+  },
 
-  // Protected routes (requires authentication)
+  // Protected routes (requires authentication + email verification)
   {
     path: 'questionnaire',
     loadComponent: () =>
       import('./features/questionnaire/questionnaire.component').then(m => m.QuestionnaireComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard, emailVerifiedGuard]
   },
   {
     path: 'results',

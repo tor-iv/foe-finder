@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { Question } from '../models/questionnaire.model';
 import { Answer } from '../models/response.model';
 import { AuthService } from './auth.service';
+import { SupabaseService } from './supabase.service';
+import { environment } from '../../../environments/environment';
 
 /**
  * NYC Neighborhood type representing personality match results
@@ -28,8 +30,12 @@ export interface NYCNeighborhood {
 @Injectable({ providedIn: 'root' })
 export class QuestionnaireService {
   private authService = inject(AuthService);
+  private supabaseService = inject(SupabaseService);
 
-  // Storage key for responses
+  // Feature flag: when true, use Supabase for storage
+  private readonly USE_SUPABASE = environment.features.useRealAuth;
+
+  // Storage key for responses (localStorage fallback)
   private readonly RESPONSES_KEY = 'foe_finder_responses';
 
   /**
@@ -304,7 +310,23 @@ export class QuestionnaireService {
       throw new Error('User must be authenticated to submit responses');
     }
 
-    // Store response in localStorage
+    // Format responses for storage
+    const responsesData = answers.map(a => ({
+      questionId: a.questionId,
+      value: a.value
+    }));
+
+    // Try to save to Supabase first (if in real auth mode)
+    if (this.USE_SUPABASE) {
+      try {
+        await this.saveToSupabase(user.uid, responsesData);
+      } catch (error) {
+        console.error('Failed to save to Supabase, falling back to localStorage:', error);
+        // Fall through to localStorage backup
+      }
+    }
+
+    // Always save to localStorage as backup/cache
     const response = {
       userId: user.uid,
       questionnaireId: 'default-v1',
@@ -313,7 +335,6 @@ export class QuestionnaireService {
       submittedAt: new Date().toISOString(),
       source: 'web'
     };
-
     localStorage.setItem(this.RESPONSES_KEY, JSON.stringify(response));
 
     // Calculate neighborhood match
@@ -326,6 +347,47 @@ export class QuestionnaireService {
     this.authService.markQuestionnaireComplete();
 
     return neighborhood;
+  }
+
+  /**
+   * Save responses to Supabase
+   */
+  private async saveToSupabase(userId: string, responses: { questionId: number; value: number }[]): Promise<void> {
+    const { error } = await this.supabaseService.client
+      .from('questionnaire_responses')
+      .upsert({
+        user_id: userId,
+        responses: responses,
+        submitted_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id'
+      });
+
+    if (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Load responses from Supabase for the current user
+   */
+  async loadFromSupabase(): Promise<{ questionId: number; value: number }[] | null> {
+    const user = this.authService.currentUser();
+    if (!user || !this.USE_SUPABASE) {
+      return null;
+    }
+
+    const { data, error } = await this.supabaseService.client
+      .from('questionnaire_responses')
+      .select('responses')
+      .eq('user_id', user.uid)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data.responses as { questionId: number; value: number }[];
   }
 
   /**

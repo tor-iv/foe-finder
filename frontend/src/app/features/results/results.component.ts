@@ -5,7 +5,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { QuestionnaireService } from '../../core/services/questionnaire.service';
+import { MatchService, MatchWithDetails } from '../../core/services/match.service';
 import { CountdownTimerComponent } from '../../shared/components/countdown-timer.component';
 
 /**
@@ -31,6 +33,7 @@ interface HotTake {
     MatButtonModule,
     MatChipsModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     CountdownTimerComponent
   ],
   template: `
@@ -56,15 +59,51 @@ interface HotTake {
               }
             </div>
 
-            <!-- Foe hunting message -->
-            <div class="foe-hunting-box">
-              <div class="foe-icon">🔍</div>
-              <div class="foe-message">
-                <p class="foe-title">Now we're hunting for your nemesis</p>
-                <p class="foe-subtitle">Someone who thinks you're completely wrong about everything.</p>
-                <p class="foe-eta">You'll hear from us soon.</p>
+            <!-- Match found or hunting message -->
+            @if (match()) {
+              <!-- Match found! -->
+              <div class="match-found-box">
+                <div class="match-header">
+                  <span class="match-icon">⚔️</span>
+                  <h3 class="match-title">Your Foe Has Been Found</h3>
+                </div>
+                <div class="opponent-info">
+                  <p class="opponent-name">{{ match()!.opponent.displayName }}</p>
+                  <p class="opposition-score">Opposition Score: {{ match()!.oppositionScore | number:'1.0-0' }}%</p>
+                </div>
+                <div class="differences-list">
+                  <p class="differences-title">Where You Clash Most:</p>
+                  @for (diff of match()!.topDifferences; track diff.questionId) {
+                    <div class="difference-item">
+                      <p class="diff-question">"{{ diff.questionText }}"</p>
+                      <div class="diff-comparison">
+                        <span class="your-stance">You: {{ matchService.getStanceLabel(diff.user1Value) }}</span>
+                        <span class="vs">vs</span>
+                        <span class="their-stance">Them: {{ matchService.getStanceLabel(diff.user2Value) }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
               </div>
-            </div>
+            } @else if (loadingMatch()) {
+              <!-- Loading match -->
+              <div class="foe-hunting-box">
+                <mat-spinner diameter="40"></mat-spinner>
+                <div class="foe-message">
+                  <p class="foe-title">Checking for your nemesis...</p>
+                </div>
+              </div>
+            } @else {
+              <!-- Still hunting -->
+              <div class="foe-hunting-box">
+                <div class="foe-icon">🔍</div>
+                <div class="foe-message">
+                  <p class="foe-title">Now we're hunting for your nemesis</p>
+                  <p class="foe-subtitle">Someone who thinks you're completely wrong about everything.</p>
+                  <p class="foe-eta">You'll hear from us soon.</p>
+                </div>
+              </div>
+            }
           </mat-card-content>
 
           <mat-card-actions>
@@ -393,19 +432,156 @@ interface HotTake {
         background: var(--foe-accent-light) !important;
       }
     }
+
+    /* Match found styles */
+    .match-found-box {
+      padding: var(--foe-space-md);
+      background: var(--foe-bg-tertiary);
+      border: 3px solid var(--foe-accent-primary);
+      margin-top: var(--foe-space-lg);
+    }
+
+    @media (min-width: 768px) {
+      .match-found-box {
+        padding: var(--foe-space-lg);
+        border-width: 4px;
+      }
+    }
+
+    .match-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--foe-space-sm);
+      margin-bottom: var(--foe-space-md);
+    }
+
+    .match-icon {
+      font-size: 32px;
+    }
+
+    .match-title {
+      font-family: 'Inter', sans-serif;
+      font-size: var(--foe-text-lg);
+      font-weight: 900;
+      color: var(--foe-accent-primary);
+      text-transform: uppercase;
+      margin: 0;
+      text-shadow: 2px 2px 0px var(--foe-bg-primary);
+    }
+
+    @media (min-width: 768px) {
+      .match-title {
+        font-size: var(--foe-text-xl);
+      }
+    }
+
+    .opponent-info {
+      text-align: center;
+      padding: var(--foe-space-md);
+      background: var(--foe-bg-secondary);
+      border: 2px solid var(--foe-border);
+      margin-bottom: var(--foe-space-md);
+    }
+
+    .opponent-name {
+      font-family: 'Inter', sans-serif;
+      font-size: var(--foe-text-xl);
+      font-weight: 900;
+      color: var(--foe-text-primary);
+      margin: 0 0 var(--foe-space-xs) 0;
+    }
+
+    .opposition-score {
+      font-size: var(--foe-text-sm);
+      color: var(--foe-accent-primary);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .differences-title {
+      font-size: var(--foe-text-sm);
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--foe-text-secondary);
+      margin: 0 0 var(--foe-space-sm) 0;
+    }
+
+    .difference-item {
+      background: var(--foe-bg-secondary);
+      padding: var(--foe-space-sm);
+      border: 2px solid var(--foe-border);
+      margin-bottom: var(--foe-space-sm);
+    }
+
+    .diff-question {
+      font-size: var(--foe-text-sm);
+      font-weight: 700;
+      margin: 0 0 var(--foe-space-xs) 0;
+    }
+
+    .diff-comparison {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--foe-space-xs);
+      align-items: center;
+      font-size: var(--foe-text-xs);
+    }
+
+    .your-stance {
+      background: var(--foe-accent-primary);
+      padding: 2px 6px;
+      font-weight: 700;
+    }
+
+    .their-stance {
+      background: var(--foe-text-primary);
+      color: var(--foe-bg-primary);
+      padding: 2px 6px;
+      font-weight: 700;
+    }
+
+    .vs {
+      color: var(--foe-text-secondary);
+      font-weight: 700;
+    }
   `]
 })
 export class ResultsComponent implements OnInit {
   private questionnaireService = inject(QuestionnaireService);
   private router = inject(Router);
+  matchService = inject(MatchService); // Public for template access
 
   // Signal to hold the user's hot takes
   hotTakes = signal<HotTake[]>([]);
 
-  ngOnInit(): void {
+  // Match signals
+  match = signal<MatchWithDetails | null>(null);
+  loadingMatch = signal(false);
+
+  async ngOnInit(): Promise<void> {
     // Get the user's most extreme opinions
     const takes = this.questionnaireService.getHotTakes(3);
     this.hotTakes.set(takes);
+
+    // Check for match (will only exist after batch matching runs)
+    await this.checkForMatch();
+  }
+
+  /**
+   * Check if the user has been matched with a foe
+   */
+  private async checkForMatch(): Promise<void> {
+    this.loadingMatch.set(true);
+    try {
+      const matchData = await this.matchService.getMyMatch();
+      this.match.set(matchData);
+    } catch (error) {
+      console.error('Error checking for match:', error);
+    } finally {
+      this.loadingMatch.set(false);
+    }
   }
 
   /**

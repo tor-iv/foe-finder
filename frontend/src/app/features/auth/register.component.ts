@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -7,6 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -20,85 +22,116 @@ import { AuthService } from '../../core/services/auth.service';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatCheckboxModule
   ],
   template: `
     <div class="register-container">
       <mat-card class="register-card">
-        <mat-card-header>
-          <mat-card-title>Join Foe Finder</mat-card-title>
-          <mat-card-subtitle>Create an account to find your opposite match</mat-card-subtitle>
-        </mat-card-header>
+        @if (emailVerificationPending()) {
+          <!-- Email Verification Pending State -->
+          <mat-card-header>
+            <mat-card-title>Check Your Email</mat-card-title>
+            <mat-card-subtitle>One more step to find your foe</mat-card-subtitle>
+          </mat-card-header>
 
-        <mat-card-content>
-          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Display Name</mat-label>
-              <input matInput type="text" formControlName="displayName" autocomplete="name">
-              @if (registerForm.get('displayName')?.hasError('required') && registerForm.get('displayName')?.touched) {
-                <mat-error>Display name is required</mat-error>
-              }
-            </mat-form-field>
+          <mat-card-content>
+            <div class="verification-message">
+              <mat-icon class="email-icon">mark_email_unread</mat-icon>
+              <p>We've sent a verification link to your email.</p>
+              <p class="instruction">Click the link in the email to verify your account, then come back and log in.</p>
+            </div>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" autocomplete="email">
-              @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
-                <mat-error>Email is required</mat-error>
-              }
-              @if (registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched) {
-                <mat-error>Please enter a valid email</mat-error>
-              }
-            </mat-form-field>
+            <a routerLink="/login" class="login-button-link">
+              <button mat-raised-button color="primary" class="full-width submit-button">
+                Go to Login
+              </button>
+            </a>
+          </mat-card-content>
+        } @else {
+          <!-- Registration Form -->
+          <mat-card-header>
+            <mat-card-title>Join Foe Finder</mat-card-title>
+            <mat-card-subtitle>Create an account to find your opposite match</mat-card-subtitle>
+          </mat-card-header>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Password</mat-label>
-              <input matInput type="password" formControlName="password" autocomplete="new-password">
-              @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
-                <mat-error>Password is required</mat-error>
-              }
-              @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
-                <mat-error>Password must be at least 6 characters</mat-error>
-              }
-            </mat-form-field>
+          <mat-card-content>
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Display Name</mat-label>
+                <input matInput type="text" formControlName="displayName" autocomplete="name">
+                @if (registerForm.get('displayName')?.hasError('required') && registerForm.get('displayName')?.touched) {
+                  <mat-error>Display name is required</mat-error>
+                }
+              </mat-form-field>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Confirm Password</mat-label>
-              <input matInput type="password" formControlName="confirmPassword" autocomplete="new-password">
-              @if (registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched) {
-                <mat-error>Please confirm your password</mat-error>
-              }
-              @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
-                <mat-error>Passwords do not match</mat-error>
-              }
-            </mat-form-field>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" autocomplete="email">
+                @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
+                  <mat-error>Email is required</mat-error>
+                }
+                @if (registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched) {
+                  <mat-error>Please enter a valid email</mat-error>
+                }
+              </mat-form-field>
 
-            @if (errorMessage()) {
-              <div class="error-message">
-                {{ errorMessage() }}
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput type="password" formControlName="password" autocomplete="new-password">
+                @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
+                  <mat-error>Password is required</mat-error>
+                }
+                @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
+                  <mat-error>Password must be at least 6 characters</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Confirm Password</mat-label>
+                <input matInput type="password" formControlName="confirmPassword" autocomplete="new-password">
+                @if (registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched) {
+                  <mat-error>Please confirm your password</mat-error>
+                }
+                @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
+                  <mat-error>Passwords do not match</mat-error>
+                }
+              </mat-form-field>
+
+              <div class="consent-checkbox">
+                <mat-checkbox formControlName="marketingConsent">
+                  Send me updates about my match and FoeFinder news
+                </mat-checkbox>
               </div>
-            }
 
-            <button
-              mat-raised-button
-              color="primary"
-              type="submit"
-              class="full-width submit-button"
-              [disabled]="loading() || registerForm.invalid"
-            >
-              @if (loading()) {
-                <mat-spinner diameter="20"></mat-spinner>
-              } @else {
-                Create Account
+              @if (errorMessage()) {
+                <div class="error-message">
+                  {{ errorMessage() }}
+                </div>
               }
-            </button>
-          </form>
 
-          <div class="login-link">
-            Already have an account?
-            <a routerLink="/login">Log in here</a>
-          </div>
-        </mat-card-content>
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                class="full-width submit-button"
+                [disabled]="loading() || registerForm.invalid"
+              >
+                @if (loading()) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  Create Account
+                }
+              </button>
+            </form>
+
+            <div class="login-link">
+              Already have an account?
+              <a routerLink="/login">Log in here</a>
+            </div>
+          </mat-card-content>
+        }
       </mat-card>
     </div>
   `,
@@ -256,6 +289,45 @@ import { AuthService } from '../../core/services/auth.service';
     mat-spinner {
       margin: 0 auto;
     }
+
+    /* Verification pending state */
+    .verification-message {
+      text-align: center;
+      padding: var(--foe-space-lg) var(--foe-space-md);
+    }
+
+    .email-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      color: var(--foe-accent-primary);
+      margin-bottom: var(--foe-space-md);
+    }
+
+    .verification-message p {
+      margin: var(--foe-space-sm) 0;
+      font-size: var(--foe-text-base);
+    }
+
+    .verification-message .instruction {
+      color: var(--foe-text-secondary);
+      font-size: var(--foe-text-sm);
+    }
+
+    .login-button-link {
+      display: block;
+      text-decoration: none;
+      margin-top: var(--foe-space-md);
+    }
+
+    .consent-checkbox {
+      margin: var(--foe-space-md) 0;
+      font-size: var(--foe-text-sm);
+    }
+
+    .consent-checkbox mat-checkbox {
+      color: var(--foe-text-secondary);
+    }
   `]
 })
 export class RegisterComponent {
@@ -266,12 +338,16 @@ export class RegisterComponent {
   loading = signal(false);
   errorMessage = signal('');
 
+  // Expose authService's emailVerificationPending signal
+  emailVerificationPending = this.authService.emailVerificationPending;
+
   constructor() {
     this.registerForm = this.fb.group({
       displayName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]],
+      marketingConsent: [false]
     }, { validators: this.passwordMatchValidator });
   }
 
@@ -293,10 +369,10 @@ export class RegisterComponent {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    const { email, password, displayName } = this.registerForm.value;
+    const { email, password, displayName, marketingConsent } = this.registerForm.value;
 
     try {
-      await this.authService.register(email, password, displayName);
+      await this.authService.register(email, password, displayName, marketingConsent);
     } catch (error: any) {
       this.errorMessage.set(error.message || 'Registration failed. Please try again.');
     } finally {

@@ -1,26 +1,35 @@
-// TODO(human): Create the Match interface here
-// This interface represents a match between two users with opposite opinions
-//
-// Required fields to include:
-// - id: unique identifier for the match
-// - userId1: first user's UID
-// - userId2: second user's UID
-// - compatibilityScore: numerical score (higher = more opposite)
-// - createdAt: when the match was created
-// - status: current state of the match
-//
-// Optional fields to consider:
-// - topDifferences: array of question IDs where they differed most
-// - viewedBy: array of user IDs who have seen this match
-
-
+/**
+ * Match interface - represents a matched pair of users with opposite opinions
+ */
 export interface Match {
+  id: string;
+  user1Id: string;
+  user2Id: string;
+  oppositionScore: number;
+  topDifferences: TopDifference[];
+  createdAt: Date;
+}
+
+/**
+ * Represents a question where two matched users had very different answers
+ */
+export interface TopDifference {
+  questionId: number;
+  questionText: string;
+  user1Value: number;
+  user2Value: number;
+}
+
+/**
+ * Match with opponent details for display in the UI
+ */
+export interface MatchDisplay {
+  id: string;
+  opponent: {
     id: string;
-    userId1: string;
-    userId2: string;
-    compatibilityScore: number;
-    createdAt: Date;
-    status: 'pending' | 'accepted' | 'rejected';
-    topDifferences?: number[];
-    viewedBy?: string[];
+    displayName: string;
+  };
+  oppositionScore: number;
+  topDifferences: TopDifference[];
+  createdAt: Date;
 }

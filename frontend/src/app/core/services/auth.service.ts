@@ -44,6 +44,9 @@ export class AuthService {
   // Signal for reactive UI updates (modern Angular approach)
   currentUser = signal<User | null>(null);
 
+  // Signal to track if user just registered and needs to verify email
+  emailVerificationPending = signal(false);
+
   constructor() {
     // Initialize auth state from storage or Supabase session
     this.initializeAuth();
@@ -61,6 +64,11 @@ export class AuthService {
       // onAuthStateChange fires whenever the user logs in, out, or token refreshes
       this.supabaseService.client.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
+          // Don't auto-login if email not verified
+          if (!session.user.email_confirmed_at) {
+            this.setUser(null);
+            return;
+          }
           const user = this.mapSupabaseUserToUser(session.user);
           this.setUser(user);
         } else {
@@ -68,9 +76,9 @@ export class AuthService {
         }
       });
 
-      // Check for existing session
+      // Check for existing session (only if email is verified)
       const { data: { session } } = await this.supabaseService.client.auth.getSession();
-      if (session?.user) {
+      if (session?.user && session.user.email_confirmed_at) {
         const user = this.mapSupabaseUserToUser(session.user);
         this.setUser(user);
       }
@@ -95,8 +103,9 @@ export class AuthService {
    * @param email - User's email address
    * @param password - User's password (min 6 characters recommended)
    * @param displayName - Name to display in the app
+   * @param marketingConsent - Whether user opted in to marketing emails
    */
-  async register(email: string, password: string, displayName: string): Promise<void> {
+  async register(email: string, password: string, displayName: string, marketingConsent: boolean = false): Promise<void> {
     if (this.USE_REAL_AUTH) {
       // Real mode: Use Supabase authentication
       const { data, error } = await this.supabaseService.client.auth.signUp({
@@ -104,8 +113,10 @@ export class AuthService {
         password,
         options: {
           data: {
-            display_name: displayName
-          }
+            display_name: displayName,
+            marketing_consent: marketingConsent
+          },
+          emailRedirectTo: `${window.location.origin}/login`
         }
       });
 
@@ -114,9 +125,19 @@ export class AuthService {
       }
 
       if (data.user) {
-        const user = this.mapSupabaseUserToUser(data.user, displayName);
-        this.setUser(user);
-        await this.router.navigate(['/questionnaire']);
+        // Check if email confirmation is required
+        // Supabase returns identities as empty array when email confirmation is pending
+        const needsEmailVerification = !data.user.email_confirmed_at;
+
+        if (needsEmailVerification) {
+          // Don't set user or navigate - show verification pending message
+          this.emailVerificationPending.set(true);
+        } else {
+          // Email already confirmed (e.g., email confirmation disabled in Supabase)
+          const user = this.mapSupabaseUserToUser(data.user, displayName);
+          this.setUser(user);
+          await this.router.navigate(['/questionnaire']);
+        }
       }
     } else {
       // Dummy mode: Create a mock user and store in localStorage
@@ -129,6 +150,7 @@ export class AuthService {
         displayName,
         createdAt: new Date(),
         updatedAt: new Date(),
+        emailVerified: true, // Dummy mode: no email verification needed
         hasCompletedQuestionnaire: false,
         isMatched: false,
         preferences: {
@@ -199,6 +221,7 @@ export class AuthService {
           displayName: email.split('@')[0], // Use part before @ as display name
           createdAt: new Date(),
           updatedAt: new Date(),
+          emailVerified: true, // Dummy mode: no email verification needed
           hasCompletedQuestionnaire: false,
           isMatched: false,
           preferences: {
@@ -238,6 +261,46 @@ export class AuthService {
   }
 
   /**
+   * Request a password reset email
+   *
+   * Supabase will send an email with a magic link that redirects to /reset-password
+   * The link contains a recovery token that Supabase handles automatically
+   *
+   * @param email - User's email address
+   */
+  async requestPasswordReset(email: string): Promise<void> {
+    const { error } = await this.supabaseService.client.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`
+    });
+
+    if (error) {
+      throw new Error(this.getErrorMessage(error.message));
+    }
+  }
+
+  /**
+   * Update user's password (called after clicking reset link)
+   *
+   * This method is called when the user submits a new password on the reset page.
+   * Supabase automatically handles the recovery token from the URL.
+   *
+   * @param newPassword - The new password to set
+   */
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await this.supabaseService.client.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      throw new Error(this.getErrorMessage(error.message));
+    }
+
+    // Sign out after password change so user can log in with new password
+    await this.supabaseService.client.auth.signOut();
+    this.setUser(null);
+  }
+
+  /**
    * Update the user's questionnaire completion status
    */
   markQuestionnaireComplete(): void {
@@ -273,6 +336,7 @@ export class AuthService {
       displayName: displayName || supabaseUser.user_metadata?.display_name || supabaseUser.email?.split('@')[0] || 'User',
       createdAt: new Date(supabaseUser.created_at),
       updatedAt: new Date(),
+      emailVerified: !!supabaseUser.email_confirmed_at,
       hasCompletedQuestionnaire: supabaseUser.user_metadata?.hasCompletedQuestionnaire || false,
       isMatched: supabaseUser.user_metadata?.isMatched || false,
       preferences: {
@@ -280,6 +344,14 @@ export class AuthService {
         emailUpdates: true
       }
     };
+  }
+
+  /**
+   * Check if current user has verified their email
+   */
+  isEmailVerified(): boolean {
+    const user = this.currentUser();
+    return user?.emailVerified ?? false;
   }
 
   /**

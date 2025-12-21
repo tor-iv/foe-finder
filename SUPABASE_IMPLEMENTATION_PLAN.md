@@ -840,11 +840,90 @@ export const environment = {
 
 ---
 
+## SMTP Configuration (Resend)
+
+Custom SMTP removes Supabase's default email rate limits and enables sending from `@foefinder.me`.
+
+### Why Resend?
+- **Ecosystem fit**: Created by ex-Vercel engineers, same philosophy as Vercel + Supabase stack
+- **Simple setup**: ~5 minutes vs AWS SES complexity
+- **Generous free tier**: 3,000 emails/month (plenty for MVP)
+- **Supabase recommended**: Featured in Supabase's official docs
+
+### Setup Steps
+
+#### 1. Create Resend Account
+1. Go to [resend.com](https://resend.com) and sign up
+2. Navigate to the dashboard
+
+#### 2. Add & Verify Domain
+1. Click **Domains** → **Add Domain**
+2. Enter `foefinder.me`
+3. Add DNS records to Vercel (see below)
+
+#### 3. Add DNS Records in Vercel
+1. Go to [vercel.com/dashboard](https://vercel.com/dashboard)
+2. Click your account → **Domains** → **foefinder.me**
+3. In **DNS Records** section, add each record from Resend:
+
+| Type | Name | Value (from Resend) |
+|------|------|---------------------|
+| MX | `send` | `feedback-smtp.us-east-1.amazonses.com` |
+| TXT | `send` | `v=spf1 include:amazonses.com ~all` |
+| TXT | `resend._domainkey` | (long DKIM key from Resend) |
+| CNAME | `rsp._domainkey` | `rsp._domainkey.resend.dev` |
+
+> **Note**: In Vercel, only enter the subdomain part (e.g., `send` not `send.foefinder.me`)
+
+#### 4. Verify Domain in Resend
+1. Return to Resend's **Domains** page
+2. Click **Verify** next to `foefinder.me`
+3. Wait for all 4 records to show green ✓
+
+#### 5. Create API Key
+1. Go to **API Keys** → **Create API Key**
+2. Name: `supabase-auth`
+3. Permission: **Sending access** only
+4. Copy the key (starts with `re_`)
+
+#### 6. Configure Supabase SMTP
+1. Go to **Supabase Dashboard** → **Project Settings** → **Authentication**
+2. Scroll to **SMTP Settings** → Toggle ON
+3. Enter:
+
+| Field | Value |
+|-------|-------|
+| Host | `smtp.resend.com` |
+| Port | `465` |
+| Username | `resend` |
+| Password | `re_...` (your API key) |
+| Sender email | `noreply@foefinder.me` |
+| Sender name | `FoeFinder` |
+
+4. Click **Save**
+
+#### 7. Test Email Delivery
+1. In Supabase Auth settings, click **Send test email**
+2. Check your inbox (including spam folder)
+3. Verify the email shows `noreply@foefinder.me` as sender
+
+### SMTP Checklist
+- [ ] Resend account created
+- [ ] Domain `foefinder.me` added in Resend
+- [ ] DNS records added in Vercel
+- [ ] Domain verified in Resend (4 green checkmarks)
+- [ ] API key created with sending permissions
+- [ ] SMTP configured in Supabase dashboard
+- [ ] Test email received successfully
+
+---
+
 ## Migration Checklist
 
 Before going live:
 - [ ] Supabase project created and configured
 - [ ] Environment variables set (never commit real keys!)
+- [ ] **SMTP configured with Resend** (see section above)
 - [ ] Email templates customized in Supabase dashboard
 - [ ] RLS policies tested (try accessing other users' data)
 - [ ] Edge Functions deployed and tested

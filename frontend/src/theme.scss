@@ -1,13 +1,13 @@
 // Custom Foe Finder Theme for Angular Material
-// "90s Bored Satire" aesthetic - Retro brutalist design
+// "90s Early Internet" aesthetic - Retro brutalist design with Netscape Blue
 @use '@angular/material' as mat;
 
 // Create a custom theme using the new M3 theming system
-// LIGHT theme with neon green accent
+// LIGHT theme with Netscape Blue accent
 $theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: mat.$green-palette,
+    primary: mat.$blue-palette,
   ),
   density: (
     scale: 0,
@@ -20,42 +20,54 @@ html {
 }
 
 // Custom Foe Finder theme variables
-// "Bored Satire" palette: Drained grays + Neon green accent
+// "Windows 95/98" palette: System grays + Navy blue accents
 :root {
-  // Backgrounds (light drained grays)
-  --foe-bg-primary: #e0e0e0;       // Main background (drained off-white)
-  --foe-bg-secondary: #ffffff;      // Cards, containers (white)
-  --foe-bg-tertiary: #c0c0c0;       // Form fields, nested elements (muted gray)
+  // =============================================
+  // WINDOWS 95 SYSTEM COLORS (Lighter variant)
+  // =============================================
+  --foe-win95-face: #d4d4d4;         // Button/panel face (lighter gray)
+  --foe-win95-highlight: #ffffff;    // 3D highlight (white)
+  --foe-win95-shadow: #a0a0a0;       // 3D shadow (medium gray)
+  --foe-win95-dark-shadow: #606060;  // Deep shadow (softer dark)
+  --foe-win95-light: #ececec;        // Light bevel
+  --foe-win95-title-bar: #0066ff;    // Bright blue title bar
+  --foe-win95-title-text: #ffffff;   // Title bar text (white)
 
-  // Primary accent (neon green spectrum)
-  --foe-accent-primary: #39ff14;    // Sickly neon green
-  --foe-accent-light: #00ff00;      // Brighter green for hover states
-  --foe-accent-dark: #32d612;       // Darker green for pressed states
+  // Backgrounds (Lighter grays for better readability)
+  --foe-bg-primary: #d4d4d4;        // Main background (lighter gray)
+  --foe-bg-secondary: #e0e0e0;      // Cards, containers (even lighter)
+  --foe-bg-tertiary: #c0c0c0;       // Nested elements, depth
+  --foe-bg-input: #ffffff;          // Form input fields (white)
+
+  // Primary accent (Vibrant blue)
+  --foe-accent-primary: #0066ff;    // Vibrant bright blue
+  --foe-accent-light: #3399ff;      // Lighter blue for hover states
+  --foe-accent-dark: #0044cc;       // Darker blue for pressed states
 
   // Text (dark on light)
-  --foe-text-primary: #333333;      // Main text (dark gray)
-  --foe-text-secondary: #555555;    // Secondary text
-  --foe-text-muted: #777777;        // Muted text
+  --foe-text-primary: #1a1a1a;      // Main text (soft black)
+  --foe-text-secondary: #404040;    // Secondary text
+  --foe-text-muted: #666666;        // Muted/disabled text
 
-  // Borders (chunky dark borders)
-  --foe-border: #333333;            // Strong dark border
-  --foe-border-accent: #39ff14;     // Neon green accent border
+  // Borders (softer borders)
+  --foe-border: #333333;            // Dark border
+  --foe-border-accent: #0066ff;     // Vibrant blue accent border
 
-  // Shadows (hard retro shadows - no blur)
-  --foe-shadow: 6px 6px 0px #333333;
-  --foe-shadow-lg: 10px 10px 0px #333333;
-  --foe-shadow-sm: 3px 3px 0px #333333;
-  --foe-shadow-accent: 4px 4px 0px #39ff14;
+  // Shadows (Win95 3D beveled style - no drop shadows)
+  --foe-shadow: none;               // Win95 uses bevels, not drop shadows
+  --foe-shadow-lg: none;
+  --foe-shadow-sm: none;
+  --foe-shadow-accent: none;
 
   // Retro-specific variables
-  --foe-border-width: 4px;
-  --foe-border-width-sm: 3px;
-  --foe-radius: 0px;                // No rounded corners - brutalist
-  --foe-header-shadow: 3px 3px 0px #c0c0c0;
+  --foe-border-width: 2px;          // Win95 uses thinner borders
+  --foe-border-width-sm: 1px;
+  --foe-radius: 0px;                // No rounded corners
+  --foe-header-shadow: none;
 
   // Error state (keeping red for UX convention)
-  --foe-error: #dc2626;
-  --foe-error-bg: #fecaca;
+  --foe-error: #ff0000;             // Pure red (more retro)
+  --foe-error-bg: #ffcccc;
 
   // =============================================
   // RESPONSIVE SYSTEM (Mobile-First)
@@ -78,8 +90,8 @@ html {
   --foe-text-3xl: 32px;
 
   // Responsive Brutalist Elements (scaled down for mobile)
-  --foe-border-width-responsive: 3px;
-  --foe-shadow-responsive: 4px 4px 0px #333333;
+  --foe-border-width-responsive: 2px;
+  --foe-shadow-responsive: none;    // Win95 uses bevels, not shadows
 
   // Layout Tokens
   --foe-navbar-height: 56px;
@@ -104,8 +116,8 @@ html {
     --foe-text-3xl: 36px;
 
     // Full brutalist elements on desktop
-    --foe-border-width-responsive: 4px;
-    --foe-shadow-responsive: 6px 6px 0px #333333;
+    --foe-border-width-responsive: 2px;
+    --foe-shadow-responsive: none;
 
     // Taller navbar on desktop
     --foe-navbar-height: 64px;
@@ -118,12 +130,17 @@ body {
   color: var(--foe-text-primary);
 }
 
-// Material card styling - Retro brutalist
+// Material card styling - Windows 95 beveled panel
 mat-card {
-  background-color: var(--foe-bg-secondary) !important;
-  border: var(--foe-border-width) solid var(--foe-border) !important;
+  background-color: var(--foe-win95-face) !important;
+  border: none !important;
   border-radius: var(--foe-radius) !important;
-  box-shadow: var(--foe-shadow) !important;
+  // Win95 outset bevel effect
+  box-shadow:
+    inset -1px -1px 0 var(--foe-win95-dark-shadow),
+    inset 1px 1px 0 var(--foe-win95-highlight),
+    inset -2px -2px 0 var(--foe-win95-shadow),
+    inset 2px 2px 0 var(--foe-win95-light) !important;
 }
 
 // Global Material overrides for brutalist aesthetic

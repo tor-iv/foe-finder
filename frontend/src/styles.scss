@@ -1,4 +1,4 @@
-/* Foe Finder Theme - "90s Bored Satire" Aesthetic */
+/* Foe Finder Theme - "90s Early Internet" Aesthetic */
 @use './theme';
 
 // Google Fonts - Space Mono (utilitarian) + Inter (heavy headers)
@@ -20,34 +20,62 @@ html, body {
 
 // Tiled background pattern (90s web aesthetic)
 .tiled-bg {
-  background-image: repeating-linear-gradient(
-    45deg,
-    var(--foe-bg-tertiary) 0,
-    var(--foe-bg-tertiary) 1px,
-    transparent 0,
-    transparent 8px
-  );
-  background-size: 8px 8px;
+  background-color: var(--foe-bg-primary);
+  background-image:
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
-// Custom scrollbar - brutalist style
+// Alternative: classic diagonal lines pattern
+.tiled-bg-diagonal {
+  background-color: var(--foe-bg-primary);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(0,0,0,0.03) 10px,
+    rgba(0,0,0,0.03) 20px
+  );
+}
+
+// Classic 90s "notebook paper" pattern
+.tiled-bg-paper {
+  background-color: var(--foe-bg-primary);
+  background-image:
+    linear-gradient(var(--foe-accent-primary) 1px, transparent 1px);
+  background-size: 100% 24px;
+  background-position: 0 -1px;
+}
+
+// Custom scrollbar - Windows 95 style
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 16px;
+  height: 16px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--foe-bg-tertiary);
-  border: 2px solid var(--foe-border);
+  background: var(--foe-win95-face);
+  box-shadow:
+    inset -1px -1px 0 var(--foe-win95-highlight),
+    inset 1px 1px 0 var(--foe-win95-shadow);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--foe-accent-primary);
-  border: 2px solid var(--foe-border);
-  border-radius: 0;
+  background: var(--foe-win95-face);
+  box-shadow:
+    inset -1px -1px 0 var(--foe-win95-dark-shadow),
+    inset 1px 1px 0 var(--foe-win95-highlight),
+    inset -2px -2px 0 var(--foe-win95-shadow),
+    inset 2px 2px 0 var(--foe-win95-light);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--foe-accent-light);
+  background: #d4d4d4;
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--foe-win95-face);
 }
 
 // Retro header typography
@@ -59,44 +87,70 @@ html, body {
   line-height: 0.9;
 }
 
-// Neon button - signature retro CTA
+// Primary CTA button - Win95 style with vibrant blue accent
 .neon-button {
   background-color: var(--foe-accent-primary) !important;
-  color: var(--foe-text-primary) !important;
-  border: var(--foe-border-width) solid var(--foe-text-primary) !important;
-  box-shadow: var(--foe-shadow) !important;
+  color: var(--foe-win95-title-text) !important;
+  border: none !important;
   border-radius: var(--foe-radius) !important;
   transition: all 0.1s !important;
   text-transform: uppercase;
   font-weight: bold;
   font-family: 'Space Mono', monospace;
+  box-shadow:
+    inset -1px -1px 0 #0044cc,
+    inset 1px 1px 0 #66b3ff,
+    inset -2px -2px 0 #0055dd,
+    inset 2px 2px 0 #3399ff !important;
 
   &:hover {
-    box-shadow: 2px 2px 0px var(--foe-text-primary) !important;
-    transform: translate(4px, 4px);
     background-color: var(--foe-accent-light) !important;
   }
 
   &:active {
-    box-shadow: none !important;
-    transform: translate(6px, 6px);
+    box-shadow:
+      inset 1px 1px 0 #0044cc,
+      inset -1px -1px 0 #66b3ff,
+      inset 2px 2px 0 #0055dd,
+      inset -2px -2px 0 #3399ff !important;
   }
 }
 
-// Material overrides for retro brutalist theme
+// Win95 title bar style for accent headers
+.win95-title-bar {
+  background: linear-gradient(90deg, var(--foe-win95-title-bar), #1084d0);
+  color: var(--foe-win95-title-text);
+  font-weight: bold;
+  padding: 4px 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: var(--foe-text-sm);
+}
+
+// Material overrides for Windows 95 theme
 .mat-mdc-card {
-  background-color: var(--foe-bg-secondary) !important;
+  background-color: var(--foe-win95-face) !important;
   color: var(--foe-text-primary) !important;
-  box-shadow: var(--foe-shadow) !important;
-  border: var(--foe-border-width) solid var(--foe-border) !important;
+  border: none !important;
   border-radius: var(--foe-radius) !important;
+  // Win95 outset bevel
+  box-shadow:
+    inset -1px -1px 0 var(--foe-win95-dark-shadow),
+    inset 1px 1px 0 var(--foe-win95-highlight),
+    inset -2px -2px 0 var(--foe-win95-shadow),
+    inset 2px 2px 0 var(--foe-win95-light) !important;
 }
 
 .mat-mdc-form-field {
   .mat-mdc-text-field-wrapper {
-    background-color: var(--foe-bg-tertiary) !important;
-    border: var(--foe-border-width-sm) solid var(--foe-border) !important;
+    background-color: var(--foe-bg-input) !important;
+    border: none !important;
     border-radius: var(--foe-radius) !important;
+    // Win95 inset bevel
+    box-shadow:
+      inset -1px -1px 0 var(--foe-win95-highlight),
+      inset 1px 1px 0 var(--foe-win95-shadow),
+      inset -2px -2px 0 var(--foe-win95-light),
+      inset 2px 2px 0 var(--foe-win95-dark-shadow) !important;
   }
 
   .mdc-floating-label {
@@ -109,29 +163,52 @@ html, body {
 }
 
 .mat-mdc-raised-button {
-  box-shadow: var(--foe-shadow-sm) !important;
-  border: var(--foe-border-width-sm) solid var(--foe-border) !important;
+  background-color: var(--foe-win95-face) !important;
+  color: var(--foe-text-primary) !important;
+  border: none !important;
   border-radius: var(--foe-radius) !important;
   font-family: 'Space Mono', monospace !important;
   text-transform: uppercase;
+  // Win95 outset bevel
+  box-shadow:
+    inset -1px -1px 0 var(--foe-win95-dark-shadow),
+    inset 1px 1px 0 var(--foe-win95-highlight),
+    inset -2px -2px 0 var(--foe-win95-shadow),
+    inset 2px 2px 0 var(--foe-win95-light) !important;
 
   &:hover {
-    box-shadow: 2px 2px 0px var(--foe-border) !important;
-    transform: translate(1px, 1px);
+    background-color: #d4d4d4 !important;
+  }
+
+  &:active {
+    // Win95 inset bevel (pressed)
+    box-shadow:
+      inset 1px 1px 0 var(--foe-win95-dark-shadow),
+      inset -1px -1px 0 var(--foe-win95-highlight),
+      inset 2px 2px 0 var(--foe-win95-shadow),
+      inset -2px -2px 0 var(--foe-win95-light) !important;
   }
 }
 
-// Slider overrides for retro look
+// Slider overrides for Win95 look
 .mat-mdc-slider {
   .mdc-slider__track {
-    border: 2px solid var(--foe-border);
+    border: none;
     border-radius: 0 !important;
-    height: 8px !important;
+    height: 6px !important;
+    // Inset groove
+    box-shadow:
+      inset 1px 1px 0 var(--foe-win95-shadow),
+      inset -1px -1px 0 var(--foe-win95-highlight);
   }
 
   .mdc-slider__thumb {
     border-radius: 0 !important;
-    border: 3px solid var(--foe-border) !important;
+    background-color: var(--foe-win95-face) !important;
+    // Win95 outset bevel
+    box-shadow:
+      inset -1px -1px 0 var(--foe-win95-dark-shadow),
+      inset 1px 1px 0 var(--foe-win95-highlight) !important;
   }
 
   .mdc-slider__track--active_fill {
@@ -156,17 +233,157 @@ html, body {
   animation: fadeIn 0.3s ease-out;
 }
 
-// Utility classes
+// =============================================
+// WINDOWS 95 BEVELED BUTTON STYLES
+// =============================================
+.win95-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: var(--foe-text-sm);
+  padding: 6px 16px;
+  background: #c0c0c0;
+  color: #000000;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  box-shadow:
+    inset -1px -1px 0 #0a0a0a,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+
+  &:hover {
+    background: #d4d4d4;
+  }
+
+  &:active, &.active {
+    box-shadow:
+      inset 1px 1px 0 #0a0a0a,
+      inset -1px -1px 0 #ffffff,
+      inset 2px 2px 0 #808080,
+      inset -2px -2px 0 #dfdfdf;
+    padding: 7px 15px 5px 17px;
+  }
+
+  &:disabled {
+    color: #808080;
+    text-shadow: 1px 1px 0 #ffffff;
+    cursor: not-allowed;
+  }
+}
+
+// Windows 95 style input/text field
+.win95-input {
+  font-family: 'Space Mono', monospace;
+  padding: 4px 6px;
+  background: #ffffff;
+  border: none;
+  box-shadow:
+    inset -1px -1px 0 #ffffff,
+    inset 1px 1px 0 #808080,
+    inset -2px -2px 0 #dfdfdf,
+    inset 2px 2px 0 #0a0a0a;
+}
+
+// Windows 95 style panel/window
+.win95-panel {
+  background: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #0a0a0a,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+  padding: 2px;
+}
+
+// =============================================
+// RETRO 90s ANIMATIONS
+// =============================================
+
+// Marquee animation (horizontal scroll)
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 12s linear infinite;
+}
+
+.marquee-container {
+  overflow: hidden;
+  width: 100%;
+}
+
+// Blink animation (use VERY sparingly!)
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+// Subtle pulse for "new" indicators
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+// Rainbow text (very 90s!)
+@keyframes rainbow {
+  0% { color: #ff0000; }
+  17% { color: #ff8000; }
+  33% { color: #ffff00; }
+  50% { color: #00ff00; }
+  67% { color: #0080ff; }
+  83% { color: #8000ff; }
+  100% { color: #ff0000; }
+}
+
+.rainbow-text {
+  animation: rainbow 3s linear infinite;
+}
+
+// Utility classes - Win95 style
 .retro-border {
-  border: var(--foe-border-width) solid var(--foe-border);
+  box-shadow:
+    inset -1px -1px 0 var(--foe-win95-dark-shadow),
+    inset 1px 1px 0 var(--foe-win95-highlight),
+    inset -2px -2px 0 var(--foe-win95-shadow),
+    inset 2px 2px 0 var(--foe-win95-light);
 }
 
 .retro-shadow {
-  box-shadow: var(--foe-shadow);
+  // Win95 uses bevels, not drop shadows
+  box-shadow:
+    inset -1px -1px 0 var(--foe-win95-dark-shadow),
+    inset 1px 1px 0 var(--foe-win95-highlight),
+    inset -2px -2px 0 var(--foe-win95-shadow),
+    inset 2px 2px 0 var(--foe-win95-light);
 }
 
 .accent-border {
-  border-color: var(--foe-accent-primary);
+  box-shadow:
+    inset -1px -1px 0 #0044cc,
+    inset 1px 1px 0 #66b3ff,
+    inset -2px -2px 0 #0055dd,
+    inset 2px 2px 0 #3399ff;
+}
+
+// Win95 inset panel (for content areas)
+.win95-inset {
+  box-shadow:
+    inset -1px -1px 0 var(--foe-win95-highlight),
+    inset 1px 1px 0 var(--foe-win95-shadow),
+    inset -2px -2px 0 var(--foe-win95-light),
+    inset 2px 2px 0 var(--foe-win95-dark-shadow);
 }
 
 // =============================================

@@ -11,18 +11,7 @@
 }
 
 .background-glow {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(107, 33, 168, 0.15) 0%, transparent 70%);
-  animation: pulse 8s ease-in-out infinite alternate;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
-  50% { opacity: 0.6; transform: scale(1.1) rotate(180deg); }
+  display: none; // Hidden for Win95 look
 }
 
 .register-card {
@@ -30,8 +19,14 @@
   width: 100%;
   position: relative;
   z-index: 1;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(107, 33, 168, 0.3);
+  background: var(--foe-win95-face);
+  border: none;
+  // Win95 outset bevel
+  box-shadow:
+    inset -1px -1px 0 var(--foe-win95-dark-shadow),
+    inset 1px 1px 0 var(--foe-win95-highlight),
+    inset -2px -2px 0 var(--foe-win95-shadow),
+    inset 2px 2px 0 var(--foe-win95-light);
 }
 
 mat-card-header {
@@ -80,12 +75,25 @@ mat-form-field {
   font-weight: 600;
   letter-spacing: 1px;
   background: var(--foe-accent-primary) !important;
-  transition: all 0.3s ease;
+  color: var(--foe-win95-title-text) !important;
+  transition: all 0.1s ease;
+  // Win95 vibrant blue bevel
+  box-shadow:
+    inset -1px -1px 0 #0044cc,
+    inset 1px 1px 0 #66b3ff,
+    inset -2px -2px 0 #0055dd,
+    inset 2px 2px 0 #3399ff !important;
 
   &:hover:not([disabled]) {
-    transform: translateY(-2px);
     background: var(--foe-accent-light) !important;
-    box-shadow: 0 8px 25px rgba(107, 33, 168, 0.4) !important;
+  }
+
+  &:active:not([disabled]) {
+    box-shadow:
+      inset 1px 1px 0 #0044cc,
+      inset -1px -1px 0 #66b3ff,
+      inset 2px 2px 0 #0055dd,
+      inset -2px -2px 0 #3399ff !important;
   }
 
   &[disabled] {
@@ -99,9 +107,9 @@ mat-form-field {
   margin: 16px 0;
   text-align: center;
   padding: 12px;
-  background: rgba(220, 38, 38, 0.1);
-  border-left: 3px solid var(--foe-error);
-  border-radius: 4px;
+  background: var(--foe-error-bg);
+  border: 2px solid var(--foe-error);
+  border-radius: 0; // Win95 - no rounded corners
 }
 
 .login-link {
@@ -111,14 +119,16 @@ mat-form-field {
   color: var(--foe-text-secondary);
 
   a {
-    color: var(--foe-accent-primary);
-    text-decoration: none;
+    color: #0000ff; // Classic blue hyperlink
+    text-decoration: underline;
     font-weight: 600;
-    transition: all 0.3s ease;
 
     &:hover {
       color: var(--foe-accent-light);
-      text-decoration: underline;
+    }
+
+    &:visited {
+      color: #800080; // Classic purple visited link
     }
   }
 }

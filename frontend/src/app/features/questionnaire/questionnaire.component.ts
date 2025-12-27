@@ -75,7 +75,7 @@ import { Answer } from '../../core/models/response.model';
                       mat-raised-button
                       color="primary"
                       (click)="nextQuestion()"
-                      [disabled]="answers()[currentQuestion()!.id] === undefined"
+                      [disabled]="!sliderMoved()[currentQuestion()!.id]"
                     >
                       Next
                     </button>
@@ -264,9 +264,10 @@ import { Answer } from '../../core/models/response.model';
 
     .slider-container {
       margin: var(--foe-space-lg) 0;
-      padding: var(--foe-space-md);
+      padding: var(--foe-space-md) 16px; /* Horizontal padding for 32px thumb overhang */
       background: var(--foe-bg-tertiary);
       border: 2px solid var(--foe-border);
+      overflow: hidden; /* Clip any thumb overflow */
       /* PERFORMANCE: Isolates repaints to this container only */
       contain: layout paint;
       /* PERFORMANCE: Promote to GPU compositing layer */
@@ -276,7 +277,7 @@ import { Answer } from '../../core/models/response.model';
     @media (min-width: 768px) {
       .slider-container {
         margin: var(--foe-space-xl) 0;
-        padding: var(--foe-space-lg);
+        padding: var(--foe-space-lg) 12px; /* Horizontal padding for 24px thumb overhang */
         border-width: 3px;
       }
     }
@@ -316,7 +317,9 @@ import { Answer } from '../../core/models/response.model';
     }
 
     .opinion-slider {
+      display: block;
       width: 100%;
+      margin: 0 auto;
       /* PERFORMANCE: Tell browser this is horizontal-only interaction */
       touch-action: pan-x;
     }
@@ -513,6 +516,10 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, AfterViewInit 
   submitting = signal(false);
   errorMessage = signal('');
 
+  // Track whether slider was moved (not just clicked) for each question
+  sliderMoved = signal<Record<number, boolean>>({});
+  private initialSliderValue = signal<number>(50);
+
   ngOnInit() {
     this.questions = this.questionnaireService.getQuestions();
 
@@ -552,6 +559,13 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, AfterViewInit 
     const value = +(event.target as HTMLInputElement).value;
     const questionId = this.currentQuestion().id;
     this.sliderInput$.next({ questionId, value });
+
+    // Detect actual movement from initial position
+    if (value !== this.initialSliderValue()) {
+      const moved = { ...this.sliderMoved() };
+      moved[questionId] = true;
+      this.sliderMoved.set(moved);
+    }
   }
 
   ngOnDestroy() {
@@ -562,9 +576,21 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, AfterViewInit 
   private updateSliderPosition() {
     if (this.sliderInput?.nativeElement) {
       const questionId = this.currentQuestion()?.id;
-      const value = questionId !== undefined ? (this.answers()[questionId] ?? 50) : 50;
+      const existingAnswer = questionId !== undefined ? this.answers()[questionId] : undefined;
+      const value = existingAnswer ?? 50;
       const inputEl = this.sliderInput.nativeElement;
       inputEl.value = String(value);
+
+      // Store initial value for movement detection
+      this.initialSliderValue.set(value);
+
+      // If returning to an already-answered question, mark as moved
+      if (questionId !== undefined && existingAnswer !== undefined) {
+        const moved = { ...this.sliderMoved() };
+        moved[questionId] = true;
+        this.sliderMoved.set(moved);
+      }
+
       // Dispatch input event to sync Angular Material's internal thumb state
       // This fixes mobile "stuck" slider when navigating between questions
       inputEl.dispatchEvent(new Event('input', { bubbles: true }));

@@ -173,6 +173,7 @@ export class RetroFooterComponent implements OnInit {
   currentYear = new Date().getFullYear();
 
   private readonly VISITOR_KEY = 'foe-visitor-count';
+  private readonly SESSION_KEY = 'foe-visitor-counted';
   private readonly BASE_COUNT = 12847;
 
   ngOnInit() {
@@ -188,6 +189,16 @@ export class RetroFooterComponent implements OnInit {
   }
 
   private async initVisitorCount() {
+    // Check if we've already counted this visitor in this session
+    const alreadyCounted = sessionStorage.getItem(this.SESSION_KEY);
+
+    if (alreadyCounted) {
+      // Already counted this session - just display the stored count
+      const stored = localStorage.getItem(this.VISITOR_KEY);
+      this.visitorCount.set(stored ? parseInt(stored, 10) : this.BASE_COUNT);
+      return;
+    }
+
     try {
       // Call Supabase function to increment and get visitor count
       const { data, error } = await this.supabase.client.rpc('increment_visitor_count');
@@ -196,6 +207,7 @@ export class RetroFooterComponent implements OnInit {
 
       this.visitorCount.set(data);
       localStorage.setItem(this.VISITOR_KEY, data.toString());
+      sessionStorage.setItem(this.SESSION_KEY, 'true');
     } catch {
       // Fallback to localStorage if Supabase fails
       const stored = localStorage.getItem(this.VISITOR_KEY);
@@ -207,6 +219,7 @@ export class RetroFooterComponent implements OnInit {
         localStorage.setItem(this.VISITOR_KEY, this.BASE_COUNT.toString());
         this.visitorCount.set(this.BASE_COUNT);
       }
+      sessionStorage.setItem(this.SESSION_KEY, 'true');
     }
   }
 }

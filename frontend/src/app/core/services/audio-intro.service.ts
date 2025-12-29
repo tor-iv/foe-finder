@@ -43,18 +43,23 @@ export class AudioIntroService {
    *
    * @param audioBlob - The recorded audio blob
    * @param transcription - Optional transcription text
+   * @param durationSeconds - Fallback duration from recorder (iOS workaround)
    * @returns The created AudioIntro record
    */
-  async uploadAudioIntro(audioBlob: Blob, transcription?: string): Promise<AudioIntro> {
+  async uploadAudioIntro(
+    audioBlob: Blob,
+    transcription?: string,
+    durationSeconds?: number
+  ): Promise<AudioIntro> {
     const user = this.authService.currentUser();
     if (!user) {
       throw new Error('User must be authenticated to upload audio');
     }
 
     if (this.USE_REAL_AUTH) {
-      return this.uploadToSupabase(user.uid, audioBlob, transcription);
+      return this.uploadToSupabase(user.uid, audioBlob, transcription, durationSeconds);
     } else {
-      return this.uploadToLocalStorage(user.uid, audioBlob, transcription);
+      return this.uploadToLocalStorage(user.uid, audioBlob, transcription, durationSeconds);
     }
   }
 
@@ -161,7 +166,12 @@ export class AudioIntroService {
   // SUPABASE IMPLEMENTATION
   // ==========================================
 
-  private async uploadToSupabase(userId: string, audioBlob: Blob, transcription?: string): Promise<AudioIntro> {
+  private async uploadToSupabase(
+    userId: string,
+    audioBlob: Blob,
+    transcription?: string,
+    fallbackDuration?: number
+  ): Promise<AudioIntro> {
     const timestamp = Date.now();
     const extension = this.getExtensionFromMimeType(audioBlob.type);
     const storagePath = `${userId}/${timestamp}.${extension}`;
@@ -185,8 +195,17 @@ export class AudioIntroService {
       throw new Error(`Upload failed: ${uploadError.message}`);
     }
 
-    // Get audio duration
-    const duration = await this.getAudioDuration(audioBlob);
+    // Get audio duration (with fallback for iOS which returns Infinity)
+    const duration = await this.getAudioDuration(audioBlob, fallbackDuration);
+
+    // Validate duration before insert
+    if (!isFinite(duration) || isNaN(duration) || duration <= 0) {
+      // Clean up uploaded file
+      await this.supabaseService.client.storage
+        .from(this.BUCKET_NAME)
+        .remove([storagePath]);
+      throw new Error('Could not determine audio duration. Please try recording again.');
+    }
 
     // Create database record
     const { data, error: insertError } = await this.supabaseService.client
@@ -262,9 +281,14 @@ export class AudioIntroService {
   // LOCALSTORAGE IMPLEMENTATION (DUMMY MODE)
   // ==========================================
 
-  private async uploadToLocalStorage(userId: string, audioBlob: Blob, transcription?: string): Promise<AudioIntro> {
+  private async uploadToLocalStorage(
+    userId: string,
+    audioBlob: Blob,
+    transcription?: string,
+    fallbackDuration?: number
+  ): Promise<AudioIntro> {
     const base64Audio = await this.blobToBase64(audioBlob);
-    const duration = await this.getAudioDuration(audioBlob);
+    const duration = await this.getAudioDuration(audioBlob, fallbackDuration);
 
     const intro: AudioIntro & { audioData: string } = {
       id: 'local_' + Date.now(),
@@ -318,7 +342,7 @@ export class AudioIntroService {
   // UTILITIES
   // ==========================================
 
-  private async getAudioDuration(blob: Blob): Promise<number> {
+  private async getAudioDuration(blob: Blob, fallbackDuration?: number): Promise<number> {
     return new Promise((resolve) => {
       const audio = new Audio();
       audio.src = URL.createObjectURL(blob);
@@ -326,12 +350,18 @@ export class AudioIntroService {
       audio.addEventListener('loadedmetadata', () => {
         const duration = audio.duration;
         URL.revokeObjectURL(audio.src);
-        resolve(Math.round(duration * 10) / 10); // Round to 1 decimal
+
+        // Validate duration - iOS often returns Infinity for MediaRecorder blobs
+        if (!isFinite(duration) || isNaN(duration) || duration <= 0) {
+          resolve(fallbackDuration ?? 0);
+        } else {
+          resolve(Math.round(duration * 10) / 10); // Round to 1 decimal
+        }
       });
 
       audio.addEventListener('error', () => {
         URL.revokeObjectURL(audio.src);
-        resolve(0);
+        resolve(fallbackDuration ?? 0);
       });
     });
   }

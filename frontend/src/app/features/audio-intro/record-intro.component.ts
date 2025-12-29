@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-import { AudioRecorderComponent } from '../../shared/components/audio-recorder.component';
+import { AudioRecorderComponent, AudioRecordingResult } from '../../shared/components/audio-recorder.component';
 import { AudioIntroService } from '../../core/services/audio-intro.service';
 import { TRANSCRIPTION_SERVICE, TranscriptionService } from '../../core/services/transcription';
 
@@ -360,7 +360,7 @@ export class RecordIntroComponent {
   transcriptionProgress = this.transcriptionService.loadingProgress;
   transcriptionStatus = this.transcriptionService.statusMessage;
 
-  async onAudioSubmitted(audioBlob: Blob): Promise<void> {
+  async onAudioSubmitted(result: AudioRecordingResult): Promise<void> {
     this.error.set(null);
 
     try {
@@ -370,7 +370,7 @@ export class RecordIntroComponent {
 
       try {
         if (this.transcriptionService.isAvailable()) {
-          transcription = await this.transcriptionService.transcribe(audioBlob);
+          transcription = await this.transcriptionService.transcribe(result.blob);
         }
       } catch (transcribeError: any) {
         // Transcription failed - continue without it
@@ -379,9 +379,13 @@ export class RecordIntroComponent {
 
       this.isProcessing.set(false);
 
-      // Phase 2: Upload to storage
+      // Phase 2: Upload to storage (pass duration as fallback for iOS)
       this.isUploading.set(true);
-      await this.audioIntroService.uploadAudioIntro(audioBlob, transcription);
+      await this.audioIntroService.uploadAudioIntro(
+        result.blob,
+        transcription,
+        result.durationSeconds
+      );
       this.isUploading.set(false);
 
       // Navigate to results

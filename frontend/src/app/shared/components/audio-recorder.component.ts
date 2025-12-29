@@ -5,6 +5,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 /**
+ * Result emitted when audio recording is submitted
+ */
+export interface AudioRecordingResult {
+  blob: Blob;
+  durationSeconds: number;
+}
+
+/**
  * Audio Recorder Component
  *
  * Records audio using the MediaRecorder API with a 20-second maximum duration.
@@ -324,7 +332,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 export class AudioRecorderComponent implements OnDestroy {
   private ngZone = inject(NgZone);
 
-  @Output() audioSubmitted = new EventEmitter<Blob>();
+  @Output() audioSubmitted = new EventEmitter<AudioRecordingResult>();
   @Output() recordingCancelled = new EventEmitter<void>();
 
   // Recording state machine
@@ -454,7 +462,10 @@ export class AudioRecorderComponent implements OnDestroy {
 
   submitRecording(): void {
     if (this.recordedBlob) {
-      this.audioSubmitted.emit(this.recordedBlob);
+      this.audioSubmitted.emit({
+        blob: this.recordedBlob,
+        durationSeconds: this.elapsedSeconds()
+      });
     }
   }
 

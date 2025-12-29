@@ -145,8 +145,7 @@ export class AuthService {
           const user = this.mapSupabaseUserToUser(data.user, displayName);
           this.setUser(user);
 
-          // Sync age verification to Supabase
-          await this.ageVerificationService.syncToSupabaseOnLogin(data.user.id);
+          // Note: syncToSupabaseOnLogin is handled by onAuthStateChange listener
 
           await this.router.navigate(['/questionnaire']);
         }
@@ -202,8 +201,8 @@ export class AuthService {
         const user = this.mapSupabaseUserToUser(data.user);
         this.setUser(user);
 
-        // Sync age verification (restores from Supabase if verified on another device)
-        await this.ageVerificationService.syncToSupabaseOnLogin(data.user.id);
+        // Note: syncToSupabaseOnLogin is handled by onAuthStateChange listener
+        // to avoid duplicate database calls
 
         // Navigate based on questionnaire completion
         if (!user.hasCompletedQuestionnaire) {

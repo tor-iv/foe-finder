@@ -37,3 +37,11 @@ out/
 # Logs
 *.log
 logs/
+
+# Python
+.venv/
+__pycache__/
+
+# Playwright/Testing
+.playwright-mcp/
+test-results/

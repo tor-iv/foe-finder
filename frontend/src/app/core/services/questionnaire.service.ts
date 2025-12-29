@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Question } from '../models/questionnaire.model';
-import { Answer } from '../models/response.model';
+import { Answer, OutlierAnswer } from '../models/response.model';
 import { AuthService } from './auth.service';
 import { SupabaseService } from './supabase.service';
 import { environment } from '../../../environments/environment';
@@ -596,7 +596,7 @@ export class QuestionnaireService {
    * Returns the top N answers that are furthest from neutral (4)
    * Only includes strong opinions (values 1, 2, 6, or 7)
    */
-  getHotTakes(count: number = 3): { question: string; value: number; stance: 'strongly_agree' | 'agree' | 'disagree' | 'strongly_disagree' }[] {
+  getHotTakes(count: number = 3): { question: string; value: number; stance: 'strongly_agree' | 'agree' | 'disagree' | 'strongly_disagree'; intensity: number }[] {
     const responses = this.getStoredResponses();
     if (!responses) return [];
 
@@ -620,7 +620,67 @@ export class QuestionnaireService {
       question: r.question,
       value: r.value,
       stance: r.value >= 6 ? (r.value === 7 ? 'strongly_agree' : 'agree')
-                          : (r.value === 1 ? 'strongly_disagree' : 'disagree')
+                          : (r.value === 1 ? 'strongly_disagree' : 'disagree'),
+      intensity: r.extremeness
     }));
+  }
+
+  /**
+   * Get statistical outliers - responses where the user is in the top or bottom 10%
+   * compared to all other users.
+   *
+   * Requires Supabase authentication and sufficient response data (10+ users per question).
+   * Returns empty array if not using Supabase or if user is not logged in.
+   */
+  async getStatisticalOutliers(): Promise<OutlierAnswer[]> {
+    // Only works with Supabase (real auth mode)
+    if (!this.USE_SUPABASE) {
+      console.log('Statistical outliers require Supabase (real auth mode)');
+      return [];
+    }
+
+    // Get current user from signal
+    const user = this.authService.currentUser();
+    if (!user) {
+      console.log('No authenticated user for outlier calculation');
+      return [];
+    }
+
+    try {
+      // Call the Supabase function to get outliers
+      const { data, error } = await this.supabaseService.client
+        .rpc('get_user_outliers', { p_user_id: user.uid });
+
+      if (error) {
+        console.error('Error fetching statistical outliers:', error);
+        return [];
+      }
+
+      if (!data || data.length === 0) {
+        console.log('No statistical outliers found for user');
+        return [];
+      }
+
+      // Map database results to OutlierAnswer interface
+      const outliers: OutlierAnswer[] = data.map((row: any) => {
+        const question = this.sampleQuestions.find(q => q.id === row.question_id);
+        return {
+          questionId: row.question_id,
+          questionText: question?.text || `Question ${row.question_id}`,
+          userValue: row.user_value,
+          populationMean: parseFloat(row.population_mean),
+          stdDev: parseFloat(row.std_dev),
+          percentileRank: parseFloat(row.percentile_rank),
+          isTopOutlier: row.is_top_outlier,
+          isBottomOutlier: row.is_bottom_outlier,
+          responseCount: 0 // Will be populated if we add this to the function
+        };
+      });
+
+      return outliers;
+    } catch (error) {
+      console.error('Exception fetching statistical outliers:', error);
+      return [];
+    }
   }
 }

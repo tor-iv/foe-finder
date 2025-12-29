@@ -20,6 +20,8 @@ export const environment = {
 
   // Feature flags
   features: {
-    useRealAuth: true
+    useRealAuth: true,
+    // Geo-fence to NYC area only (set to true when ready to enforce)
+    geoFenceEnabled: false
   }
 };

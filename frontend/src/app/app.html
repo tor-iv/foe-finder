@@ -1,10 +1,20 @@
-<!-- Age Gate - blocks entire app until verified -->
+<!-- Age Gate - first check -->
 @if (!ageVerified()) {
   <app-age-gate (verified)="onAgeVerified()"></app-age-gate>
 }
 
-<!-- Main app content - only shown after age verification -->
-@if (ageVerified()) {
-  <app-navbar></app-navbar>
-  <router-outlet />
+<!-- Geo Gate - second check (only if geo-fence enabled and age verified) -->
+@if (ageVerified() && geoFenceEnabled && geoVerified() !== true) {
+  <app-geo-gate (verified)="onGeoVerified()"></app-geo-gate>
+}
+
+<!-- Main app content - only shown after all gates passed -->
+@if (showApp()) {
+  <div class="app-container tiled-bg">
+    <app-navbar></app-navbar>
+    <main class="main-content">
+      <router-outlet />
+    </main>
+    <app-retro-footer></app-retro-footer>
+  </div>
 }

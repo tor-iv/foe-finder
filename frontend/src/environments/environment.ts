@@ -23,6 +23,8 @@ export const environment = {
   // Feature flags
   features: {
     // Set to true to use real Supabase authentication
-    useRealAuth: true
+    useRealAuth: true,
+    // Set to true to restrict app to NYC area only
+    geoFenceEnabled: false
   }
 };

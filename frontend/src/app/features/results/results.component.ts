@@ -10,6 +10,7 @@ import { QuestionnaireService } from '../../core/services/questionnaire.service'
 import { MatchService, MatchWithDetails } from '../../core/services/match.service';
 import { CountdownTimerComponent } from '../../shared/components/countdown-timer.component';
 import { AudioPlayerComponent } from '../../shared/components/audio-player.component';
+import { OutlierAnswer } from '../../core/models/response.model';
 
 /**
  * Hot Take type - represents a user's extreme opinion
@@ -18,6 +19,7 @@ interface HotTake {
   question: string;
   value: number;
   stance: 'strongly_agree' | 'agree' | 'disagree' | 'strongly_disagree';
+  intensity: number; // Distance from neutral (4), range 0-3
 }
 
 /**
@@ -54,12 +56,48 @@ interface HotTake {
               @for (take of hotTakes(); track take.question) {
                 <div class="hot-take-item">
                   <p class="take-question">"{{ take.question }}"</p>
-                  <span class="take-stance" [class]="take.stance">
-                    {{ getStanceLabel(take.stance) }}
-                  </span>
+                  <div class="take-details">
+                    <span class="take-stance" [class]="take.stance">
+                      {{ getStanceLabel(take.stance) }}
+                    </span>
+                    <span class="take-value">{{ take.value }}/7</span>
+                  </div>
+                  <div class="intensity-bar">
+                    <div class="intensity-fill" [style.width.%]="(take.intensity / 3) * 100"></div>
+                  </div>
                 </div>
               }
             </div>
+
+            <!-- Statistical outliers section -->
+            @if (outliers().length > 0) {
+              <div class="outliers-section">
+                <h3 class="outliers-title">Your Unique Perspectives</h3>
+                <p class="outliers-subtitle">These opinions put you in the most extreme 10% compared to everyone else.</p>
+                <div class="outliers-list">
+                  @for (outlier of outliers(); track outlier.questionId) {
+                    <div class="outlier-item">
+                      <p class="outlier-question">"{{ outlier.questionText }}"</p>
+                      <div class="outlier-stats">
+                        <div class="outlier-stat">
+                          <span class="outlier-label">You:</span>
+                          <span class="outlier-your-value">{{ outlier.userValue }}/7</span>
+                        </div>
+                        <div class="outlier-stat">
+                          <span class="outlier-label">Average:</span>
+                          <span class="outlier-avg-value">{{ outlier.populationMean | number:'1.1-1' }}/7</span>
+                        </div>
+                        <div class="outlier-stat">
+                          <span class="outlier-percentile" [class.top]="outlier.isTopOutlier" [class.bottom]="outlier.isBottomOutlier">
+                            {{ getPercentileLabel(outlier) }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
 
             <!-- Match found or hunting message -->
             @if (match()) {
@@ -245,6 +283,14 @@ interface HotTake {
       }
     }
 
+    .take-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--foe-space-sm);
+      margin-bottom: var(--foe-space-xs);
+    }
+
     .take-stance {
       display: inline-block;
       padding: 4px 8px;
@@ -261,6 +307,167 @@ interface HotTake {
         font-size: var(--foe-text-xs);
         letter-spacing: 1px;
       }
+    }
+
+    .take-value {
+      font-size: var(--foe-text-xs);
+      font-weight: 700;
+      color: var(--foe-accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .intensity-bar {
+      height: 6px;
+      background: var(--foe-border);
+      border: 2px solid var(--foe-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .intensity-fill {
+      height: 100%;
+      background: var(--foe-accent-primary);
+      transition: width 0.3s ease;
+    }
+
+    /* Statistical outliers section */
+    .outliers-section {
+      margin-top: var(--foe-space-xl);
+      padding-top: var(--foe-space-lg);
+      border-top: 3px solid var(--foe-border);
+    }
+
+    .outliers-title {
+      font-family: 'Inter', sans-serif;
+      font-size: var(--foe-text-lg);
+      font-weight: 900;
+      color: var(--foe-text-primary);
+      text-transform: uppercase;
+      margin: 0 0 var(--foe-space-xs) 0;
+      letter-spacing: -0.5px;
+    }
+
+    @media (min-width: 768px) {
+      .outliers-title {
+        font-size: var(--foe-text-xl);
+      }
+    }
+
+    .outliers-subtitle {
+      font-size: var(--foe-text-xs);
+      color: var(--foe-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 var(--foe-space-md) 0;
+      line-height: 1.4;
+    }
+
+    .outliers-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--foe-space-sm);
+    }
+
+    @media (min-width: 768px) {
+      .outliers-list {
+        gap: var(--foe-space-md);
+      }
+    }
+
+    .outlier-item {
+      background: var(--foe-bg-tertiary);
+      padding: var(--foe-space-sm);
+      border: 2px solid var(--foe-border);
+      border-left: 4px solid var(--foe-accent-primary);
+    }
+
+    @media (min-width: 768px) {
+      .outlier-item {
+        padding: var(--foe-space-md);
+        border-width: 3px;
+        border-left-width: 6px;
+      }
+    }
+
+    .outlier-question {
+      font-size: var(--foe-text-sm);
+      font-weight: 700;
+      color: var(--foe-text-primary);
+      margin: 0 0 var(--foe-space-sm) 0;
+      line-height: 1.4;
+    }
+
+    @media (min-width: 768px) {
+      .outlier-question {
+        font-size: var(--foe-text-base);
+      }
+    }
+
+    .outlier-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--foe-space-sm);
+      align-items: center;
+    }
+
+    .outlier-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .outlier-label {
+      font-size: var(--foe-text-xs);
+      color: var(--foe-text-secondary);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .outlier-your-value {
+      font-size: var(--foe-text-xs);
+      font-weight: 700;
+      color: var(--foe-accent-primary);
+      padding: 2px 6px;
+      background: var(--foe-bg-secondary);
+      border: 2px solid var(--foe-border);
+    }
+
+    .outlier-avg-value {
+      font-size: var(--foe-text-xs);
+      font-weight: 700;
+      color: var(--foe-text-primary);
+      padding: 2px 6px;
+      background: var(--foe-bg-secondary);
+      border: 2px solid var(--foe-border);
+    }
+
+    .outlier-percentile {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 8px;
+      border: 2px solid var(--foe-border);
+    }
+
+    @media (min-width: 768px) {
+      .outlier-percentile {
+        font-size: var(--foe-text-xs);
+        padding: 6px 12px;
+        letter-spacing: 1px;
+      }
+    }
+
+    .outlier-percentile.top {
+      background: var(--foe-accent-primary);
+      color: var(--foe-text-primary);
+    }
+
+    .outlier-percentile.bottom {
+      background: var(--foe-text-primary);
+      color: var(--foe-bg-secondary);
     }
 
     /* Neon green tints for stance badges */
@@ -601,6 +808,10 @@ export class ResultsComponent implements OnInit {
   // Signal to hold the user's hot takes
   hotTakes = signal<HotTake[]>([]);
 
+  // Signal to hold statistical outliers
+  outliers = signal<OutlierAnswer[]>([]);
+  loadingOutliers = signal(false);
+
   // Match signals
   match = signal<MatchWithDetails | null>(null);
   loadingMatch = signal(false);
@@ -612,6 +823,9 @@ export class ResultsComponent implements OnInit {
 
     // Check for match (will only exist after batch matching runs)
     await this.checkForMatch();
+
+    // Fetch statistical outliers (async)
+    await this.fetchStatisticalOutliers();
   }
 
   /**
@@ -626,6 +840,32 @@ export class ResultsComponent implements OnInit {
       console.error('Error checking for match:', error);
     } finally {
       this.loadingMatch.set(false);
+    }
+  }
+
+  /**
+   * Fetch statistical outliers for the user
+   */
+  private async fetchStatisticalOutliers(): Promise<void> {
+    this.loadingOutliers.set(true);
+    try {
+      const outliersData = await this.questionnaireService.getStatisticalOutliers();
+      this.outliers.set(outliersData);
+    } catch (error) {
+      console.error('Error fetching statistical outliers:', error);
+    } finally {
+      this.loadingOutliers.set(false);
+    }
+  }
+
+  /**
+   * Format percentile rank for display
+   */
+  getPercentileLabel(outlier: OutlierAnswer): string {
+    if (outlier.isTopOutlier) {
+      return `Top ${(100 - outlier.percentileRank).toFixed(0)}%`;
+    } else {
+      return `Bottom ${outlier.percentileRank.toFixed(0)}%`;
     }
   }
 

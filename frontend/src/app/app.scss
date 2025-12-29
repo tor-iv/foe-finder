@@ -1,4 +1,4 @@
-// Global app styles - "90s Bored Satire" Aesthetic
+// Global app styles - "90s Early Internet" Aesthetic
 * {
   margin: 0;
   padding: 0;
@@ -9,4 +9,17 @@ body {
   font-family: 'Space Mono', monospace;
   margin: 0;
   padding: 0;
+}
+
+// Main app container with tiled background
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }

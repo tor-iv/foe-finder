@@ -448,3 +448,21 @@ html, body {
     max-width: 100% !important;
   }
 }
+
+// =============================================
+// DIALOG OVERRIDES
+// =============================================
+.suggestion-dialog-panel {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .mdc-dialog__surface {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+}

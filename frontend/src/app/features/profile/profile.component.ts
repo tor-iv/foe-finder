@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../core/services/auth.service';
+import { ShareButtonComponent } from '../../shared/components/share-button.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule],
+  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule, ShareButtonComponent],
   template: `
     <div class="profile-container">
       <mat-card class="profile-card">
@@ -55,6 +56,12 @@ import { AuthService } from '../../core/services/auth.service';
                 <p>We're working on finding your opposite match. Check back soon!</p>
               </div>
             }
+
+            <!-- Invite Friends Section -->
+            <div class="invite-section">
+              <p class="invite-text">Know someone who needs their echo chamber popped?</p>
+              <app-share-button></app-share-button>
+            </div>
           }
         </mat-card-content>
       </mat-card>
@@ -229,6 +236,22 @@ import { AuthService } from '../../core/services/auth.service';
       color: var(--foe-text-secondary);
       margin: 0;
       line-height: 1.5;
+    }
+
+    /* Invite Friends Section */
+    .invite-section {
+      margin-top: var(--foe-space-lg);
+      padding-top: var(--foe-space-lg);
+      border-top: 3px solid var(--foe-border);
+      text-align: center;
+    }
+
+    .invite-text {
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: var(--foe-text-xs);
+      color: var(--foe-text-secondary);
+      margin-bottom: var(--foe-space-md);
     }
   `]
 })

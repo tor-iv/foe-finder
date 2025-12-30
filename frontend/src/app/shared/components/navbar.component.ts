@@ -21,6 +21,9 @@ import { AuthService } from '../../core/services/auth.service';
 
       @if (authService.currentUser(); as user) {
         <span class="welcome">Welcome, <strong>{{ user.displayName }}</strong></span>
+        @if (user.isAdmin) {
+          <button mat-button routerLink="/admin" class="nav-btn admin-btn">Admin</button>
+        }
         <button mat-button routerLink="/profile" class="nav-btn">Profile</button>
         <button mat-button (click)="logout()" class="nav-btn logout-btn">Logout</button>
       } @else {
@@ -163,6 +166,12 @@ import { AuthService } from '../../core/services/auth.service';
       background-color: var(--foe-error) !important;
       color: white !important;
       border-color: var(--foe-border) !important;
+    }
+
+    .admin-btn {
+      background-color: var(--foe-accent-primary) !important;
+      border: 2px solid var(--foe-border) !important;
+      font-weight: 700;
     }
 
     /* Register button - mobile first */

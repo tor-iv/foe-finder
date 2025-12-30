@@ -71,7 +71,7 @@ export class AuthService {
             this.setUser(null);
             return;
           }
-          const user = this.mapSupabaseUserToUser(session.user);
+          const user = await this.mapSupabaseUserToUser(session.user);
           this.setUser(user);
 
           // Sync age verification on auth state changes (e.g., email verification callback)
@@ -84,7 +84,7 @@ export class AuthService {
       // Check for existing session (only if email is verified)
       const { data: { session } } = await this.supabaseService.client.auth.getSession();
       if (session?.user && session.user.email_confirmed_at) {
-        const user = this.mapSupabaseUserToUser(session.user);
+        const user = await this.mapSupabaseUserToUser(session.user);
         this.setUser(user);
 
         // Sync age verification on session restore
@@ -124,7 +124,7 @@ export class AuthService {
             display_name: displayName,
             marketing_consent: marketingConsent
           },
-          emailRedirectTo: `${window.location.origin}/login`
+          emailRedirectTo: `${window.location.origin}/auth/callback`
         }
       });
 
@@ -142,7 +142,7 @@ export class AuthService {
           this.emailVerificationPending.set(true);
         } else {
           // Email already confirmed (e.g., email confirmation disabled in Supabase)
-          const user = this.mapSupabaseUserToUser(data.user, displayName);
+          const user = await this.mapSupabaseUserToUser(data.user, displayName);
           this.setUser(user);
 
           // Note: syncToSupabaseOnLogin is handled by onAuthStateChange listener
@@ -198,7 +198,7 @@ export class AuthService {
       }
 
       if (data.user) {
-        const user = this.mapSupabaseUserToUser(data.user);
+        const user = await this.mapSupabaseUserToUser(data.user);
         this.setUser(user);
 
         // Note: syncToSupabaseOnLogin is handled by onAuthStateChange listener
@@ -284,7 +284,7 @@ export class AuthService {
    */
   async requestPasswordReset(email: string): Promise<void> {
     const { error } = await this.supabaseService.client.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`
+      redirectTo: `${window.location.origin}/auth/callback`
     });
 
     if (error) {
@@ -342,8 +342,20 @@ export class AuthService {
 
   /**
    * Map Supabase user to our User model
+   * Fetches is_admin flag from profiles table
    */
-  private mapSupabaseUserToUser(supabaseUser: any, displayName?: string): User {
+  private async mapSupabaseUserToUser(supabaseUser: any, displayName?: string): Promise<User> {
+    // Fetch is_admin from profiles table
+    let isAdmin = false;
+    if (this.USE_REAL_AUTH) {
+      const { data } = await this.supabaseService.client
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', supabaseUser.id)
+        .single();
+      isAdmin = data?.is_admin ?? false;
+    }
+
     return {
       uid: supabaseUser.id,
       email: supabaseUser.email || '',
@@ -353,6 +365,7 @@ export class AuthService {
       emailVerified: !!supabaseUser.email_confirmed_at,
       hasCompletedQuestionnaire: supabaseUser.user_metadata?.hasCompletedQuestionnaire || false,
       isMatched: supabaseUser.user_metadata?.isMatched || false,
+      isAdmin,
       preferences: {
         notifications: true,
         emailUpdates: true

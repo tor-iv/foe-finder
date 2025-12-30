@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { emailVerifiedGuard } from './core/guards/email-verified.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 /**
  * Application Routes Configuration
@@ -47,6 +48,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/reset-password.component').then(m => m.ResetPasswordComponent)
   },
+  {
+    path: 'auth/callback',
+    loadComponent: () =>
+      import('./features/auth/auth-callback.component').then(m => m.AuthCallbackComponent)
+  },
 
   // Protected routes (requires authentication + email verification)
   {
@@ -72,6 +78,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/profile/profile.component').then(m => m.ProfileComponent),
     canActivate: [authGuard]
+  },
+
+  // Admin route (requires authentication + admin role)
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./features/admin/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+    canActivate: [authGuard, adminGuard]
   },
 
   // Wildcard route - catch all unknown routes and redirect to login

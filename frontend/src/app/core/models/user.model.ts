@@ -8,6 +8,7 @@ export interface User {
   emailVerified: boolean;
   hasCompletedQuestionnaire: boolean;
   isMatched: boolean;
+  isAdmin?: boolean;
   preferences?: {
     notifications: boolean;
     emailUpdates: boolean;

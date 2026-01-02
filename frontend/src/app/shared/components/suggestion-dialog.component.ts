@@ -320,6 +320,24 @@ import {
     mat-spinner {
       display: inline-block;
     }
+
+    /* Mobile responsive */
+    @media (max-width: 480px) {
+      .dialog-container {
+        min-width: unset;
+        width: calc(100vw - 32px);
+      }
+
+      .dialog-actions {
+        flex-direction: column;
+        gap: var(--foe-space-md);
+      }
+
+      .cancel-button, .submit-button, .action-button {
+        width: 100%;
+        min-width: unset;
+      }
+    }
   `]
 })
 export class SuggestionDialogComponent {

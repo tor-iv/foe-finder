@@ -34,13 +34,13 @@ import { SuggestionDialogComponent } from './suggestion-dialog.component';
           </button>
         </div>
 
-        <!-- Email Webmaster -->
+        <!-- Contact Us -->
         <div class="webmaster">
-          <a href="mailto:webmaster&#64;foefinder.me" class="email-link">
+          <button class="contact-button" (click)="openSuggestionDialog()">
             <span class="blink">*</span>
-            EMAIL THE WEBMASTER
+            CONTACT US
             <span class="blink">*</span>
-          </a>
+          </button>
         </div>
 
         <!-- Copyright -->
@@ -133,12 +133,16 @@ import { SuggestionDialogComponent } from './suggestion-dialog.component';
       margin-top: var(--foe-space-sm);
     }
 
-    .email-link {
+    .contact-button {
+      background: transparent;
+      border: none;
       color: var(--foe-accent-primary);
-      text-decoration: none;
+      font-family: 'Space Mono', monospace;
       font-size: 11px;
       font-weight: bold;
       letter-spacing: 1px;
+      cursor: pointer;
+      padding: 0;
 
       &:hover {
         text-decoration: underline;

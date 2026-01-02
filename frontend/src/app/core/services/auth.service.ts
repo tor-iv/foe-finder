@@ -49,6 +49,9 @@ export class AuthService {
   // Signal to track if user just registered and needs to verify email
   emailVerificationPending = signal(false);
 
+  // Flag to prevent race condition between login() and onAuthStateChange
+  private isManualLogin = false;
+
   constructor() {
     // Initialize auth state from storage or Supabase session
     this.initializeAuth();
@@ -65,30 +68,45 @@ export class AuthService {
       // Real mode: Listen to Supabase auth state changes
       // onAuthStateChange fires whenever the user logs in, out, or token refreshes
       this.supabaseService.client.auth.onAuthStateChange(async (event, session) => {
-        if (session?.user) {
-          // Don't auto-login if email not verified
-          if (!session.user.email_confirmed_at) {
-            this.setUser(null);
+        try {
+          // Skip if this is a manual login - let the login() method handle it
+          // to avoid race conditions
+          if (event === 'SIGNED_IN' && this.isManualLogin) {
             return;
           }
-          const user = await this.mapSupabaseUserToUser(session.user);
-          this.setUser(user);
 
-          // Sync age verification on auth state changes (e.g., email verification callback)
-          await this.ageVerificationService.syncToSupabaseOnLogin(session.user.id);
-        } else {
+          if (session?.user) {
+            // Don't auto-login if email not verified
+            if (!session.user.email_confirmed_at) {
+              this.setUser(null);
+              return;
+            }
+            const user = await this.mapSupabaseUserToUser(session.user);
+            this.setUser(user);
+
+            // Sync age verification on auth state changes (e.g., email verification callback)
+            await this.ageVerificationService.syncToSupabaseOnLogin(session.user.id);
+          } else {
+            this.setUser(null);
+          }
+        } catch (err) {
+          console.error('Error in onAuthStateChange callback:', err);
           this.setUser(null);
         }
       });
 
       // Check for existing session (only if email is verified)
-      const { data: { session } } = await this.supabaseService.client.auth.getSession();
-      if (session?.user && session.user.email_confirmed_at) {
-        const user = await this.mapSupabaseUserToUser(session.user);
-        this.setUser(user);
+      try {
+        const { data: { session } } = await this.supabaseService.client.auth.getSession();
+        if (session?.user && session.user.email_confirmed_at) {
+          const user = await this.mapSupabaseUserToUser(session.user);
+          this.setUser(user);
 
-        // Sync age verification on session restore
-        await this.ageVerificationService.syncToSupabaseOnLogin(session.user.id);
+          // Sync age verification on session restore
+          await this.ageVerificationService.syncToSupabaseOnLogin(session.user.id);
+        }
+      } catch (err) {
+        console.error('Error getting initial session:', err);
       }
     } else {
       // Dummy mode: Load user from localStorage
@@ -187,29 +205,44 @@ export class AuthService {
    */
   async login(email: string, password: string): Promise<void> {
     if (this.USE_REAL_AUTH) {
-      // Real mode: Use Supabase authentication
-      const { data, error } = await this.supabaseService.client.auth.signInWithPassword({
-        email,
-        password
-      });
+      // Set flag to prevent onAuthStateChange from racing with us
+      this.isManualLogin = true;
 
-      if (error) {
-        throw new Error(this.getErrorMessage(error.message));
-      }
+      try {
+        // Real mode: Use Supabase authentication
+        const { data, error } = await this.supabaseService.client.auth.signInWithPassword({
+          email,
+          password
+        });
 
-      if (data.user) {
-        const user = await this.mapSupabaseUserToUser(data.user);
-        this.setUser(user);
-
-        // Note: syncToSupabaseOnLogin is handled by onAuthStateChange listener
-        // to avoid duplicate database calls
-
-        // Navigate based on questionnaire completion
-        if (!user.hasCompletedQuestionnaire) {
-          await this.router.navigate(['/questionnaire']);
-        } else {
-          await this.router.navigate(['/profile']);
+        if (error) {
+          throw new Error(this.getErrorMessage(error.message));
         }
+
+        if (data.user) {
+          // Check if email is verified
+          if (!data.user.email_confirmed_at) {
+            // Sign out since we don't allow unverified users
+            await this.supabaseService.client.auth.signOut();
+            throw new Error('Please confirm your email before logging in. Check your inbox for the verification link.');
+          }
+
+          const user = await this.mapSupabaseUserToUser(data.user);
+          this.setUser(user);
+
+          // Sync age verification
+          await this.ageVerificationService.syncToSupabaseOnLogin(data.user.id);
+
+          // Navigate based on questionnaire completion
+          if (!user.hasCompletedQuestionnaire) {
+            await this.router.navigate(['/questionnaire']);
+          } else {
+            await this.router.navigate(['/profile']);
+          }
+        }
+      } finally {
+        // Reset flag after login completes (success or failure)
+        this.isManualLogin = false;
       }
     } else {
       // Dummy mode: Accept any email/password combination
@@ -348,12 +381,22 @@ export class AuthService {
     // Fetch is_admin from profiles table
     let isAdmin = false;
     if (this.USE_REAL_AUTH) {
-      const { data } = await this.supabaseService.client
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', supabaseUser.id)
-        .single();
-      isAdmin = data?.is_admin ?? false;
+      try {
+        const { data, error } = await this.supabaseService.client
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', supabaseUser.id)
+          .single();
+
+        if (error) {
+          // Log the error but continue - profile might not exist yet
+          console.warn('Could not fetch profile for user:', supabaseUser.id, error.message);
+        }
+        isAdmin = data?.is_admin ?? false;
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        // Continue with isAdmin = false
+      }
     }
 
     return {

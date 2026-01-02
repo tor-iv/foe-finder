@@ -42,7 +42,7 @@ import { SupabaseService } from '../../core/services/supabase.service';
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: calc(100vh - var(--foe-navbar-height));
+      min-height: calc(100dvh - var(--foe-navbar-height));
       padding: var(--foe-space-md);
       background: var(--foe-bg-primary);
       font-family: 'Space Mono', monospace;

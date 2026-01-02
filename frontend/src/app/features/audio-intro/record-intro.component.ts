@@ -123,7 +123,7 @@ import { TRANSCRIPTION_SERVICE, TranscriptionService } from '../../core/services
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      min-height: calc(100vh - var(--foe-navbar-height));
+      min-height: calc(100dvh - var(--foe-navbar-height));
       padding: var(--foe-space-sm);
       background: var(--foe-bg-primary);
       font-family: 'Space Mono', monospace;

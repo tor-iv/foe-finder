@@ -103,7 +103,7 @@ import { CountdownTimerComponent } from '../../shared/components/countdown-timer
       justify-content: flex-start;
       align-items: center;
       gap: var(--foe-space-md);
-      min-height: calc(100vh - var(--foe-navbar-height));
+      min-height: calc(100dvh - var(--foe-navbar-height));
       padding: var(--foe-space-md);
       background: var(--foe-bg-primary);
       overflow: hidden;

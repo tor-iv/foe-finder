@@ -562,9 +562,17 @@ export class QuestionnaireComponent implements OnInit, OnDestroy, AfterViewInit 
 
     // Detect actual movement from initial position
     if (value !== this.initialSliderValue()) {
-      const moved = { ...this.sliderMoved() };
-      moved[questionId] = true;
-      this.sliderMoved.set(moved);
+      // Run signal updates inside zone to trigger change detection
+      this.ngZone.run(() => {
+        const moved = { ...this.sliderMoved() };
+        moved[questionId] = true;
+        this.sliderMoved.set(moved);
+
+        // Also update answer immediately so isComplete() works on last question
+        const currentAnswers = { ...this.answers() };
+        currentAnswers[questionId] = value;
+        this.answers.set(currentAnswers);
+      });
     }
   }
 

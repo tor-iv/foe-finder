@@ -14,7 +14,7 @@ import { ShareButtonComponent } from '../../shared/components/share-button.compo
     <div class="profile-container">
       <mat-card class="profile-card">
         <mat-card-header>
-          <mat-card-title>Your Profile</mat-card-title>
+          <mat-card-title>Subject File</mat-card-title>
         </mat-card-header>
 
         <mat-card-content>
@@ -29,37 +29,37 @@ import { ShareButtonComponent } from '../../shared/components/share-button.compo
                 <span>{{ user.email }}</span>
               </div>
               <div class="info-row">
-                <strong>Questionnaire:</strong>
+                <strong>Opinions Extracted:</strong>
                 <span class="status" [class.completed]="user.hasCompletedQuestionnaire">
-                  {{ user.hasCompletedQuestionnaire ? 'Completed' : 'Not Completed' }}
+                  {{ user.hasCompletedQuestionnaire ? 'Yes' : 'Pending' }}
                 </span>
               </div>
               <div class="info-row">
-                <strong>Match Status:</strong>
+                <strong>Nemesis Status:</strong>
                 <span class="status" [class.matched]="user.isMatched">
-                  {{ user.isMatched ? 'Matched!' : 'Waiting for match' }}
+                  {{ user.isMatched ? 'Assigned' : 'Searching' }}
                 </span>
               </div>
             </div>
 
             @if (!user.hasCompletedQuestionnaire) {
               <div class="alert">
-                <p>You haven't completed the questionnaire yet.</p>
+                <p>Warning: Opinions not yet extracted</p>
                 <button mat-raised-button color="primary" routerLink="/questionnaire">
-                  Complete Questionnaire
+                  Submit to Extraction
                 </button>
               </div>
             }
 
             @if (user.hasCompletedQuestionnaire && !user.isMatched) {
               <div class="info-message">
-                <p>We're working on finding your opposite match. Check back soon!</p>
+                <p>Our algorithm is still hunting. Your nemesis cannot hide forever.</p>
               </div>
             }
 
             <!-- Invite Friends Section -->
             <div class="invite-section">
-              <p class="invite-text">Know someone who needs their echo chamber popped?</p>
+              <p class="invite-text">Know someone who needs their echo chamber destroyed?</p>
               <app-share-button></app-share-button>
             </div>
           }

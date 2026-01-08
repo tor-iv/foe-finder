@@ -32,8 +32,8 @@ import { AuthService } from '../../core/services/auth.service';
         @if (emailVerificationPending()) {
           <!-- Email Verification Pending State -->
           <mat-card-header>
-            <mat-card-title>Check Your Email</mat-card-title>
-            <mat-card-subtitle>One more step to find your foe</mat-card-subtitle>
+            <mat-card-title>Almost There</mat-card-title>
+            <mat-card-subtitle>One more step before we ruin your dating life</mat-card-subtitle>
           </mat-card-header>
 
           <mat-card-content>
@@ -52,8 +52,8 @@ import { AuthService } from '../../core/services/auth.service';
         } @else {
           <!-- Registration Form -->
           <mat-card-header>
-            <mat-card-title>Join Foe Finder</mat-card-title>
-            <mat-card-subtitle>Create an account to find your opposite match</mat-card-subtitle>
+            <mat-card-title>Join the Experiment</mat-card-title>
+            <mat-card-subtitle>Sign up to be scientifically matched with your worst nightmare</mat-card-subtitle>
           </mat-card-header>
 
           <mat-card-content>
@@ -101,7 +101,7 @@ import { AuthService } from '../../core/services/auth.service';
 
               <div class="consent-checkbox">
                 <mat-checkbox formControlName="marketingConsent">
-                  Send me updates about my match and FoeFinder news
+                  Yes, email me when you've found someone I'll inevitably argue with
                 </mat-checkbox>
               </div>
 
@@ -121,7 +121,7 @@ import { AuthService } from '../../core/services/auth.service';
                 @if (loading()) {
                   <mat-spinner diameter="20"></mat-spinner>
                 } @else {
-                  Create Account
+                  Seal My Fate
                 }
               </button>
             </form>

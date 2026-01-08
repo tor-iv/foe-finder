@@ -46,7 +46,7 @@ import { SuggestionDialogComponent } from './suggestion-dialog.component';
         <!-- Copyright -->
         <div class="copyright">
           <p>&copy; {{ currentYear }} FOEFINDER.ME - ALL RIGHTS RESERVED</p>
-          <p class="disclaimer">This site is not affiliated with any political organization.</p>
+          <p class="disclaimer">This site is not responsible for any arguments, breakups, or existential crises.</p>
         </div>
       </div>
     </footer>

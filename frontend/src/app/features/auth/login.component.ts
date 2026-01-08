@@ -34,7 +34,7 @@ import { CountdownTimerComponent } from '../../shared/components/countdown-timer
             <span class="title-foe">FOE</span>
             <span class="title-finder">FINDER</span>
           </mat-card-title>
-          <mat-card-subtitle>Log in to find your opposite match</mat-card-subtitle>
+          <mat-card-subtitle>Log in to resume your quest for incompatibility</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
@@ -74,7 +74,7 @@ import { CountdownTimerComponent } from '../../shared/components/countdown-timer
               @if (loading()) {
                 <mat-spinner diameter="20"></mat-spinner>
               } @else {
-                Log In
+                Return to the Chaos
               }
             </button>
           </form>
@@ -84,8 +84,8 @@ import { CountdownTimerComponent } from '../../shared/components/countdown-timer
           </div>
 
           <div class="register-link">
-            Don't have an account?
-            <a routerLink="/register">Register here</a>
+            Not yet registered for disappointment?
+            <a routerLink="/register">Join the Misery</a>
           </div>
         </mat-card-content>
       </mat-card>

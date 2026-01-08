@@ -27,16 +27,16 @@ import { Answer } from '../../core/models/response.model';
     <div class="questionnaire-container">
       <mat-card class="questionnaire-card">
         <mat-card-header>
-          <mat-card-title>Find Your Opposite Match</mat-card-title>
+          <mat-card-title>Opinion Extraction Protocol</mat-card-title>
           <mat-card-subtitle>
-            Answer these questions honestly. We'll match you with someone who sees things differently.
+            Answer honestly. Our algorithm uses your responses to find someone who thinks you're completely wrong about everything.
           </mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
             <div class="progress-container">
               <div class="progress-text">
-                Question {{ currentQuestionIndex() + 1 }} of {{ questions.length }}
+                Processing Opinion {{ currentQuestionIndex() + 1 }} of {{ questions.length }}
               </div>
               <mat-progress-bar
                 mode="determinate"
@@ -89,7 +89,7 @@ import { Answer } from '../../core/models/response.model';
                       @if (submitting()) {
                         <mat-spinner diameter="20"></mat-spinner>
                       } @else {
-                        Submit
+                        Submit to the Algorithm
                       }
                     </button>
                   }

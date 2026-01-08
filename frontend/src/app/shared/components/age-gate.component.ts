@@ -28,7 +28,7 @@ import { AgeVerificationService } from '../../core/services/age-verification.ser
         <div class="age-gate-content">
           <h2 class="age-gate-title">AGE VERIFICATION</h2>
           <p class="age-gate-subtitle">
-            You must be <strong>21 or older</strong> to enter this site.
+            You must be <strong>21 or older</strong> to willingly enter a relationship disaster zone.
           </p>
 
           <div class="birthday-input-group">
@@ -54,11 +54,11 @@ import { AgeVerificationService } from '../../core/services/age-verification.ser
             (click)="verifyAge()"
             [disabled]="!birthDate"
           >
-            VERIFY AGE
+            PROCEED AT YOUR OWN RISK
           </button>
 
           <p class="age-gate-disclaimer">
-            By entering, you confirm you are of legal age.
+            By entering, you accept full responsibility for all future arguments.
           </p>
         </div>
       </div>

@@ -72,8 +72,8 @@ interface HotTake {
             <!-- Statistical outliers section -->
             @if (outliers().length > 0) {
               <div class="outliers-section">
-                <h3 class="outliers-title">Your Unique Perspectives</h3>
-                <p class="outliers-subtitle">These opinions put you in the most extreme 10% compared to everyone else.</p>
+                <h3 class="outliers-title">Where You're Statistically Weird</h3>
+                <p class="outliers-subtitle">These opinions make you a statistical anomaly. Congratulations?</p>
                 <div class="outliers-list">
                   @for (outlier of outliers(); track outlier.questionId) {
                     <div class="outlier-item">
@@ -105,7 +105,7 @@ interface HotTake {
               <div class="match-found-box">
                 <div class="match-header">
                   <span class="match-icon">⚔️</span>
-                  <h3 class="match-title">Your Foe Has Been Found</h3>
+                  <h3 class="match-title">Target Acquired</h3>
                 </div>
                 <div class="opponent-info">
                   <p class="opponent-name">
@@ -116,7 +116,7 @@ interface HotTake {
                       </span>
                     }
                   </p>
-                  <p class="opposition-score">Opposition Score: {{ match()!.oppositionScore | number:'1.0-0' }}%</p>
+                  <p class="opposition-score">Incompatibility Rating: {{ match()!.oppositionScore | number:'1.0-0' }}%</p>
                 </div>
 
                 <!-- Opponent's Audio Intro -->
@@ -130,7 +130,7 @@ interface HotTake {
                   </app-audio-player>
                 }
                 <div class="differences-list">
-                  <p class="differences-title">Where You Clash Most:</p>
+                  <p class="differences-title">Predicted Argument Topics:</p>
                   @for (diff of match()!.topDifferences; track diff.questionId) {
                     <div class="difference-item">
                       <p class="diff-question">"{{ diff.questionText }}"</p>
@@ -148,7 +148,7 @@ interface HotTake {
               <div class="foe-hunting-box">
                 <mat-spinner diameter="40"></mat-spinner>
                 <div class="foe-message">
-                  <p class="foe-title">Checking for your nemesis...</p>
+                  <p class="foe-title">Scanning for your nemesis...</p>
                 </div>
               </div>
             } @else {
@@ -156,9 +156,9 @@ interface HotTake {
               <div class="foe-hunting-box">
                 <div class="foe-icon">🔍</div>
                 <div class="foe-message">
-                  <p class="foe-title">Now we're hunting for your nemesis</p>
-                  <p class="foe-subtitle">Someone who thinks you're completely wrong about everything.</p>
-                  <p class="foe-eta">You'll hear from us soon.</p>
+                  <p class="foe-title">Scanning for Your Nemesis</p>
+                  <p class="foe-subtitle">Our algorithm is searching for someone who will find your existence mildly infuriating.</p>
+                  <p class="foe-eta">Please Stand By for Disappointment</p>
                 </div>
               </div>
             }
@@ -166,17 +166,17 @@ interface HotTake {
 
           <mat-card-actions>
             <button mat-button (click)="retakeQuiz()">
-              Retake Quiz
+              Re-Submit to Algorithm
             </button>
           </mat-card-actions>
         </mat-card>
       } @else {
         <mat-card class="no-results-card">
           <mat-card-content>
-            <h2>No Results Found</h2>
-            <p>It looks like you haven't completed the quiz yet.</p>
+            <h2>No Data Detected</h2>
+            <p>Our algorithm has no opinions to analyze. Submit yourself for extraction.</p>
             <button mat-raised-button color="primary" (click)="goToQuestionnaire()">
-              Take the Quiz
+              Submit Opinions for Analysis
             </button>
           </mat-card-content>
         </mat-card>

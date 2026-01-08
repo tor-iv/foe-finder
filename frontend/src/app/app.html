@@ -1,10 +1,15 @@
-<!-- Age Gate - first check -->
-@if (!ageVerified()) {
+<!-- Intro Screen - first check -->
+@if (!introSeen()) {
+  <app-intro (dismissed)="onIntroDismissed()"></app-intro>
+}
+
+<!-- Age Gate - second check (only after intro seen) -->
+@if (introSeen() && !ageVerified()) {
   <app-age-gate (verified)="onAgeVerified()"></app-age-gate>
 }
 
-<!-- Geo Gate - second check (only if geo-fence enabled and age verified) -->
-@if (ageVerified() && geoFenceEnabled && geoVerified() !== true) {
+<!-- Geo Gate - third check (only if geo-fence enabled and age verified) -->
+@if (introSeen() && ageVerified() && geoFenceEnabled && geoVerified() !== true) {
   <app-geo-gate (verified)="onGeoVerified()"></app-geo-gate>
 }
 

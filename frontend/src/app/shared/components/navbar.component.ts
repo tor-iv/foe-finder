@@ -16,7 +16,7 @@ import { AuthService } from '../../core/services/auth.service';
         <span class="logo-foe">FOE</span>
         <span class="logo-finder">FINDER</span>
       </span>
-      <span class="tagline">Find Your Opposite</span>
+      <span class="tagline">The Only Honest Dating App</span>
       <span class="spacer"></span>
 
       @if (authService.currentUser(); as user) {

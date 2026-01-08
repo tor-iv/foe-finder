@@ -43,13 +43,13 @@ import { GeoFenceService } from '../../core/services/geo-fence.service';
             <div class="initial-state">
               <h2 class="geo-gate-title">LOCATION REQUIRED</h2>
               <p class="geo-gate-subtitle">
-                FoeFinder is currently available in <strong>NYC only</strong>.
+                FoeFinder is currently unleashing chaos in <strong>NYC only</strong>.
               </p>
               <p class="geo-gate-info">
-                We need to verify your location to continue.
+                Confirm you're in the blast radius.
               </p>
               <button class="verify-btn" (click)="checkLocation()">
-                CHECK MY LOCATION
+                VERIFY I'M IN THE ZONE
               </button>
             </div>
           }
@@ -87,7 +87,7 @@ import { GeoFenceService } from '../../core/services/geo-fence.service';
               @if (!waitlistSubmitted()) {
                 <div class="waitlist-section">
                   <p class="waitlist-intro">
-                    Join the waitlist to be notified when we launch in your area:
+                    Join the waitlist. We'll notify you when we expand our reign of incompatibility:
                   </p>
                   <div class="waitlist-form">
                     <input
@@ -125,7 +125,7 @@ import { GeoFenceService } from '../../core/services/geo-fence.service';
               @if (waitlistSubmitted()) {
                 <div class="waitlist-success">
                   <p class="success-message">
-                    You're on the list! We'll email you when FoeFinder launches in your area.
+                    You're on the list. Prepare yourself.
                   </p>
                 </div>
               }

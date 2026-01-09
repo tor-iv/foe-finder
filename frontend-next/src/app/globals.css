@@ -1,0 +1,288 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ==============================================
+   FoeFinder Win95 Theme
+   ============================================== */
+
+:root {
+  /* Windows 95 System Colors */
+  --win95-face: #d4d4d4;
+  --win95-highlight: #ffffff;
+  --win95-shadow: #a0a0a0;
+  --win95-dark-shadow: #606060;
+  --win95-light: #ececec;
+
+  /* FoeFinder Accent (Netscape Blue) */
+  --foe-accent: #0066ff;
+  --foe-accent-light: #3399ff;
+  --foe-accent-dark: #0044cc;
+
+  /* Semantic Colors */
+  --foe-error: #cc0000;
+  --foe-success: #008800;
+  --foe-warning: #cc8800;
+
+  /* shadcn/ui Semantic Mapping → Win95 */
+  --radius: 0px;
+  --background: #d4d4d4;
+  --foreground: #1a1a1a;
+  --card: #e0e0e0;
+  --card-foreground: #1a1a1a;
+  --popover: #e0e0e0;
+  --popover-foreground: #1a1a1a;
+  --primary: #0066ff;
+  --primary-foreground: #ffffff;
+  --secondary: #d4d4d4;
+  --secondary-foreground: #1a1a1a;
+  --muted: #c0c0c0;
+  --muted-foreground: #666666;
+  --accent: #0066ff;
+  --accent-foreground: #ffffff;
+  --destructive: #cc0000;
+  --destructive-foreground: #ffffff;
+  --border: #a0a0a0;
+  --input: #ffffff;
+  --ring: #0066ff;
+}
+
+@theme inline {
+  /* Win95 Colors */
+  --color-win95-face: var(--win95-face);
+  --color-win95-highlight: var(--win95-highlight);
+  --color-win95-shadow: var(--win95-shadow);
+  --color-win95-dark-shadow: var(--win95-dark-shadow);
+  --color-win95-light: var(--win95-light);
+
+  /* FoeFinder Accent Colors */
+  --color-foe-accent: var(--foe-accent);
+  --color-foe-accent-light: var(--foe-accent-light);
+  --color-foe-accent-dark: var(--foe-accent-dark);
+  --color-foe-error: var(--foe-error);
+  --color-foe-success: var(--foe-success);
+  --color-foe-warning: var(--foe-warning);
+
+  /* shadcn semantic colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Win95 = No border radius */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+
+  /* Fonts */
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+  --font-display: 'Inter', ui-sans-serif, sans-serif;
+
+  /* Win95 Box Shadows */
+  --shadow-win95-outset: inset -1px -1px #606060,
+                         inset 1px 1px #ffffff,
+                         inset -2px -2px #a0a0a0,
+                         inset 2px 2px #ececec;
+  --shadow-win95-inset: inset 1px 1px #606060,
+                        inset -1px -1px #ffffff,
+                        inset 2px 2px #a0a0a0,
+                        inset -2px -2px #ececec;
+  --shadow-win95-pressed: inset 2px 2px #606060,
+                          inset -1px -1px #ffffff;
+}
+
+/* ==============================================
+   Base Styles
+   ============================================== */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-mono);
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Win95 Scrollbars */
+  ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #a0a0a0;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #d4d4d4;
+    box-shadow: var(--shadow-win95-outset);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ececec;
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--foe-accent);
+    color: white;
+  }
+}
+
+/* ==============================================
+   Win95 Utility Classes
+   ============================================== */
+
+.win95-outset {
+  box-shadow: var(--shadow-win95-outset);
+  background: var(--win95-face);
+}
+
+.win95-inset {
+  box-shadow: var(--shadow-win95-inset);
+  background: var(--win95-face);
+}
+
+.win95-pressed {
+  box-shadow: var(--shadow-win95-pressed);
+  background: var(--win95-shadow);
+}
+
+/* Win95 Panel/Card */
+.win95-panel {
+  box-shadow: var(--shadow-win95-outset);
+  background: var(--win95-face);
+  padding: 16px;
+}
+
+/* Win95 Title Bar */
+.win95-titlebar {
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: white;
+  font-weight: 700;
+  padding: 4px 8px;
+  font-family: var(--font-display);
+}
+
+/* ==============================================
+   Win95 Button Styles
+   ============================================== */
+
+.win95-btn {
+  box-shadow: var(--shadow-win95-outset);
+  background: var(--win95-face);
+  border: none;
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: none;
+  user-select: none;
+}
+
+.win95-btn:hover {
+  background: var(--win95-light);
+}
+
+.win95-btn:active {
+  box-shadow: var(--shadow-win95-pressed);
+  background: var(--win95-shadow);
+  padding: 9px 15px 7px 17px;
+}
+
+.win95-btn:disabled {
+  color: var(--win95-shadow);
+  text-shadow: 1px 1px var(--win95-highlight);
+  cursor: not-allowed;
+}
+
+/* Primary Button (Netscape Blue) */
+.win95-btn-primary {
+  background: var(--foe-accent);
+  color: white;
+  box-shadow: inset -1px -1px var(--foe-accent-dark),
+              inset 1px 1px var(--foe-accent-light),
+              inset -2px -2px var(--foe-accent),
+              inset 2px 2px var(--foe-accent-light);
+}
+
+.win95-btn-primary:hover {
+  background: var(--foe-accent-light);
+}
+
+.win95-btn-primary:active {
+  box-shadow: inset 2px 2px var(--foe-accent-dark);
+  background: var(--foe-accent-dark);
+}
+
+/* ==============================================
+   Win95 Form Elements
+   ============================================== */
+
+.win95-input {
+  box-shadow: var(--shadow-win95-inset);
+  background: white;
+  border: none;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  outline: none;
+}
+
+.win95-input:focus {
+  box-shadow: var(--shadow-win95-inset), 0 0 0 2px var(--foe-accent);
+}
+
+.win95-input::placeholder {
+  color: var(--win95-shadow);
+}
+
+/* ==============================================
+   Responsive Spacing
+   ============================================== */
+
+@media (min-width: 768px) {
+  :root {
+    --spacing-md: 20px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+  }
+}
+
+/* ==============================================
+   Animation Utilities (for Framer Motion)
+   ============================================== */
+
+/* Disable animations for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -78,10 +78,20 @@ import { AgeVerificationService } from '../../core/services/age-verification.ser
       background: rgba(0, 0, 0, 0.9);
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       z-index: 9999;
-      padding: var(--foe-space-md);
+      padding: var(--foe-space-sm);
+      padding-top: var(--foe-space-md);
       font-family: 'Space Mono', monospace;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (min-height: 550px) {
+      .age-gate-overlay {
+        align-items: center;
+        padding: var(--foe-space-md);
+      }
     }
 
     .age-gate-modal {
@@ -91,6 +101,7 @@ import { AgeVerificationService } from '../../core/services/age-verification.ser
       max-width: 400px;
       width: 100%;
       text-align: center;
+      margin-bottom: var(--foe-space-md);
     }
 
     @media (min-width: 768px) {
@@ -133,7 +144,13 @@ import { AgeVerificationService } from '../../core/services/age-verification.ser
     }
 
     .age-gate-content {
-      padding: var(--foe-space-lg);
+      padding: var(--foe-space-md);
+    }
+
+    @media (min-height: 550px) {
+      .age-gate-content {
+        padding: var(--foe-space-lg);
+      }
     }
 
     @media (min-width: 768px) {
@@ -144,12 +161,20 @@ import { AgeVerificationService } from '../../core/services/age-verification.ser
 
     .age-gate-title {
       font-family: 'Inter', sans-serif;
-      font-size: var(--foe-text-lg);
+      font-size: var(--foe-text-base);
       font-weight: 900;
-      margin-bottom: var(--foe-space-sm);
+      margin-bottom: var(--foe-space-xs);
       color: var(--foe-text-primary);
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
+    }
+
+    @media (min-height: 550px) {
+      .age-gate-title {
+        font-size: var(--foe-text-lg);
+        margin-bottom: var(--foe-space-sm);
+        letter-spacing: 2px;
+      }
     }
 
     @media (min-width: 768px) {
@@ -160,9 +185,9 @@ import { AgeVerificationService } from '../../core/services/age-verification.ser
     }
 
     .age-gate-subtitle {
-      font-size: var(--foe-text-sm);
+      font-size: var(--foe-text-xs);
       color: var(--foe-text-secondary);
-      margin-bottom: var(--foe-space-lg);
+      margin-bottom: var(--foe-space-md);
       text-transform: uppercase;
       letter-spacing: 1px;
 
@@ -172,8 +197,21 @@ import { AgeVerificationService } from '../../core/services/age-verification.ser
       }
     }
 
+    @media (min-height: 550px) {
+      .age-gate-subtitle {
+        font-size: var(--foe-text-sm);
+        margin-bottom: var(--foe-space-lg);
+      }
+    }
+
     .birthday-input-group {
-      margin-bottom: var(--foe-space-lg);
+      margin-bottom: var(--foe-space-md);
+    }
+
+    @media (min-height: 550px) {
+      .birthday-input-group {
+        margin-bottom: var(--foe-space-lg);
+      }
     }
 
     .birthday-label {
@@ -245,11 +283,17 @@ import { AgeVerificationService } from '../../core/services/age-verification.ser
     }
 
     .age-gate-disclaimer {
-      margin-top: var(--foe-space-lg);
+      margin-top: var(--foe-space-md);
       font-size: 10px;
       color: var(--foe-text-muted);
       text-transform: uppercase;
       letter-spacing: 1px;
+    }
+
+    @media (min-height: 550px) {
+      .age-gate-disclaimer {
+        margin-top: var(--foe-space-lg);
+      }
     }
   `]
 })

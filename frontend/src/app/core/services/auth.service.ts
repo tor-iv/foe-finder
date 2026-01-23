@@ -230,8 +230,10 @@ export class AuthService {
           const user = await this.mapSupabaseUserToUser(data.user);
           this.setUser(user);
 
-          // Sync age verification
-          await this.ageVerificationService.syncToSupabaseOnLogin(data.user.id);
+          // Fire and forget - don't block login on age verification sync
+          this.ageVerificationService.syncToSupabaseOnLogin(data.user.id).catch(err => {
+            console.warn('Age verification sync failed:', err);
+          });
 
           // Navigate based on questionnaire completion
           if (!user.hasCompletedQuestionnaire) {
@@ -382,11 +384,18 @@ export class AuthService {
     let isAdmin = false;
     if (this.USE_REAL_AUTH) {
       try {
-        const { data, error } = await this.supabaseService.client
+        // Add 5 second timeout to prevent hanging on slow/failed profile queries
+        const timeoutPromise = new Promise<{ data: null; error: null }>((resolve) =>
+          setTimeout(() => resolve({ data: null, error: null }), 5000)
+        );
+
+        const profilePromise = this.supabaseService.client
           .from('profiles')
           .select('is_admin')
           .eq('id', supabaseUser.id)
           .single();
+
+        const { data, error } = await Promise.race([profilePromise, timeoutPromise]);
 
         if (error) {
           // Log the error but continue - profile might not exist yet

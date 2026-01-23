@@ -315,11 +315,20 @@ export class LoginComponent {
 
     const { email, password } = this.loginForm.value;
 
+    // Safety timeout - if login takes more than 10 seconds, show error
+    const timeoutId = setTimeout(() => {
+      if (this.loading()) {
+        this.loading.set(false);
+        this.errorMessage.set('Login is taking too long. Please try again.');
+      }
+    }, 10000);
+
     try {
       await this.authService.login(email, password);
     } catch (error: any) {
       this.errorMessage.set(error.message || 'Login failed. Please try again.');
     } finally {
+      clearTimeout(timeoutId);
       this.loading.set(false);
     }
   }

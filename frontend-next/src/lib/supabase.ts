@@ -1,9 +1,11 @@
 import { createBrowserClient } from '@supabase/ssr';
 
-// Singleton browser client
-let client: ReturnType<typeof createBrowserClient> | null = null;
+type SupabaseClient = ReturnType<typeof createBrowserClient>;
 
-export function getSupabaseClient() {
+// Singleton browser client - created lazily on first access
+let client: SupabaseClient | null = null;
+
+function getClient(): SupabaseClient {
   if (client) return client;
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -21,9 +23,20 @@ export function getSupabaseClient() {
   return client;
 }
 
-// Lazy getter - only initializes when accessed at runtime
-export const supabase = new Proxy({} as ReturnType<typeof createBrowserClient>, {
+// Export getter function for explicit initialization
+export function getSupabaseClient(): SupabaseClient {
+  return getClient();
+}
+
+// Lazy proxy that preserves method binding
+export const supabase = new Proxy({} as SupabaseClient, {
   get(_, prop) {
-    return getSupabaseClient()[prop as keyof ReturnType<typeof createBrowserClient>];
+    const client = getClient();
+    const value = client[prop as keyof SupabaseClient];
+    // Bind methods to preserve 'this' context
+    if (typeof value === 'function') {
+      return value.bind(client);
+    }
+    return value;
   },
 });

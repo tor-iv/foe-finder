@@ -35,13 +35,10 @@ export default function QuestionnairePage() {
 
   // Immediate DOM update using transforms only (Safari optimized)
   const updateSliderVisuals = useCallback((value: number) => {
-    const containerWidth = containerWidthRef.current;
-    const thumbWidth = window.innerWidth >= 768 ? 24 : 32;
-
-    if (thumbRef.current && containerWidth > 0) {
-      const px = (value / 100) * containerWidth - thumbWidth / 2;
-      thumbRef.current.style.left = '0';
-      thumbRef.current.style.transform = `translateX(${px}px) translateY(-50%)`;
+    if (thumbRef.current) {
+      // Use percentage-based left + fixed translateX offset for thumb centering
+      thumbRef.current.style.left = `${value}%`;
+      thumbRef.current.style.transform = 'translateX(-50%) translateY(-50%)';
     }
     if (fillRef.current) {
       fillRef.current.style.transform = `scaleX(${value / 100})`;
@@ -244,11 +241,11 @@ export default function QuestionnairePage() {
                     />
                   </div>
 
-                  {/* Thumb - uses translateX for GPU-only updates */}
+                  {/* Thumb - uses percentage left + translateX(-50%) for centering */}
                   <div
                     ref={thumbRef}
-                    className="absolute top-1/2 w-8 h-8 md:w-6 md:h-6 bg-foe-accent border-2 md:border-[3px] border-win95-darkShadow outline outline-1 md:outline-2 outline-offset-1 md:outline-offset-2 outline-win95-darkShadow/30 pointer-events-none will-change-transform"
-                    style={{ left: '50%', transform: 'translateX(-50%) translateY(-50%)' }}
+                    className="absolute w-8 h-8 md:w-6 md:h-6 bg-foe-accent border-2 md:border-[3px] border-win95-darkShadow outline outline-1 md:outline-2 outline-offset-1 md:outline-offset-2 outline-win95-darkShadow/30 pointer-events-none will-change-transform"
+                    style={{ top: '50%', left: '50%', transform: 'translateX(-50%) translateY(-50%)' }}
                   />
 
                   {/* Native Range Input (uncontrolled for Safari performance) */}

@@ -40,6 +40,7 @@ export default function QuestionnairePage() {
 
     if (thumbRef.current && containerWidth > 0) {
       const px = (value / 100) * containerWidth - thumbWidth / 2;
+      thumbRef.current.style.left = '0';
       thumbRef.current.style.transform = `translateX(${px}px) translateY(-50%)`;
     }
     if (fillRef.current) {
@@ -246,8 +247,8 @@ export default function QuestionnairePage() {
                   {/* Thumb - uses translateX for GPU-only updates */}
                   <div
                     ref={thumbRef}
-                    className="absolute top-1/2 left-0 w-8 h-8 md:w-6 md:h-6 bg-foe-accent border-2 md:border-[3px] border-win95-darkShadow outline outline-1 md:outline-2 outline-offset-1 md:outline-offset-2 outline-win95-darkShadow/30 pointer-events-none will-change-transform"
-                    style={{ transform: 'translateX(calc(50% - 16px)) translateY(-50%)' }}
+                    className="absolute top-1/2 w-8 h-8 md:w-6 md:h-6 bg-foe-accent border-2 md:border-[3px] border-win95-darkShadow outline outline-1 md:outline-2 outline-offset-1 md:outline-offset-2 outline-win95-darkShadow/30 pointer-events-none will-change-transform"
+                    style={{ left: '50%', transform: 'translateX(-50%) translateY(-50%)' }}
                   />
 
                   {/* Native Range Input (uncontrolled for Safari performance) */}

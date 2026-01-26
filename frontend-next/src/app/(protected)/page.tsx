@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/providers/auth-provider';
@@ -30,7 +31,8 @@ function getDisagreementComment(percentage: number): string {
 }
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const router = useRouter();
+  const { user, isLoading: authLoading } = useAuth();
   const [responses, setResponses] = useState<UserResponse[]>([]);
   const [averages, setAverages] = useState<Map<number, number>>(new Map());
   const [visitorCount, setVisitorCount] = useState<number>(0);
@@ -38,9 +40,19 @@ export default function HomePage() {
   const [matchId, setMatchId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Redirect to login if not authenticated (client-side fallback)
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/login');
+    }
+  }, [authLoading, user, router]);
+
   useEffect(() => {
     async function fetchData() {
-      if (!user) return;
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
 
       try {
         // Fetch user's responses

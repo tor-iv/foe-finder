@@ -4,70 +4,63 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**FoeFinder** (foefinder.me) is a matchmaking app that connects people with opposite opinions. Unlike traditional matching apps that find similarities, this project maximizes opinion differences to facilitate diverse conversations and challenge echo chambers.
+**FoeFinder** (foefinder.me) is a social matching app that connects people with opposite opinions. Unlike traditional matching apps that find similarities, FoeFinder maximizes opinion differences to facilitate diverse conversations.
 
-## Current Status
+## Active Frontends
 
-- ✅ **Working**: Angular 20 frontend with Supabase auth, questionnaire system, user profiles
-- ✅ **Working**: Rust matching engine (WebAssembly)
-- ⏳ **Planned**: Ionic/Capacitor migration for mobile, Cloud Functions for matching triggers
+The project has **two frontend implementations**:
 
-## Development Commands
+### Next.js Frontend (primary, in development)
+```bash
+cd frontend-next
+npm install           # Install dependencies
+npm run dev           # Dev server at http://localhost:3000
+npm run build         # Production build
+npm run lint          # Run ESLint
+npm test              # Run Playwright tests
+npm run test:ui       # Playwright test UI
+npm run test:headed   # Headed browser tests
+```
 
-### Frontend (Angular)
+**Stack:** Next.js 16, React 19, Supabase SSR, TanStack Query, Zustand, Tailwind CSS 4, shadcn/ui (Radix), Framer Motion
+
+### Angular Frontend (legacy)
 ```bash
 cd frontend
-
-npm install          # Install dependencies
-npm start            # Dev server at http://localhost:4200
-npm run build        # Production build to dist/frontend/browser/
-npm test             # Run Jasmine/Karma tests
-npm run watch        # Dev build with watch mode
+npm install           # Install dependencies
+npm start             # Dev server at http://localhost:4200
+npm run build         # Production build
+npm test              # Run Jasmine/Karma tests
 ```
+
+**Stack:** Angular 20, Angular Material, Supabase JS client
 
 ### Rust Matching Engine
 ```bash
 cd rust-matcher
-
 cargo test                      # Run tests
-cargo test -- --nocapture       # Run tests with output
-wasm-pack build --target web    # Build for browser (WebAssembly)
-wasm-pack build --target nodejs # Build for Node.js/Cloud Functions
-cargo check                     # Check code without building
+cargo test -- --nocapture       # Tests with output
+wasm-pack build --target web    # Build WASM for browser
+wasm-pack build --target nodejs # Build for Node.js
 ```
-
-### Deployment
-Vercel auto-deploys from `main` branch. Configuration in `/vercel.json`.
 
 ## Architecture
 
-### Frontend (`frontend/src/app/`)
-```
-app/
-├── core/
-│   ├── services/       # AuthService, SupabaseService, QuestionnaireService
-│   ├── guards/         # AuthGuard (route protection)
-│   └── models/         # User, Match, Questionnaire, Response interfaces
-├── features/
-│   ├── auth/           # Login, Register components
-│   ├── questionnaire/  # 1-7 scale questionnaire
-│   ├── results/        # Match results display
-│   └── profile/        # User profile
-└── shared/components/  # Navbar, reusable UI
-```
+### Backend: Supabase
+- **Auth**: Email/password with email verification
+- **Database**: PostgreSQL with Row Level Security (RLS)
+- **Schema**: See `supabase-schema.sql` for complete schema
 
-**Key patterns:**
-- Standalone components (no NgModules)
-- Services use `providedIn: 'root'`
-- Lazy-loaded routes in `app.routes.ts`
-- Auth has dual mode: real Supabase or dummy localStorage (controlled by `environment.features.useRealAuth`)
+Key tables: `users`, `questionnaires`, `responses`, `matches`, `user_events`
 
-### Rust Matcher (`rust-matcher/src/`)
-- **lib.rs**: WASM bindings, User/Match structs, ScoringStrategy trait
-- **scoring.rs**: SimpleDifferenceScorer, EuclideanDistanceScorer, WeightedScorer, PolarizationScorer
-- **matching.rs**: GreedyMatcher algorithm
+Triggers auto-create user profiles on signup and mark questionnaire completion.
 
-**Matching algorithm**: Calculates sum of absolute differences between users' 1-7 scale responses; higher scores = more opposite opinions.
+### Matching Algorithm (Rust → WASM)
+- `lib.rs`: Core User/Match structs, ScoringStrategy trait, WASM bindings
+- `scoring.rs`: SimpleDifferenceScorer, EuclideanDistanceScorer, WeightedScorer, PolarizationScorer
+- `matching.rs`: GreedyMatcher algorithm
+
+Calculates sum of absolute differences between users' 1-7 scale responses; higher scores = more opposite opinions.
 
 ### Data Flow
 ```
@@ -77,21 +70,35 @@ User completes questionnaire (1-7 scale)
   → Users matched with maximum difference scores
 ```
 
+## Environment Configuration
+
+### Next.js (`frontend-next/.env.local`)
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### Angular (`frontend/.env`)
+```
+NG_APP_SUPABASE_URL=https://your-project.supabase.co
+NG_APP_SUPABASE_ANON_KEY=your-anon-key
+```
+
+## Deployment
+
+- Next.js frontend: Vercel (auto-deploys from main branch, config in `frontend-next/vercel.json`)
+- Supabase: Managed hosting
+
 ## Important Notes
 
 ### Angular Package Versions
-All `@angular/*` packages must be the same version. Version mismatches cause npm peer dependency errors.
+All `@angular/*` packages must be the same version (currently ^20.3.0). Mismatches cause peer dependency errors.
 
-### Auth Modes
-Toggle `environment.features.useRealAuth` in `frontend/src/environments/environment.ts`:
-- `false`: Dummy mode using localStorage (no Supabase needed)
-- `true`: Real Supabase auth (requires valid credentials)
+### Design System
+The app uses a dark "Nemesis" theme - see `frontend/THEME.md` for CSS variables, color palette, and component styles. Key accent color: `#e94560` (pink-red).
 
-### File Naming
-- Components: `name.component.ts`
-- Services: `name.service.ts`
-- Models: `name.model.ts`
-- Guards: `name.guard.ts`
+### Questionnaire Format
+Questions use a 1-7 Likert scale with categories (social, opinions, lifestyle). See seed data in `supabase-schema.sql` for current question bank.
 
 ## Learning Goals
 
@@ -99,10 +106,4 @@ The developer is learning the full stack. When implementing:
 1. Explain what code does and why patterns are used
 2. Quiz periodically to reinforce concepts
 3. Suggest hands-on modifications to deepen understanding
-4. Use `TODO(human)` comments to mark areas for developer implementation
-
-## Related Documentation
-
-- `IONIC_MIGRATION.md` - Planned Ionic/Capacitor mobile migration
-- `FIREBASE_IMPLEMENTATION_PLAN.md` - Cloud Functions integration plan
-- `frontend/QUICKSTART.md` - Environment setup guide
+4. Use `TODO(human)` comments for areas requiring developer implementation

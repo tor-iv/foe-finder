@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { useEffect, useState } from 'react';
 
 // ==============================================
 // Types
@@ -143,4 +144,30 @@ export async function checkGeoLocation(): Promise<{
       }
     );
   });
+}
+
+// ==============================================
+// Hydration Hook
+// ==============================================
+
+export function useAppStoreHydrated() {
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    // Wait for zustand to hydrate from localStorage
+    const unsubscribe = useAppStore.persist.onFinishHydration(() => {
+      setHydrated(true);
+    });
+
+    // Check if already hydrated
+    if (useAppStore.persist.hasHydrated()) {
+      setHydrated(true);
+    }
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  return hydrated;
 }

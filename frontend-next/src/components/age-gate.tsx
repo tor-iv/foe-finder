@@ -2,15 +2,18 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAppStore } from '@/stores/app-store';
+import { useAppStore, useAppStoreHydrated } from '@/stores/app-store';
 import { modalOverlay, modalContent, shake } from '@/lib/animations';
 
 export function AgeGate() {
+  const hydrated = useAppStoreHydrated();
   const { ageVerified, verifyAge } = useAppStore();
   const [birthDate, setBirthDate] = useState('');
   const [error, setError] = useState('');
   const [shouldShake, setShouldShake] = useState(false);
 
+  // Don't render until hydrated to avoid flash of age gate
+  if (!hydrated) return null;
   if (ageVerified) return null;
 
   const handleSubmit = (e: React.FormEvent) => {

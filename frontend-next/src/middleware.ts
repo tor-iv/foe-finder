@@ -10,6 +10,9 @@ const PROTECTED_ROUTES = [
   '/admin',
 ];
 
+// Home page needs special handling - auth but different redirect
+const HOME_ROUTE = '/';
+
 // Routes that require email verification (subset of protected)
 const EMAIL_VERIFIED_ROUTES = ['/questionnaire', '/record-intro'];
 
@@ -76,6 +79,13 @@ export async function middleware(request: NextRequest) {
   );
   const isAdminRoute = ADMIN_ROUTES.some((route) => pathname.startsWith(route));
 
+  // Home page: redirect to login if not authenticated
+  if (pathname === '/' && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  }
+
   // Redirect logic
   if (isProtectedRoute && !user) {
     // Not logged in, redirect to login
@@ -109,18 +119,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // If logged in user tries to access login/register, redirect to questionnaire or results
+  // If logged in user tries to access login/register, redirect to home
   if (isPublicRoute && user && pathname !== '/auth/callback') {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('has_completed_questionnaire')
-      .eq('id', user.id)
-      .single();
-
     const url = request.nextUrl.clone();
-    url.pathname = profile?.has_completed_questionnaire
-      ? '/results'
-      : '/questionnaire';
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 

@@ -18,12 +18,12 @@ use std::collections::HashSet;
 ///
 /// # Generics Deep Dive
 ///
-/// ```rust
+/// ```text
 /// pub struct GreedyMatcher<S: ScoringStrategy>
 ///                          ^  ^
 ///                          |  |
-///                          |  └─ Trait bound: S must implement ScoringStrategy
-///                          └─ Generic type parameter: S can be ANY type
+///                          |  Trait bound: S must implement ScoringStrategy
+///                          Generic type parameter: S can be ANY type
 /// ```
 ///
 /// ## Why Generics?
@@ -142,6 +142,7 @@ impl<S: ScoringStrategy> GreedyMatcher<S> {
                 pairs.push((i, j, score));  // Push tuple
             }
         }
+        pairs
     }
 
     /// Greedily select pairs from sorted candidates

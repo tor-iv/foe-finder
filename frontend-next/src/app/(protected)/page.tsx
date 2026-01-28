@@ -215,7 +215,7 @@ export default function HomePage() {
                     key={opinion.questionId}
                     className="border-2 border-win95-darkShadow p-3 bg-win95-shadow/20"
                   >
-                    <p className="text-sm font-medium mb-2">"{opinion.text}"</p>
+                    <p className="text-sm font-medium mb-2">&ldquo;{opinion.text}&rdquo;</p>
                     <div className="flex items-center gap-2 mb-1">
                       <div className="flex-1 h-2 bg-win95-shadow/30 border border-win95-darkShadow">
                         <div
@@ -256,7 +256,7 @@ export default function HomePage() {
                 topics.
               </p>
               <p className="text-sm font-mono">
-                "{getDisagreementComment(disagreementPercentage)}"
+                &ldquo;{getDisagreementComment(disagreementPercentage)}&rdquo;
               </p>
             </div>
           </motion.div>

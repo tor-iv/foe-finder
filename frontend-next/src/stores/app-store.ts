@@ -47,7 +47,7 @@ const NYC_BOUNDS = {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Intro
       introSeen: false,
       markIntroSeen: () => set({ introSeen: true }),
@@ -151,23 +151,22 @@ export async function checkGeoLocation(): Promise<{
 // ==============================================
 
 export function useAppStoreHydrated() {
-  const [hydrated, setHydrated] = useState(false);
+  // Initialize with current hydration state to avoid synchronous setState in effect
+  const [hydrated, setHydrated] = useState(() => useAppStore.persist.hasHydrated());
 
   useEffect(() => {
+    // If already hydrated, nothing to do
+    if (hydrated) return;
+
     // Wait for zustand to hydrate from localStorage
     const unsubscribe = useAppStore.persist.onFinishHydration(() => {
       setHydrated(true);
     });
 
-    // Check if already hydrated
-    if (useAppStore.persist.hasHydrated()) {
-      setHydrated(true);
-    }
-
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [hydrated]);
 
   return hydrated;
 }

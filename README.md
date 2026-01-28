@@ -45,8 +45,7 @@ Unlike traditional matching apps that find similarities, FoeFinder matches users
 
 ### Prerequisites
 
-- Node.js 18+
-- npm or yarn
+- [Bun](https://bun.sh) (recommended) or Node.js 18+
 - Firebase account
 - Xcode (for iOS development, macOS only)
 - Android Studio (for Android development)
@@ -62,7 +61,7 @@ Unlike traditional matching apps that find similarities, FoeFinder matches users
 2. **Set up the frontend**
    ```bash
    cd frontend
-   npm install
+   bun install
    ```
 
 3. **Configure Firebase**

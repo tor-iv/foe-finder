@@ -13,13 +13,13 @@ The project has **two frontend implementations**:
 ### Next.js Frontend (primary, in development)
 ```bash
 cd frontend-next
-npm install           # Install dependencies
-npm run dev           # Dev server at http://localhost:3000
-npm run build         # Production build
-npm run lint          # Run ESLint
-npm test              # Run Playwright tests
-npm run test:ui       # Playwright test UI
-npm run test:headed   # Headed browser tests
+bun install           # Install dependencies
+bun run dev           # Dev server at http://localhost:3000
+bun run build         # Production build
+bun run lint          # Run ESLint
+bun run test          # Run Playwright tests
+bun run test:ui       # Playwright test UI
+bun run test:headed   # Headed browser tests
 ```
 
 **Stack:** Next.js 16, React 19, Supabase SSR, TanStack Query, Zustand, Tailwind CSS 4, shadcn/ui (Radix), Framer Motion
@@ -27,10 +27,10 @@ npm run test:headed   # Headed browser tests
 ### Angular Frontend (legacy)
 ```bash
 cd frontend
-npm install           # Install dependencies
-npm start             # Dev server at http://localhost:4200
-npm run build         # Production build
-npm test              # Run Jasmine/Karma tests
+bun install           # Install dependencies
+bun start             # Dev server at http://localhost:4200
+bun run build         # Production build
+bun run test          # Run Jasmine/Karma tests
 ```
 
 **Stack:** Angular 20, Angular Material, Supabase JS client

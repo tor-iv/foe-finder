@@ -1,27 +1,18 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { getServerUser } from '@/lib/supabase-server';
+import { ProtectedLayoutClient } from './layout-client';
 
-import { ReactNode } from 'react';
-import { Navbar } from '@/components/navbar';
-import { IntroModal } from '@/components/intro-modal';
-import { AgeGate } from '@/components/age-gate';
-import { useAppStore } from '@/stores/app-store';
+export default async function ProtectedLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  const user = await getServerUser();
 
-export default function ProtectedLayout({ children }: { children: ReactNode }) {
-  const { ageVerified } = useAppStore();
+  // Full session validation (proxy only checked cookie existence)
+  if (!user) {
+    redirect('/login');
+  }
 
-  return (
-    <>
-      {/* Age Gate - must pass before seeing anything */}
-      <AgeGate />
-
-      {/* Intro Modal - shows after age gate passes */}
-      {ageVerified && <IntroModal />}
-
-      {/* Navbar */}
-      <Navbar />
-
-      {/* Page Content */}
-      <main className="min-h-[calc(100vh-60px)]">{children}</main>
-    </>
-  );
+  return <ProtectedLayoutClient>{children}</ProtectedLayoutClient>;
 }

@@ -3,6 +3,9 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# Bun
+bun.lock
+
 # Environment files
 .env
 .env.local

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/providers/auth-provider';
@@ -8,7 +8,6 @@ import { useQuestionnaire } from '@/hooks/use-questionnaire';
 import {
   fadeInUp,
   staggerContainer,
-  staggerItem,
   matchReveal,
   hotTakeCard,
   springs,
@@ -16,19 +15,18 @@ import {
 import { HotTake } from '@/types';
 
 export default function ResultsPage() {
-  const { user } = useAuth();
+  useAuth();
   const { getHotTakes } = useQuestionnaire();
-  const [hotTakes, setHotTakes] = useState<HotTake[]>([]);
   const [isRevealed, setIsRevealed] = useState(false);
 
-  useEffect(() => {
-    const takes = getHotTakes(3);
-    setHotTakes(takes);
+  // Compute hot takes once using useMemo instead of effect + state
+  const hotTakes = useMemo(() => getHotTakes(3), [getHotTakes]);
 
+  useEffect(() => {
     // Trigger reveal animation after a delay
     const timer = setTimeout(() => setIsRevealed(true), 500);
     return () => clearTimeout(timer);
-  }, [getHotTakes]);
+  }, []);
 
   const getStanceColor = (stance: HotTake['stance']) => {
     switch (stance) {

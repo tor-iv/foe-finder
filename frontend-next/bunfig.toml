@@ -1,0 +1,3 @@
+# Use Bun runtime instead of Node.js for all scripts
+[run]
+bun = true

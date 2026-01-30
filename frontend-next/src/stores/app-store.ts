@@ -31,6 +31,13 @@ interface AppState {
 // ==============================================
 
 const MINIMUM_AGE = 21;
+
+// SSR-safe storage: no-op storage for server-side rendering
+const noopStorage = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+};
 const GEO_VERIFICATION_EXPIRY_HOURS = 24;
 
 // NYC Bounding Box
@@ -83,7 +90,9 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'foe-finder-app',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() =>
+        typeof window !== 'undefined' ? localStorage : noopStorage
+      ),
       partialize: (state) => ({
         introSeen: state.introSeen,
         ageVerified: state.ageVerified,
@@ -110,11 +119,12 @@ export async function checkGeoLocation(): Promise<{
   inNYC: boolean;
   error?: string;
 }> {
+  // SSR guard: geolocation only available in browser
+  if (typeof window === 'undefined' || !navigator.geolocation) {
+    return { inNYC: false, error: 'Geolocation is not supported' };
+  }
+
   return new Promise((resolve) => {
-    if (!navigator.geolocation) {
-      resolve({ inNYC: false, error: 'Geolocation is not supported' });
-      return;
-    }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {

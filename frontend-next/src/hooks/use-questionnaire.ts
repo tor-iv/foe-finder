@@ -76,14 +76,16 @@ export function useQuestionnaire() {
         if (error) throw error;
 
         // Save to localStorage as backup
-        localStorage.setItem(
-          RESPONSES_KEY,
-          JSON.stringify({
-            userId: user.uid,
-            answers,
-            submittedAt: new Date().toISOString(),
-          })
-        );
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(
+            RESPONSES_KEY,
+            JSON.stringify({
+              userId: user.uid,
+              answers,
+              submittedAt: new Date().toISOString(),
+            })
+          );
+        }
 
         // Refresh user to update hasCompletedQuestionnaire
         await refreshUser();
@@ -103,6 +105,8 @@ export function useQuestionnaire() {
   );
 
   const getStoredResponses = useCallback((): Answer[] | null => {
+    if (typeof window === 'undefined') return null;
+
     const stored = localStorage.getItem(RESPONSES_KEY);
     if (!stored) return null;
 
@@ -137,7 +141,9 @@ export function useQuestionnaire() {
   }, [getStoredResponses]);
 
   const clearResponses = useCallback(() => {
-    localStorage.removeItem(RESPONSES_KEY);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(RESPONSES_KEY);
+    }
   }, []);
 
   return {

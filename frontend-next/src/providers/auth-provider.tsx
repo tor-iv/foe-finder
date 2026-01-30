@@ -207,7 +207,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
               display_name: displayName,
               marketing_consent: marketingConsent,
             },
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: typeof window !== 'undefined'
+              ? `${window.location.origin}/auth/callback`
+              : undefined,
           },
         });
 
@@ -247,7 +249,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async (email: string): Promise<{ error?: string }> => {
       try {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/reset-password`,
+          redirectTo: typeof window !== 'undefined'
+            ? `${window.location.origin}/reset-password`
+            : undefined,
         });
 
         if (error) {

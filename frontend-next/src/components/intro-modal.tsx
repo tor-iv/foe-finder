@@ -59,7 +59,7 @@ export function IntroModal() {
               <div className="win95-inset p-4 text-left">
                 <p className="font-bold text-sm mb-2">How it works:</p>
                 <ul className="text-sm space-y-2 text-muted-foreground">
-                  <li>📝 Answer 30 spicy questions</li>
+                  <li>📝 Answer 30 honest questions</li>
                   <li>🔥 We find your hot takes</li>
                   <li>💀 Match you with your polar opposite</li>
                   <li>🎤 Optional: Record a voice intro</li>

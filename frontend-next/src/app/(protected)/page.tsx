@@ -8,6 +8,7 @@ import { useAuth } from '@/providers/auth-provider';
 import { supabase } from '@/lib/supabase';
 import { QUESTIONS } from '@/hooks/use-questionnaire';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
+import { CountdownTimer } from '@/components/countdown-timer';
 
 interface UserResponse {
   questionId: number;
@@ -173,6 +174,11 @@ export default function HomePage() {
           <p className="text-muted-foreground text-sm font-mono">
             The Algorithm has been watching.
           </p>
+        </motion.div>
+
+        {/* Countdown Timer */}
+        <motion.div variants={fadeInUp} className="mb-6">
+          <CountdownTimer />
         </motion.div>
 
         {/* Status Card */}

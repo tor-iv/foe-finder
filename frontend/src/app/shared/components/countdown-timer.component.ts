@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 /**
  * Countdown Timer Component
  *
- * Displays a countdown to the matching algorithm execution date (January 25th, 2025 at midnight).
+ * Displays a countdown to National Enemy Day (June 9th, 2026 at midnight).
  * Uses Angular Signals for reactive state management and runs the timer outside NgZone
  * for optimal performance (avoids triggering change detection every second).
  *
@@ -199,8 +199,8 @@ export class CountdownTimerComponent implements OnInit, OnDestroy {
   private ngZone = inject(NgZone);
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
-  // Target date: Valentine's Day 2026 at midnight (local time)
-  private targetDate = new Date('2026-02-14T00:00:00');
+  // Target date: National Enemy Day 2026 at midnight (local time)
+  private targetDate = new Date('2026-06-09T00:00:00');
 
   // Signals for reactive countdown display
   days = signal('00');

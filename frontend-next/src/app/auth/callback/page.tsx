@@ -23,10 +23,16 @@ export default function AuthCallbackPage() {
 
         // Also check query params (for some flows)
         const queryParams = new URLSearchParams(window.location.search);
+        const errorCode = queryParams.get('error');
         const errorDescription = queryParams.get('error_description');
 
-        if (errorDescription) {
-          setError(errorDescription);
+        if (errorCode || errorDescription) {
+          // Provide user-friendly messages for common errors
+          if (errorCode === 'access_denied') {
+            setError('Email verification failed. The link may have expired or is invalid. Please try registering again or contact support.');
+          } else {
+            setError(errorDescription || errorCode || 'Authentication failed');
+          }
           return;
         }
 

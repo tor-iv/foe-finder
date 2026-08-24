@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env*
+!.env.local.example
+data
+*.db
+*.db-wal
+*.db-shm
+test-results
+playwright-report
+tests

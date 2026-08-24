@@ -48,3 +48,9 @@ __pycache__/
 # Playwright/Testing
 .playwright-mcp/
 test-results/
+
+# SQLite (local dev data)
+frontend-next/data/
+*.db
+*.db-wal
+*.db-shm

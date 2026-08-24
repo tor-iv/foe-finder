@@ -11,16 +11,18 @@ import { fadeInUp, shake, scaleIn } from '@/lib/animations';
 
 function ResetPasswordForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { updatePassword, isLoading } = useAuth();
 
+  const token = searchParams.get('token') ?? '';
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(token ? '' : 'This reset link is invalid or expired.');
   const [success, setSuccess] = useState(false);
   const [shouldShake, setShouldShake] = useState(false);
 
   const passwordsMatch = password === confirmPassword;
-  const isValid = password.length >= 6 && passwordsMatch;
+  const isValid = password.length >= 8 && passwordsMatch && !!token;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +35,7 @@ function ResetPasswordForm() {
       return;
     }
 
-    const result = await updatePassword(password);
+    const result = await updatePassword(password, token);
 
     if (result.error) {
       setError(result.error);
@@ -107,9 +109,9 @@ function ResetPasswordForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="win95-input w-full"
-                placeholder="Min 6 characters"
+                placeholder="Min 8 characters"
                 required
-                minLength={6}
+                minLength={8}
                 disabled={isLoading}
               />
             </div>

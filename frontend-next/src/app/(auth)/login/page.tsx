@@ -12,10 +12,12 @@ import { fadeInUp, shake } from '@/lib/animations';
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isLoading } = useAuth();
+  const { login, verifyTwoFactor, isLoading } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [code, setCode] = useState('');
+  const [needsTwoFactor, setNeedsTwoFactor] = useState(false);
   const [error, setError] = useState('');
   const [shouldShake, setShouldShake] = useState(false);
 
@@ -33,10 +35,95 @@ function LoginForm() {
       setError(result.error);
       setShouldShake(true);
       setTimeout(() => setShouldShake(false), 500);
+    } else if (result.twoFactorRequired) {
+      setNeedsTwoFactor(true);
     } else {
       router.push(redirect || '/questionnaire');
     }
   };
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    const result = await verifyTwoFactor(code);
+
+    if (result.error) {
+      setError(result.error);
+      setShouldShake(true);
+      setTimeout(() => setShouldShake(false), 500);
+    } else {
+      router.push(redirect || '/questionnaire');
+    }
+  };
+
+  if (needsTwoFactor) {
+    return (
+      <motion.div
+        initial="initial"
+        animate="animate"
+        variants={fadeInUp}
+        className="w-full max-w-md"
+      >
+        <div className="win95-panel">
+          <div className="win95-titlebar -mx-4 -mt-4 mb-4 flex items-center gap-2">
+            <span className="text-sm">FOE FINDER - Two-Factor Code</span>
+          </div>
+
+          <p className="text-sm text-muted-foreground mb-4">
+            Enter the 6-digit code from your authenticator app.
+          </p>
+
+          <motion.form
+            onSubmit={handleVerifyCode}
+            animate={shouldShake ? 'animate' : 'initial'}
+            variants={shake}
+          >
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="code" className="text-sm font-bold uppercase">
+                  Authentication Code
+                </Label>
+                <Input
+                  id="code"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="win95-input w-full text-center text-2xl tracking-[0.5em]"
+                  placeholder="000000"
+                  maxLength={6}
+                  required
+                  disabled={isLoading}
+                  autoFocus
+                />
+              </div>
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-foe-error text-sm p-2 win95-inset"
+                >
+                  {error}
+                </motion.div>
+              )}
+
+              <motion.button
+                type="submit"
+                disabled={isLoading}
+                className="win95-btn win95-btn-primary w-full py-3"
+                whileTap={{ scale: 0.98 }}
+              >
+                {isLoading ? 'Verifying...' : 'Verify'}
+              </motion.button>
+            </div>
+          </motion.form>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

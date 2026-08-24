@@ -33,14 +33,3 @@ export interface MatchDisplay {
   topDifferences: TopDifference[];
   createdAt: Date;
 }
-
-/**
- * Full match details including audio intro
- */
-export interface MatchWithDetails extends MatchDisplay {
-  opponentAudioIntro?: {
-    url: string;
-    transcription?: string;
-    transcriptionStatus: 'pending' | 'processing' | 'completed' | 'failed';
-  };
-}

@@ -8,12 +8,7 @@ import {
   useCallback,
   ReactNode,
 } from 'react';
-import {
-  User as SupabaseUser,
-  AuthChangeEvent,
-  Session,
-} from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { authClient } from '@/lib/auth-client';
 import { User } from '@/types';
 
 // ==============================================
@@ -28,7 +23,11 @@ interface AuthState {
 }
 
 interface AuthActions {
-  login: (email: string, password: string) => Promise<{ error?: string }>;
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ error?: string; twoFactorRequired?: boolean }>;
+  verifyTwoFactor: (code: string) => Promise<{ error?: string }>;
   register: (
     email: string,
     password: string,
@@ -37,7 +36,7 @@ interface AuthActions {
   ) => Promise<{ error?: string }>;
   logout: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<{ error?: string }>;
-  updatePassword: (newPassword: string) => Promise<{ error?: string }>;
+  updatePassword: (newPassword: string, token: string) => Promise<{ error?: string }>;
   refreshUser: () => Promise<void>;
 }
 
@@ -53,29 +52,43 @@ const AuthContext = createContext<AuthContextType | null>(null);
 // Helper Functions
 // ==============================================
 
-function mapSupabaseUserToUser(
-  supabaseUser: SupabaseUser,
-  profile?: {
-    display_name?: string;
-    has_completed_questionnaire?: boolean;
-    match_id?: string;
-    is_admin?: boolean;
+interface BetterAuthUser {
+  id: string;
+  email: string;
+  name: string;
+  emailVerified: boolean;
+  isAdmin?: boolean | null;
+  hasCompletedQuestionnaire?: boolean | null;
+  twoFactorEnabled?: boolean | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
+async function fetchIsMatched(): Promise<boolean> {
+  try {
+    const res = await fetch('/api/match');
+    if (!res.ok) return false;
+    const data = await res.json();
+    return !!data.match;
+  } catch {
+    return false;
   }
-): User {
+}
+
+async function mapSessionUserToUser(sessionUser: BetterAuthUser): Promise<User> {
+  const isMatched = await fetchIsMatched();
+
   return {
-    uid: supabaseUser.id,
-    email: supabaseUser.email || '',
-    displayName:
-      profile?.display_name ||
-      supabaseUser.user_metadata?.display_name ||
-      supabaseUser.email?.split('@')[0] ||
-      'User',
-    emailVerified: supabaseUser.email_confirmed_at !== null,
-    hasCompletedQuestionnaire: profile?.has_completed_questionnaire || false,
-    isMatched: !!profile?.match_id,
-    isAdmin: profile?.is_admin || false,
-    createdAt: new Date(supabaseUser.created_at),
-    updatedAt: new Date(),
+    uid: sessionUser.id,
+    email: sessionUser.email,
+    displayName: sessionUser.name || sessionUser.email.split('@')[0],
+    emailVerified: sessionUser.emailVerified,
+    hasCompletedQuestionnaire: !!sessionUser.hasCompletedQuestionnaire,
+    isMatched,
+    isAdmin: !!sessionUser.isAdmin,
+    twoFactorEnabled: !!sessionUser.twoFactorEnabled,
+    createdAt: new Date(sessionUser.createdAt),
+    updatedAt: new Date(sessionUser.updatedAt),
   };
 }
 
@@ -92,100 +105,81 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [emailVerificationPending, setEmailVerificationPending] = useState(false);
 
-  // Flag to prevent auth state change listener from interfering with manual login
-  const [isManualAuth, setIsManualAuth] = useState(false);
-
-  // Fetch user profile from database
-  const fetchUserProfile = useCallback(async (userId: string) => {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('display_name, has_completed_questionnaire, match_id, is_admin')
-      .eq('id', userId)
-      .single();
-
-    return profile;
+  const loadUser = useCallback(async () => {
+    const { data } = await authClient.getSession();
+    if (data?.user) {
+      setUser(await mapSessionUserToUser(data.user as BetterAuthUser));
+    } else {
+      setUser(null);
+    }
   }, []);
 
-  // Initialize auth state
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+    let cancelled = false;
 
-        if (session?.user) {
-          const profile = await fetchUserProfile(session.user.id);
-          setUser(mapSupabaseUserToUser(session.user, profile || undefined));
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    async function init() {
+      await loadUser();
+      if (!cancelled) setIsLoading(false);
+    }
 
-    initAuth();
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-      // Skip if manual auth is in progress
-      if (isManualAuth) return;
-
-      if (event === 'SIGNED_IN' && session?.user) {
-        const profile = await fetchUserProfile(session.user.id);
-        setUser(mapSupabaseUserToUser(session.user, profile || undefined));
-        setEmailVerificationPending(false);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-      } else if (event === 'USER_UPDATED' && session?.user) {
-        const profile = await fetchUserProfile(session.user.id);
-        setUser(mapSupabaseUserToUser(session.user, profile || undefined));
-      }
-    });
-
+    init();
     return () => {
-      subscription.unsubscribe();
+      cancelled = true;
     };
-  }, [fetchUserProfile, isManualAuth]);
+  }, [loadUser]);
 
   // ==============================================
   // Auth Actions
   // ==============================================
 
   const login = useCallback(
-    async (email: string, password: string): Promise<{ error?: string }> => {
-      setIsManualAuth(true);
+    async (
+      email: string,
+      password: string
+    ): Promise<{ error?: string; twoFactorRequired?: boolean }> => {
       setIsLoading(true);
 
       try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        const { data, error } = await authClient.signIn.email({ email, password });
 
         if (error) {
           return { error: error.message };
         }
 
-        if (data.user) {
-          const profile = await fetchUserProfile(data.user.id);
-          setUser(mapSupabaseUserToUser(data.user, profile || undefined));
+        if (data && 'twoFactorRedirect' in data && data.twoFactorRedirect) {
+          return { twoFactorRequired: true };
         }
 
+        await loadUser();
         return {};
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : 'An error occurred';
+        const message = error instanceof Error ? error.message : 'An error occurred';
         return { error: message };
       } finally {
         setIsLoading(false);
-        setIsManualAuth(false);
       }
     },
-    [fetchUserProfile]
+    [loadUser]
+  );
+
+  const verifyTwoFactor = useCallback(
+    async (code: string): Promise<{ error?: string }> => {
+      setIsLoading(true);
+      try {
+        const { error } = await authClient.twoFactor.verifyTotp({ code });
+        if (error) {
+          return { error: error.message };
+        }
+        await loadUser();
+        return {};
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'An error occurred';
+        return { error: message };
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [loadUser]
   );
 
   const register = useCallback(
@@ -195,41 +189,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
       displayName: string,
       marketingConsent: boolean
     ): Promise<{ error?: string }> => {
-      setIsManualAuth(true);
       setIsLoading(true);
 
       try {
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error } = await authClient.signUp.email({
           email,
           password,
-          options: {
-            data: {
-              display_name: displayName,
-              marketing_consent: marketingConsent,
-            },
-            emailRedirectTo: typeof window !== 'undefined'
-              ? `${window.location.origin}/auth/callback`
-              : undefined,
-          },
-        });
+          name: displayName,
+          marketingConsent,
+          callbackURL: '/verify-email',
+        } as Parameters<typeof authClient.signUp.email>[0]);
 
         if (error) {
           return { error: error.message };
         }
 
-        // Check if email confirmation is required
-        if (data.user && !data.user.email_confirmed_at) {
+        if (data?.user && !data.user.emailVerified) {
           setEmailVerificationPending(true);
         }
 
         return {};
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : 'An error occurred';
+        const message = error instanceof Error ? error.message : 'An error occurred';
         return { error: message };
       } finally {
         setIsLoading(false);
-        setIsManualAuth(false);
       }
     },
     []
@@ -238,7 +222,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = useCallback(async () => {
     setIsLoading(true);
     try {
-      await supabase.auth.signOut();
+      await authClient.signOut();
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -248,10 +232,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const requestPasswordReset = useCallback(
     async (email: string): Promise<{ error?: string }> => {
       try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: typeof window !== 'undefined'
-            ? `${window.location.origin}/reset-password`
-            : undefined,
+        const { error } = await authClient.requestPasswordReset({
+          email,
+          redirectTo:
+            typeof window !== 'undefined'
+              ? `${window.location.origin}/reset-password`
+              : undefined,
         });
 
         if (error) {
@@ -260,8 +246,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         return {};
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : 'An error occurred';
+        const message = error instanceof Error ? error.message : 'An error occurred';
         return { error: message };
       }
     },
@@ -269,10 +254,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 
   const updatePassword = useCallback(
-    async (newPassword: string): Promise<{ error?: string }> => {
+    async (newPassword: string, token: string): Promise<{ error?: string }> => {
       try {
-        const { error } = await supabase.auth.updateUser({
-          password: newPassword,
+        const { error } = await authClient.resetPassword({
+          newPassword,
+          token,
         });
 
         if (error) {
@@ -281,8 +267,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         return {};
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : 'An error occurred';
+        const message = error instanceof Error ? error.message : 'An error occurred';
         return { error: message };
       }
     },
@@ -290,15 +275,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 
   const refreshUser = useCallback(async () => {
-    const {
-      data: { user: supabaseUser },
-    } = await supabase.auth.getUser();
-
-    if (supabaseUser) {
-      const profile = await fetchUserProfile(supabaseUser.id);
-      setUser(mapSupabaseUserToUser(supabaseUser, profile || undefined));
-    }
-  }, [fetchUserProfile]);
+    await loadUser();
+  }, [loadUser]);
 
   // ==============================================
   // Context Value
@@ -310,6 +288,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: !!user,
     emailVerificationPending,
     login,
+    verifyTwoFactor,
     register,
     logout,
     requestPasswordReset,

@@ -25,7 +25,7 @@ function RegisterForm() {
   const isValid =
     displayName.length >= 2 &&
     email.includes('@') &&
-    password.length >= 6 &&
+    password.length >= 8 &&
     passwordsMatch;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,9 +158,9 @@ function RegisterForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="win95-input w-full"
-                placeholder="Min 6 characters"
+                placeholder="Min 8 characters"
                 required
-                minLength={6}
+                minLength={8}
                 disabled={isLoading}
               />
             </div>

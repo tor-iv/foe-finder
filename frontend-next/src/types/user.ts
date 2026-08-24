@@ -9,8 +9,5 @@ export interface User {
   hasCompletedQuestionnaire: boolean;
   isMatched: boolean;
   isAdmin?: boolean;
-  preferences?: {
-    notifications: boolean;
-    emailUpdates: boolean;
-  };
+  twoFactorEnabled?: boolean;
 }

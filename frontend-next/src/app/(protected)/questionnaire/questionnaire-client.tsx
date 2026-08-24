@@ -9,7 +9,7 @@ import { questionSlide, springs, fadeInUp } from '@/lib/animations';
 
 export default function QuestionnaireClient() {
   const router = useRouter();
-  const { questions, submitResponses, isSubmitting } = useQuestionnaire();
+  const { questions, submitResponses, isSubmitting, isLoadingQuestions } = useQuestionnaire();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Map<number, number>>(new Map());
@@ -25,9 +25,9 @@ export default function QuestionnaireClient() {
   const containerWidthRef = useRef(0);
 
   const currentQuestion = questions[currentIndex];
-  const progress = ((currentIndex + 1) / questions.length) * 100;
+  const progress = questions.length ? ((currentIndex + 1) / questions.length) * 100 : 0;
   const isLastQuestion = currentIndex === questions.length - 1;
-  const canProceed = hasInteracted || answers.has(currentQuestion.id);
+  const canProceed = !!currentQuestion && (hasInteracted || answers.has(currentQuestion.id));
 
   // Convert 0-100 slider to 1-7 scale
   const toScale7 = (value: number) => Math.round((value / 100) * 6) + 1;
@@ -69,11 +69,11 @@ export default function QuestionnaireClient() {
   }, [updateSliderVisuals]);
 
   const saveCurrentAnswer = useCallback(() => {
-    if (hasInteracted) {
+    if (hasInteracted && currentQuestion) {
       const scale7Value = toScale7(sliderValueRef.current);
       setAnswers((prev) => new Map(prev).set(currentQuestion.id, scale7Value));
     }
-  }, [currentQuestion.id, hasInteracted]);
+  }, [currentQuestion, hasInteracted]);
 
   const goToNext = useCallback(() => {
     saveCurrentAnswer();
@@ -115,7 +115,7 @@ export default function QuestionnaireClient() {
       finalAnswers.push({ questionId, value });
     });
 
-    if (hasInteracted && !answers.has(currentQuestion.id)) {
+    if (hasInteracted && currentQuestion && !answers.has(currentQuestion.id)) {
       finalAnswers.push({
         questionId: currentQuestion.id,
         value: toScale7(sliderValueRef.current),
@@ -124,11 +124,11 @@ export default function QuestionnaireClient() {
 
     const result = await submitResponses(finalAnswers);
     if (result.success) {
-      router.push('/record-intro');
+      router.push('/results');
     }
   }, [
     answers,
-    currentQuestion.id,
+    currentQuestion,
     hasInteracted,
     saveCurrentAnswer,
     submitResponses,
@@ -147,6 +147,16 @@ export default function QuestionnaireClient() {
       goToPrevious();
     }
   };
+
+  if (isLoadingQuestions || !currentQuestion) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="font-mono text-muted-foreground uppercase tracking-wide">
+          Loading questions...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

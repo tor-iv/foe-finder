@@ -62,7 +62,7 @@ export function IntroModal() {
                   <li>📝 Answer 30 honest questions</li>
                   <li>🔥 We find your hot takes</li>
                   <li>💀 Match you with your polar opposite</li>
-                  <li>🎤 Optional: Record a voice intro</li>
+                  <li>💬 Message them once you&apos;re matched</li>
                 </ul>
               </div>
 

@@ -1,19 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/providers/auth-provider';
-import { supabase } from '@/lib/supabase';
-import { QUESTIONS } from '@/hooks/use-questionnaire';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
-import { CountdownTimer } from '@/components/countdown-timer';
-
-interface UserResponse {
-  questionId: number;
-  value: number;
-}
 
 const DEADPAN_COMMENTS = [
   'Noted.',
@@ -31,120 +22,78 @@ function getDisagreementComment(percentage: number): string {
   return 'You disagree with almost everyone. Impressive.';
 }
 
+interface DashboardData {
+  extremeOpinions: { questionId: number; text: string; value: number }[];
+  disagreementPercentage: number;
+  hasResponses: boolean;
+  isMatched: boolean;
+}
+
+function MatchStatusWidget({
+  hasCompletedQuestionnaire,
+  isMatched,
+}: {
+  hasCompletedQuestionnaire: boolean;
+  isMatched: boolean;
+}) {
+  if (isMatched) {
+    return (
+      <Link
+        href="/results"
+        className="flex items-center gap-2 text-sm hover:text-foe-accent transition-colors"
+      >
+        <span className="text-foe-success">✓</span>
+        <span className="underline">Matched! View your nemesis</span>
+      </Link>
+    );
+  }
+
+  if (hasCompletedQuestionnaire) {
+    return (
+      <div className="flex items-center gap-2 text-sm">
+        <span className="text-muted-foreground">○</span>
+        <span>In the pool — matching hasn&apos;t run yet</span>
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href="/questionnaire"
+      className="flex items-center gap-2 text-sm hover:text-foe-accent transition-colors"
+    >
+      <span className="text-muted-foreground">○</span>
+      <span className="underline">Complete the quiz to enter the pool</span>
+    </Link>
+  );
+}
+
 export default function HomePage() {
-  const router = useRouter();
-  const { user, isLoading: authLoading } = useAuth();
-  const [responses, setResponses] = useState<UserResponse[]>([]);
-  const [averages, setAverages] = useState<Map<number, number>>(new Map());
-  const [visitorCount, setVisitorCount] = useState<number>(0);
-  const [hasAudioIntro, setHasAudioIntro] = useState(false);
-  const [matchId, setMatchId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Redirect to login if not authenticated (client-side fallback)
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.replace('/login');
-    }
-  }, [authLoading, user, router]);
+    let cancelled = false;
 
-  useEffect(() => {
-    async function fetchData() {
-      if (!user) {
-        setIsLoading(false);
-        return;
-      }
-
+    async function load() {
       try {
-        // Fetch user's responses
-        const { data: responseData } = await supabase
-          .from('questionnaire_responses')
-          .select('responses')
-          .eq('user_id', user.uid)
-          .single();
-
-        if (responseData?.responses) {
-          setResponses(responseData.responses as UserResponse[]);
-        }
-
-        // Fetch profile data
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('has_audio_intro, match_id')
-          .eq('id', user.uid)
-          .single();
-
-        if (profileData) {
-          setHasAudioIntro(profileData.has_audio_intro || false);
-          setMatchId(profileData.match_id);
-        }
-
-        // Fetch all responses to compute averages
-        const { data: allResponses } = await supabase
-          .from('questionnaire_responses')
-          .select('responses');
-
-        if (allResponses && allResponses.length > 0) {
-          const sums = new Map<number, number>();
-          const counts = new Map<number, number>();
-
-          allResponses.forEach((row: { responses: UserResponse[] | null }) => {
-            const resp = row.responses;
-            resp?.forEach((r) => {
-              sums.set(r.questionId, (sums.get(r.questionId) || 0) + r.value);
-              counts.set(r.questionId, (counts.get(r.questionId) || 0) + 1);
-            });
-          });
-
-          const avgMap = new Map<number, number>();
-          sums.forEach((sum, qId) => {
-            avgMap.set(qId, sum / (counts.get(qId) || 1));
-          });
-          setAverages(avgMap);
-        }
-
-        // Fetch visitor count
-        const { data: statsData } = await supabase
-          .from('site_stats')
-          .select('visitor_count')
-          .eq('id', 'global')
-          .single();
-
-        if (statsData) {
-          setVisitorCount(statsData.visitor_count || 0);
+        const res = await fetch('/api/dashboard');
+        if (res.ok && !cancelled) {
+          setData(await res.json());
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
 
-    fetchData();
-  }, [user]);
-
-  // Get extreme opinions (value 1 or 7)
-  const extremeOpinions = responses
-    .filter((r) => r.value === 1 || r.value === 7)
-    .slice(0, 3)
-    .map((r, i) => {
-      const question = QUESTIONS.find((q) => q.id === r.questionId);
-      return {
-        ...r,
-        text: question?.text || '',
-        comment: DEADPAN_COMMENTS[i % DEADPAN_COMMENTS.length],
-      };
-    });
-
-  // Calculate disagreement percentage
-  const disagreementCount = responses.filter((r) => {
-    const avg = averages.get(r.questionId);
-    return avg !== undefined && Math.abs(r.value - avg) >= 3;
-  }).length;
-  const disagreementPercentage =
-    responses.length > 0
-      ? Math.round((disagreementCount / responses.length) * 100)
-      : 0;
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const hasCompletedQuestionnaire = user?.hasCompletedQuestionnaire || false;
 
@@ -176,47 +125,42 @@ export default function HomePage() {
           </p>
         </motion.div>
 
-        {/* Countdown Timer */}
-        <motion.div variants={fadeInUp} className="mb-6">
-          <CountdownTimer />
-        </motion.div>
-
         {/* Status Card */}
         <motion.div variants={fadeInUp} className="win95-panel mb-6">
           <h2 className="font-display font-bold text-lg mb-4 uppercase tracking-wide">
             Your Status
           </h2>
           <div className="space-y-3">
-            <StatusItem
-              done={hasCompletedQuestionnaire}
-              doneText="Opinions extracted"
-              pendingText="Opinion extraction required"
-              href="/questionnaire"
-            />
-            <StatusItem
-              done={hasAudioIntro}
-              doneText="Voice sample collected"
-              pendingText="Voice sample pending"
-              href="/record-intro"
-            />
-            <StatusItem
-              done={!!matchId}
-              doneText="Match assigned"
-              pendingText="Awaiting match assignment"
-              href="/results"
+            {hasCompletedQuestionnaire ? (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-foe-success">✓</span>
+                <span>Opinions extracted</span>
+              </div>
+            ) : (
+              <Link
+                href="/questionnaire"
+                className="flex items-center gap-2 text-sm hover:text-foe-accent transition-colors"
+              >
+                <span className="text-muted-foreground">○</span>
+                <span className="underline">Opinion extraction required</span>
+              </Link>
+            )}
+            <MatchStatusWidget
+              hasCompletedQuestionnaire={hasCompletedQuestionnaire}
+              isMatched={data?.isMatched ?? false}
             />
           </div>
         </motion.div>
 
         {/* Strongest Opinions Card */}
-        {hasCompletedQuestionnaire && (
+        {hasCompletedQuestionnaire && data && (
           <motion.div variants={fadeInUp} className="win95-panel mb-6">
             <h2 className="font-display font-bold text-lg mb-4 uppercase tracking-wide">
               Your Strongest Opinions
             </h2>
-            {extremeOpinions.length > 0 ? (
+            {data.extremeOpinions.length > 0 ? (
               <div className="space-y-4">
-                {extremeOpinions.map((opinion) => (
+                {data.extremeOpinions.map((opinion, i) => (
                   <div
                     key={opinion.questionId}
                     className="border-2 border-win95-darkShadow p-3 bg-win95-shadow/20"
@@ -229,12 +173,10 @@ export default function HomePage() {
                           style={{ width: `${((opinion.value - 1) / 6) * 100}%` }}
                         />
                       </div>
-                      <span className="text-xs font-mono w-12">
-                        You: {opinion.value}
-                      </span>
+                      <span className="text-xs font-mono w-12">You: {opinion.value}</span>
                     </div>
                     <p className="text-xs text-muted-foreground italic">
-                      {opinion.comment}
+                      {DEADPAN_COMMENTS[i % DEADPAN_COMMENTS.length]}
                     </p>
                   </div>
                 ))}
@@ -248,21 +190,20 @@ export default function HomePage() {
         )}
 
         {/* Disagreement Rating Card */}
-        {hasCompletedQuestionnaire && averages.size > 0 && (
+        {hasCompletedQuestionnaire && data?.hasResponses && (
           <motion.div variants={fadeInUp} className="win95-panel mb-6">
             <h2 className="font-display font-bold text-lg mb-4 uppercase tracking-wide">
               Your Disagreement Rating
             </h2>
             <div className="text-center">
               <div className="text-5xl font-display font-black text-foe-accent mb-2">
-                {disagreementPercentage}%
+                {data.disagreementPercentage}%
               </div>
               <p className="text-sm text-muted-foreground mb-3">
-                You disagree with the average user on {disagreementPercentage}% of
-                topics.
+                You disagree with the average user on {data.disagreementPercentage}% of topics.
               </p>
               <p className="text-sm font-mono">
-                &ldquo;{getDisagreementComment(disagreementPercentage)}&rdquo;
+                &ldquo;{getDisagreementComment(data.disagreementPercentage)}&rdquo;
               </p>
             </div>
           </motion.div>
@@ -280,49 +221,6 @@ export default function HomePage() {
           </motion.div>
         )}
       </motion.div>
-
-      {/* Visitor Counter - Fixed at bottom */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="fixed bottom-0 left-0 right-0 py-3 bg-win95-face border-t-2 border-win95-darkShadow text-center"
-      >
-        <span className="text-sm font-mono text-muted-foreground">
-          👁 {visitorCount.toLocaleString()} souls observed
-        </span>
-      </motion.div>
     </div>
-  );
-}
-
-function StatusItem({
-  done,
-  doneText,
-  pendingText,
-  href,
-}: {
-  done: boolean;
-  doneText: string;
-  pendingText: string;
-  href: string;
-}) {
-  if (done) {
-    return (
-      <div className="flex items-center gap-2 text-sm">
-        <span className="text-foe-success">✓</span>
-        <span>{doneText}</span>
-      </div>
-    );
-  }
-
-  return (
-    <Link
-      href={href}
-      className="flex items-center gap-2 text-sm hover:text-foe-accent transition-colors"
-    >
-      <span className="text-muted-foreground">○</span>
-      <span className="underline">{pendingText}</span>
-    </Link>
   );
 }

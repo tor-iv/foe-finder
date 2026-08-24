@@ -35,6 +35,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.local.example
 
 # vercel
 .vercel
@@ -43,3 +44,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 playwright-report/
+
+# SQLite (local dev data)
+data/
+*.db
+*.db-wal
+*.db-shm

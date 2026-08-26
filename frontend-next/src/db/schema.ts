@@ -67,20 +67,29 @@ export const matches = sqliteTable(
   ],
 );
 
-export const messages = sqliteTable(
-  "messages",
+export const guessRounds = sqliteTable(
+  "guess_rounds",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     matchId: text("match_id")
       .notNull()
       .references(() => matches.id, { onDelete: "cascade" }),
-    senderId: text("sender_id")
+    askerId: text("asker_id")
       .notNull()
-      .references(() => user.id),
-    body: text("body").notNull(),
+      .references(() => user.id, { onDelete: "cascade" }),
+    answererId: text("answerer_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    questionText: text("question_text").notNull(),
+    guessValue: integer("guess_value").notNull(),
+    actualValue: integer("actual_value"),
     createdAt: text("created_at")
       .notNull()
       .default(sql`(datetime('now'))`),
+    answeredAt: text("answered_at"),
   },
-  (t) => [index("idx_messages_match").on(t.matchId, t.createdAt)],
+  (t) => [
+    index("idx_guess_rounds_match").on(t.matchId, t.createdAt),
+    index("idx_guess_rounds_answerer_pending").on(t.answererId, t.answeredAt),
+  ],
 );

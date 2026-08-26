@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 // only — better-sqlite3 can't run on the Edge runtime, so real session
 // validation (and the email-verified / isAdmin checks) happens server-side
 // in (protected)/layout.tsx and the /admin layout.
-const PROTECTED_ROUTES = ['/questionnaire', '/results', '/profile', '/admin', '/chat'];
+const PROTECTED_ROUTES = ['/questionnaire', '/results', '/profile', '/admin', '/game'];
 
 // Public routes (no auth required)
 const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];

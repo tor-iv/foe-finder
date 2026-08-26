@@ -177,8 +177,8 @@ export default function ResultsPage() {
               </div>
 
               <div className="text-center pt-2">
-                <Link href="/chat" className="win95-btn win95-btn-primary px-6 py-3 inline-block">
-                  Message Your Nemesis
+                <Link href="/game" className="win95-btn win95-btn-primary px-6 py-3 inline-block">
+                  Test Your Nemesis Knowledge
                 </Link>
               </div>
             </div>

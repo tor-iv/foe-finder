@@ -1,0 +1,37 @@
+# Deploy to the Hetzner box on push to main.
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   HETZNER_IP           — public IPv4 of the server
+#   SSH_PRIVATE_KEY      — private key whose public half is in the server's authorized_keys
+#   SSH_HOST_FINGERPRINT — SHA256 fingerprint of the server's *ECDSA* host key
+#                          (appleboy's Go SSH client negotiates ECDSA, not ed25519)
+
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
+        with:
+          host: ${{ secrets.HETZNER_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          fingerprint: ${{ secrets.SSH_HOST_FINGERPRINT }}
+          command_timeout: 20m
+          script: |
+            cd /opt/foefinder
+            git pull origin main
+            cd /opt/fieldhouse
+            # Build explicitly first so a build error fails the deploy loudly;
+            # then force-recreate so the fresh image actually replaces the
+            # running container (learned on fieldhouse: `up -d --build` can
+            # silently keep a stale image while CI reports success).
+            docker compose build foefinder
+            docker compose up -d --force-recreate foefinder
+            docker image prune -f

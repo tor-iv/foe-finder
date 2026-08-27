@@ -1,5 +1,6 @@
 'use client';
 
+import { Win95TitleBar } from '@/components/win95-titlebar';
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -58,9 +59,7 @@ function ResetPasswordForm() {
         className="w-full max-w-md"
       >
         <div className="win95-panel">
-          <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-            <span className="text-sm">FOE FINDER - Success</span>
-          </div>
+          <Win95TitleBar title="FOE FINDER - Success" />
 
           <div className="text-center space-y-4">
             <div className="text-4xl">✅</div>
@@ -82,9 +81,7 @@ function ResetPasswordForm() {
       className="w-full max-w-md"
     >
       <div className="win95-panel">
-        <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-          <span className="text-sm">FOE FINDER - New Password</span>
-        </div>
+        <Win95TitleBar title="FOE FINDER - New Password" />
 
         <div className="text-center mb-6">
           <h1 className="text-xl font-display font-bold">Set New Password</h1>
@@ -154,7 +151,6 @@ function ResetPasswordForm() {
               type="submit"
               disabled={isLoading || !isValid}
               className="win95-btn win95-btn-primary w-full py-3"
-              whileTap={{ scale: 0.98 }}
             >
               {isLoading ? 'Updating...' : 'Update Password'}
             </motion.button>
@@ -175,9 +171,7 @@ function ResetPasswordLoading() {
   return (
     <div className="w-full max-w-md">
       <div className="win95-panel animate-pulse">
-        <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-          <span className="text-sm">FOE FINDER - New Password</span>
-        </div>
+        <Win95TitleBar title="FOE FINDER - New Password" />
         <div className="h-64 bg-win95-shadow/20" />
       </div>
     </div>

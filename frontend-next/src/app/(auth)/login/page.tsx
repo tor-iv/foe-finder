@@ -1,5 +1,6 @@
 'use client';
 
+import { Win95TitleBar } from '@/components/win95-titlebar';
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -8,6 +9,7 @@ import { useAuth } from '@/providers/auth-provider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { fadeInUp, shake } from '@/lib/animations';
+import { ResendVerificationButton } from '@/components/resend-verification-button';
 
 function LoginForm() {
   const router = useRouter();
@@ -66,9 +68,7 @@ function LoginForm() {
         className="w-full max-w-md"
       >
         <div className="win95-panel">
-          <div className="win95-titlebar -mx-4 -mt-4 mb-4 flex items-center gap-2">
-            <span className="text-sm">FOE FINDER - Two-Factor Code</span>
-          </div>
+          <Win95TitleBar title="FOE FINDER - Two-Factor Code" />
 
           <p className="text-sm text-muted-foreground mb-4">
             Enter the 6-digit code from your authenticator app.
@@ -114,7 +114,6 @@ function LoginForm() {
                 type="submit"
                 disabled={isLoading}
                 className="win95-btn win95-btn-primary w-full py-3"
-                whileTap={{ scale: 0.98 }}
               >
                 {isLoading ? 'Verifying...' : 'Verify'}
               </motion.button>
@@ -135,9 +134,7 @@ function LoginForm() {
       {/* Win95 Window */}
       <div className="win95-panel">
         {/* Title Bar */}
-        <div className="win95-titlebar -mx-4 -mt-4 mb-4 flex items-center gap-2">
-          <span className="text-sm">FOE FINDER - Login</span>
-        </div>
+        <Win95TitleBar title="FOE FINDER - Login" />
 
         {/* Logo */}
         <div className="text-center mb-6">
@@ -155,9 +152,10 @@ function LoginForm() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="win95-inset p-3 mb-4 text-sm"
+            className="win95-inset p-3 mb-4 text-sm space-y-2"
           >
-            Please verify your email before continuing.
+            <p>Please verify your email before continuing.</p>
+            {email.includes('@') && <ResendVerificationButton email={email} />}
           </motion.div>
         )}
 
@@ -221,7 +219,6 @@ function LoginForm() {
               type="submit"
               disabled={isLoading}
               className="win95-btn win95-btn-primary w-full py-3"
-              whileTap={{ scale: 0.98 }}
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </motion.button>
@@ -255,9 +252,7 @@ function LoginLoading() {
   return (
     <div className="w-full max-w-md">
       <div className="win95-panel animate-pulse">
-        <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-          <span className="text-sm">FOE FINDER - Login</span>
-        </div>
+        <Win95TitleBar title="FOE FINDER - Login" />
         <div className="h-48 bg-win95-shadow/20" />
       </div>
     </div>

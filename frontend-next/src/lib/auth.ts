@@ -19,13 +19,18 @@ function adminEmails() {
 }
 
 async function sendEmail(params: { to: string; subject: string; html: string }) {
-  try {
-    await resend.emails.send({ from: fromEmail, ...params });
-  } catch (error) {
-    // Don't fail the auth request just because email delivery hiccuped —
-    // log it so it's visible in server logs, but let signup/reset proceed.
-    console.error(`Failed to send email "${params.subject}" to ${params.to}:`, error);
+  // Resend's SDK resolves { data, error } instead of throwing on API failures,
+  // so the error must be checked explicitly or sends fail with no trace.
+  // Throwing here is safe: signup/reset paths run this in background (better-auth
+  // swallows and logs), while the manual resend endpoint propagates it to the UI.
+  const { data, error } = await resend.emails.send({ from: fromEmail, ...params });
+  if (error) {
+    console.error(
+      `[email] FAILED "${params.subject}" to ${params.to}: ${error.name} - ${error.message}`
+    );
+    throw new Error(`Email delivery failed: ${error.message}`);
   }
+  console.log(`[email] sent "${params.subject}" to ${params.to} (id: ${data?.id})`);
 }
 
 export const auth = betterAuth({
@@ -89,7 +94,8 @@ export const auth = betterAuth({
   },
   plugins: [twoFactor({ issuer: "FoeFinder" })],
   rateLimit: {
-    enabled: true,
+    // Dev/tests hammer get-session (parallel Playwright workers) — prod only
+    enabled: process.env.NODE_ENV === "production",
     window: 60,
     max: 20,
   },

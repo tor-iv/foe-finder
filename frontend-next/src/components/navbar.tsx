@@ -42,6 +42,28 @@ export function Navbar() {
                 Welcome, {user?.displayName}
               </span>
 
+              {/* Nemesis Links (once matched) */}
+              {user?.isMatched && (
+                <>
+                  <Link
+                    href="/results"
+                    className={`win95-btn text-sm hidden sm:inline-block ${
+                      pathname === '/results' ? 'win95-pressed' : ''
+                    }`}
+                  >
+                    Nemesis
+                  </Link>
+                  <Link
+                    href="/game"
+                    className={`win95-btn text-sm hidden sm:inline-block ${
+                      pathname === '/game' ? 'win95-pressed' : ''
+                    }`}
+                  >
+                    Game
+                  </Link>
+                </>
+              )}
+
               {/* Profile Link */}
               <Link
                 href="/profile"
@@ -73,6 +95,11 @@ export function Navbar() {
                 Logout
               </button>
             </>
+          ) : isLoading ? (
+            /* Session still resolving — render nothing rather than flashing Login/Register */
+            <span className="win95-btn text-sm invisible" aria-hidden="true">
+              Loading
+            </span>
           ) : (
             <>
               <Link href="/login" className="win95-btn text-sm">

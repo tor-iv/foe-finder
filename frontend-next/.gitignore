@@ -50,3 +50,5 @@ data/
 *.db
 *.db-wal
 *.db-shm
+playwright/.auth/
+polish-shots/

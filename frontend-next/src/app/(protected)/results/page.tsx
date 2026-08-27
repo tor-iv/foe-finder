@@ -1,5 +1,6 @@
 'use client';
 
+import { Win95TitleBar } from '@/components/win95-titlebar';
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -77,10 +78,10 @@ export default function ResultsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <h1 className="text-2xl md:text-3xl font-display font-black">
-            Your <span className="text-foe-accent">Hot Takes</span>
+          <h1 className="win95-desktop-label text-2xl md:text-3xl font-display font-black">
+            Your Hot Takes
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="win95-desktop-label mt-2 text-sm opacity-80">
             These are your most extreme opinions
           </p>
         </motion.header>
@@ -141,9 +142,7 @@ export default function ResultsPage() {
           animate={isRevealed ? 'animate' : 'initial'}
           className="win95-panel text-center"
         >
-          <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-            <span className="text-sm">MATCH STATUS</span>
-          </div>
+          <Win95TitleBar title="MATCH STATUS" />
 
           {match ? (
             <div className="py-6 space-y-4 text-left">

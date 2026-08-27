@@ -1,5 +1,6 @@
 'use client';
 
+import { Win95TitleBar } from '@/components/win95-titlebar';
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -7,6 +8,7 @@ import { useAuth } from '@/providers/auth-provider';
 import { authClient } from '@/lib/auth-client';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ResendVerificationButton } from '@/components/resend-verification-button';
 import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
 
 function extractSecret(totpURI: string): string {
@@ -229,9 +231,7 @@ export default function ProfilePage() {
           variants={fadeInUp}
           className="win95-panel"
         >
-          <div className="win95-titlebar -mx-4 -mt-4 mb-6">
-            <span className="text-sm">USER PROFILE</span>
-          </div>
+          <Win95TitleBar title="USER PROFILE" />
 
           {/* Avatar & Name */}
           <div className="text-center mb-8">
@@ -295,6 +295,11 @@ export default function ProfilePage() {
                   {user.emailVerified ? 'VERIFIED' : 'UNVERIFIED'}
                 </span>
               </div>
+              {!user.emailVerified && (
+                <div className="mt-3">
+                  <ResendVerificationButton email={user.email} />
+                </div>
+              )}
             </motion.div>
 
             {/* Member Since */}

@@ -1,5 +1,7 @@
 'use client';
 
+import { Win95TitleBar } from '@/components/win95-titlebar';
+import { Win95Loading } from '@/components/win95-loading';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -112,11 +114,7 @@ export default function GamePage() {
   };
 
   if (isLoadingMatch) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="font-mono text-muted-foreground uppercase tracking-wide">Loading...</p>
-      </div>
-    );
+    return <Win95Loading title="NEMESIS KNOWLEDGE" label="Locating your nemesis..." />;
   }
 
   if (!match) {
@@ -128,9 +126,7 @@ export default function GamePage() {
           variants={fadeInUp}
           className="win95-panel max-w-md w-full text-center"
         >
-          <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-            <span className="text-sm">NO MATCH YET</span>
-          </div>
+          <Win95TitleBar title="NO MATCH YET" />
           <p className="text-sm text-muted-foreground mb-4">
             You need a nemesis before you can test how well you know them.
           </p>
@@ -146,12 +142,14 @@ export default function GamePage() {
     <div className="min-h-screen p-4">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="win95-panel">
-          <div className="win95-titlebar -mx-4 -mt-4 mb-4 flex justify-between items-center">
-            <span className="text-sm">NEMESIS KNOWLEDGE: {match.opponent.displayName.toUpperCase()}</span>
-            <Link href="/results" className="text-xs underline">
-              Back
-            </Link>
-          </div>
+          <Win95TitleBar
+            title={`NEMESIS KNOWLEDGE: ${match.opponent.displayName.toUpperCase()}`}
+            right={
+              <Link href="/results" className="text-xs underline">
+                Back
+              </Link>
+            }
+          />
 
           {stats && (
             <div className="text-center space-y-1">
@@ -170,9 +168,7 @@ export default function GamePage() {
         </div>
 
         <div className="win95-panel">
-          <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-            <span className="text-sm">ASK A QUESTION</span>
-          </div>
+          <Win95TitleBar title="ASK A QUESTION" />
 
           <form onSubmit={handleAsk} className="space-y-3">
             <textarea
@@ -199,9 +195,7 @@ export default function GamePage() {
 
         {pendingForYou.length > 0 && (
           <div className="win95-panel">
-            <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-              <span className="text-sm">AWAITING YOUR ANSWER</span>
-            </div>
+            <Win95TitleBar title="AWAITING YOUR ANSWER" />
             <div className="space-y-4">
               {pendingForYou.map((round) => (
                 <div key={round.id} className="win95-inset p-3 space-y-2">
@@ -226,9 +220,7 @@ export default function GamePage() {
 
         {pendingForThem.length > 0 && (
           <div className="win95-panel">
-            <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-              <span className="text-sm">WAITING ON {match.opponent.displayName.toUpperCase()}</span>
-            </div>
+            <Win95TitleBar title={`WAITING ON ${match.opponent.displayName.toUpperCase()}`} />
             <div className="space-y-2">
               {pendingForThem.map((round) => (
                 <div key={round.id} className="win95-inset p-3 text-sm">
@@ -242,9 +234,7 @@ export default function GamePage() {
 
         {revealed.length > 0 && (
           <div className="win95-panel">
-            <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-              <span className="text-sm">HISTORY</span>
-            </div>
+            <Win95TitleBar title="HISTORY" />
             <div className="space-y-3">
               {revealed.map((round) => (
                 <div key={round.id} className="win95-inset p-3 text-sm space-y-1">

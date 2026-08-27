@@ -1,5 +1,6 @@
 'use client';
 
+import { Win95TitleBar } from '@/components/win95-titlebar';
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -8,6 +9,7 @@ import { useAuth } from '@/providers/auth-provider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { fadeInUp, shake, scaleIn } from '@/lib/animations';
+import { ResendVerificationButton } from '@/components/resend-verification-button';
 
 function RegisterForm() {
   const router = useRouter();
@@ -58,9 +60,7 @@ function RegisterForm() {
         className="w-full max-w-md"
       >
         <div className="win95-panel">
-          <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-            <span className="text-sm">FOE FINDER - Verify Email</span>
-          </div>
+          <Win95TitleBar title="FOE FINDER - Verify Email" />
 
           <div className="text-center space-y-4">
             <div className="text-4xl">📧</div>
@@ -75,6 +75,7 @@ function RegisterForm() {
                 Didn&apos;t receive it? Check your spam folder.
               </p>
             </div>
+            <ResendVerificationButton email={email} />
             <Link href="/login" className="win95-btn inline-block mt-4">
               Back to Login
             </Link>
@@ -92,9 +93,7 @@ function RegisterForm() {
       className="w-full max-w-md"
     >
       <div className="win95-panel">
-        <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-          <span className="text-sm">FOE FINDER - Register</span>
-        </div>
+        <Win95TitleBar title="FOE FINDER - Register" />
 
         <div className="text-center mb-6">
           <h1 className="text-2xl font-display font-black tracking-tight">
@@ -220,7 +219,6 @@ function RegisterForm() {
               type="submit"
               disabled={isLoading || !isValid}
               className="win95-btn win95-btn-primary w-full py-3"
-              whileTap={{ scale: 0.98 }}
             >
               {isLoading ? 'Creating Account...' : 'Create Account'}
             </motion.button>
@@ -242,9 +240,7 @@ function RegisterLoading() {
   return (
     <div className="w-full max-w-md">
       <div className="win95-panel animate-pulse">
-        <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-          <span className="text-sm">FOE FINDER - Register</span>
-        </div>
+        <Win95TitleBar title="FOE FINDER - Register" />
         <div className="h-96 bg-win95-shadow/20" />
       </div>
     </div>

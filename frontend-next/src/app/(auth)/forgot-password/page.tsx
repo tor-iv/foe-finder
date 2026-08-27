@@ -1,5 +1,6 @@
 'use client';
 
+import { Win95TitleBar } from '@/components/win95-titlebar';
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -40,9 +41,7 @@ export default function ForgotPasswordPage() {
             className="w-full max-w-md"
           >
             <div className="win95-panel">
-              <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-                <span className="text-sm">FOE FINDER - Email Sent</span>
-              </div>
+              <Win95TitleBar title="FOE FINDER - Email Sent" />
 
               <div className="text-center space-y-4">
                 <div className="text-4xl">📬</div>
@@ -69,9 +68,7 @@ export default function ForgotPasswordPage() {
             className="w-full max-w-md"
           >
             <div className="win95-panel">
-              <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-                <span className="text-sm">FOE FINDER - Reset Password</span>
-              </div>
+              <Win95TitleBar title="FOE FINDER - Reset Password" />
 
               <div className="text-center mb-6">
                 <h1 className="text-xl font-display font-bold">Forgot Password?</h1>
@@ -112,7 +109,6 @@ export default function ForgotPasswordPage() {
                     type="submit"
                     disabled={isLoading || !email}
                     className="win95-btn win95-btn-primary w-full py-3"
-                    whileTap={{ scale: 0.98 }}
                   >
                     {isLoading ? 'Sending...' : 'Send Reset Link'}
                   </motion.button>

@@ -21,7 +21,7 @@ export default function ProtectedError({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="text-center max-w-md">
         <div className="mb-6">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">

@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/providers/auth-provider';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
+import { Win95Loading } from '@/components/win95-loading';
+import { Win95TitleBar } from '@/components/win95-titlebar';
 
 const DEADPAN_COMMENTS = [
   'Noted.',
@@ -98,17 +100,11 @@ export default function HomePage() {
   const hasCompletedQuestionnaire = user?.hasCompletedQuestionnaire || false;
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="text-lg font-mono">Loading...</div>
-        </div>
-      </div>
-    );
+    return <Win95Loading title="FOE FINDER - Control Panel" label="Consulting The Algorithm..." />;
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen pb-20">
       <motion.div
         className="max-w-2xl mx-auto px-4 py-8"
         variants={staggerContainer}
@@ -117,19 +113,17 @@ export default function HomePage() {
       >
         {/* Welcome Header */}
         <motion.div variants={fadeInUp} className="text-center mb-8">
-          <h1 className="font-display font-black text-2xl md:text-3xl mb-2">
-            Welcome back, {user?.displayName || 'User'}
+          <h1 className="win95-desktop-label font-display font-black text-2xl md:text-3xl mb-2">
+            {user ? `Welcome back, ${user.displayName}` : 'Welcome back'}
           </h1>
-          <p className="text-muted-foreground text-sm font-mono">
+          <p className="win95-desktop-label text-sm font-mono opacity-80">
             The Algorithm has been watching.
           </p>
         </motion.div>
 
         {/* Status Card */}
         <motion.div variants={fadeInUp} className="win95-panel mb-6">
-          <h2 className="font-display font-bold text-lg mb-4 uppercase tracking-wide">
-            Your Status
-          </h2>
+          <Win95TitleBar title="YOUR STATUS" />
           <div className="space-y-3">
             {hasCompletedQuestionnaire ? (
               <div className="flex items-center gap-2 text-sm">
@@ -155,9 +149,7 @@ export default function HomePage() {
         {/* Strongest Opinions Card */}
         {hasCompletedQuestionnaire && data && (
           <motion.div variants={fadeInUp} className="win95-panel mb-6">
-            <h2 className="font-display font-bold text-lg mb-4 uppercase tracking-wide">
-              Your Strongest Opinions
-            </h2>
+            <Win95TitleBar title="YOUR STRONGEST OPINIONS" />
             {data.extremeOpinions.length > 0 ? (
               <div className="space-y-4">
                 {data.extremeOpinions.map((opinion, i) => (
@@ -192,9 +184,7 @@ export default function HomePage() {
         {/* Disagreement Rating Card */}
         {hasCompletedQuestionnaire && data?.hasResponses && (
           <motion.div variants={fadeInUp} className="win95-panel mb-6">
-            <h2 className="font-display font-bold text-lg mb-4 uppercase tracking-wide">
-              Your Disagreement Rating
-            </h2>
+            <Win95TitleBar title="YOUR DISAGREEMENT RATING" />
             <div className="text-center">
               <div className="text-5xl font-display font-black text-foe-accent mb-2">
                 {data.disagreementPercentage}%

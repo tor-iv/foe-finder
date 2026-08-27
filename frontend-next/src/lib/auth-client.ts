@@ -15,5 +15,6 @@ export const {
   getSession,
   requestPasswordReset,
   resetPassword,
+  sendVerificationEmail,
   twoFactor,
 } = authClient;

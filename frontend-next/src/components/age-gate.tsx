@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore, useAppStoreHydrated } from '@/stores/app-store';
 import { modalOverlay, modalContent, shake } from '@/lib/animations';
+import { Win95TitleBar } from '@/components/win95-titlebar';
 
 export function AgeGate() {
   const hydrated = useAppStoreHydrated();
@@ -67,18 +68,20 @@ export function AgeGate() {
           <motion.div
             animate={shouldShake ? 'animate' : 'initial'}
             variants={shake}
-            className="bg-win95-face border-[3px] border-win95-darkShadow shadow-[4px_4px_0px_#333]"
+            className="win95-panel"
           >
+            <Win95TitleBar title="FOE FINDER - Age Verification" />
+
             {/* Header with Logo */}
-            <div className="bg-win95-shadow/30 p-4 md:p-6 border-b-[3px] border-win95-darkShadow text-center">
+            <div className="text-center mb-4">
               <h1 className="text-2xl md:text-3xl font-display font-black tracking-tight">
-                <span className="text-foe-accent drop-shadow-[2px_2px_0px_#333]">FOE</span>
-                <span className="text-foreground drop-shadow-[2px_2px_0px_#a0a0a0]">FINDER</span>
+                <span className="text-foe-accent">FOE</span>
+                <span className="text-foreground">FINDER</span>
               </h1>
             </div>
 
             {/* Content */}
-            <div className="p-6 md:p-8">
+            <div className="px-2 pb-2 md:px-4">
               <h2 className="text-lg md:text-xl font-display font-black text-center uppercase tracking-[2px] md:tracking-[3px] mb-2">
                 Age Verification
               </h2>
@@ -102,7 +105,7 @@ export function AgeGate() {
                       setBirthDate(e.target.value);
                       setError('');
                     }}
-                    className="w-full p-3 md:p-4 font-mono text-base bg-win95-shadow/30 border-[3px] border-win95-darkShadow text-center cursor-pointer focus:outline-none focus:border-foe-accent focus:ring-2 focus:ring-foe-accent"
+                    className="win95-input w-full p-3 md:p-4 text-base text-center cursor-pointer"
                     max={new Date().toISOString().split('T')[0]}
                   />
                 </div>
@@ -111,20 +114,19 @@ export function AgeGate() {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="bg-foe-error/10 border-2 border-foe-error text-foe-error p-2 text-xs uppercase tracking-wide font-bold text-center"
+                    className="win95-inset text-foe-error p-2 text-xs uppercase tracking-wide font-bold text-center"
                   >
-                    {error}
+                    ⚠ {error}
                   </motion.div>
                 )}
 
-                <motion.button
+                <button
                   type="submit"
                   disabled={!birthDate}
-                  className="w-full p-3 md:p-4 bg-foe-accent text-foreground font-mono text-base font-bold uppercase tracking-[2px] border-[3px] border-win95-darkShadow shadow-[3px_3px_0px_#333] hover:bg-foe-accent/80 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_#333] disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-win95-shadow/30 transition-all duration-100"
-                  whileTap={{ scale: 0.98 }}
+                  className="win95-btn win95-btn-primary w-full p-3 md:p-4 text-base tracking-[2px]"
                 >
                   Proceed at Your Own Risk
-                </motion.button>
+                </button>
               </form>
 
               <p className="text-[10px] text-muted-foreground text-center mt-6 uppercase tracking-wide">

@@ -6,6 +6,8 @@ import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { useQuestionnaire } from '@/hooks/use-questionnaire';
 import { Answer } from '@/types';
 import { questionSlide, springs, fadeInUp } from '@/lib/animations';
+import { Win95TitleBar } from '@/components/win95-titlebar';
+import { Win95Loading } from '@/components/win95-loading';
 
 export default function QuestionnaireClient() {
   const router = useRouter();
@@ -149,17 +151,11 @@ export default function QuestionnaireClient() {
   };
 
   if (isLoadingQuestions || !currentQuestion) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="font-mono text-muted-foreground uppercase tracking-wide">
-          Loading questions...
-        </p>
-      </div>
-    );
+    return <Win95Loading title="OPINION EXTRACTION PROTOCOL" label="Preparing interrogation..." />;
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col">
       {/* Unified Header */}
       <motion.header
         initial={{ y: -50, opacity: 0 }}
@@ -212,6 +208,7 @@ export default function QuestionnaireClient() {
               dragListener={false}
               className="win95-panel"
             >
+              <Win95TitleBar title={`QUESTION ${currentIndex + 1}`} />
               {/* Question Text - drag enabled here only */}
               <motion.h2
                 drag="x"
@@ -224,16 +221,7 @@ export default function QuestionnaireClient() {
               </motion.h2>
 
               {/* Slider Container - NO drag interference */}
-              <div className="bg-win95-shadow/30 border-2 md:border-[3px] border-win95-darkShadow p-4 md:p-6 mx-0 md:mx-4">
-                {/* Scale Labels */}
-                <div className="flex justify-between gap-2 md:gap-4 mb-4 md:mb-6">
-                  <span className="text-[9px] md:text-sm font-bold uppercase tracking-wide bg-win95-face px-1 py-1 md:px-3 md:py-1.5 border-2 border-win95-darkShadow text-center max-w-[45%] md:max-w-none">
-                    {currentQuestion.scaleMinLabel}
-                  </span>
-                  <span className="text-[9px] md:text-sm font-bold uppercase tracking-wide bg-win95-face px-1 py-1 md:px-3 md:py-1.5 border-2 border-win95-darkShadow text-center max-w-[45%] md:max-w-none">
-                    {currentQuestion.scaleMaxLabel}
-                  </span>
-                </div>
+              <div className="win95-inset p-4 md:p-6 mx-0 md:mx-4">
 
                 {/* Custom Slider - Safari optimized */}
                 <div
@@ -242,7 +230,7 @@ export default function QuestionnaireClient() {
                   style={{ touchAction: 'manipulation', contain: 'layout paint' }}
                 >
                   {/* Track Background */}
-                  <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[10px] md:h-[12px] border-2 border-win95-darkShadow bg-win95-face">
+                  <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[10px] md:h-[12px] win95-inset !bg-white">
                     {/* Track Fill - uses scaleX for GPU-only updates */}
                     <div
                       ref={fillRef}
@@ -254,7 +242,7 @@ export default function QuestionnaireClient() {
                   {/* Thumb - uses percentage left + translateX(-50%) for centering */}
                   <div
                     ref={thumbRef}
-                    className="absolute w-8 h-8 md:w-6 md:h-6 bg-foe-accent border-2 md:border-[3px] border-win95-darkShadow outline outline-1 md:outline-2 outline-offset-1 md:outline-offset-2 outline-win95-darkShadow/30 pointer-events-none will-change-transform"
+                    className="absolute w-[22px] h-8 md:w-[18px] md:h-[30px] win95-outset border border-win95-dark-shadow pointer-events-none will-change-transform"
                     style={{ top: '50%', left: '50%', transform: 'translateX(-50%) translateY(-50%)' }}
                   />
 
@@ -276,6 +264,16 @@ export default function QuestionnaireClient() {
                     aria-label={currentQuestion.text}
                   />
                 </div>
+
+                {/* Scale Labels */}
+                <div className="flex justify-between gap-2 mt-2">
+                  <span className="text-[9px] md:text-xs font-bold uppercase tracking-wide text-muted-foreground max-w-[45%]">
+                    {currentQuestion.scaleMinLabel}
+                  </span>
+                  <span className="text-[9px] md:text-xs font-bold uppercase tracking-wide text-muted-foreground max-w-[45%] text-right">
+                    {currentQuestion.scaleMaxLabel}
+                  </span>
+                </div>
               </div>
             </motion.div>
           </AnimatePresence>
@@ -290,7 +288,7 @@ export default function QuestionnaireClient() {
             <button
               onClick={goToPrevious}
               disabled={currentIndex === 0}
-              className="win95-btn px-6 py-3 min-h-[48px] uppercase tracking-wide font-bold disabled:opacity-40 order-2 sm:order-1 w-full sm:w-auto border-2 border-win95-darkShadow bg-win95-shadow/30"
+              className="win95-btn px-6 py-3 min-h-[48px] uppercase tracking-wide font-bold order-2 sm:order-1 w-full sm:w-auto"
             >
               Previous
             </button>
@@ -299,8 +297,7 @@ export default function QuestionnaireClient() {
               <motion.button
                 onClick={handleSubmit}
                 disabled={!canProceed || isSubmitting}
-                className="win95-btn win95-btn-primary px-8 py-3 min-h-[48px] uppercase tracking-[2px] font-bold disabled:opacity-40 order-1 sm:order-2 w-full sm:w-auto"
-                whileTap={{ scale: 0.98 }}
+                className="win95-btn win95-btn-primary px-8 py-3 min-h-[48px] uppercase tracking-[2px] font-bold order-1 sm:order-2 w-full sm:w-auto"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit to the Algorithm'}
               </motion.button>
@@ -308,8 +305,7 @@ export default function QuestionnaireClient() {
               <motion.button
                 onClick={goToNext}
                 disabled={!canProceed}
-                className="win95-btn win95-btn-primary px-8 py-3 min-h-[48px] uppercase tracking-[2px] font-bold disabled:opacity-40 order-1 sm:order-2 w-full sm:w-auto"
-                whileTap={{ scale: 0.98 }}
+                className="win95-btn win95-btn-primary px-8 py-3 min-h-[48px] uppercase tracking-[2px] font-bold order-1 sm:order-2 w-full sm:w-auto"
               >
                 Next
               </motion.button>

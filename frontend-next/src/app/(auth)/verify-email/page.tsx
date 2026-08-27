@@ -1,21 +1,22 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Win95TitleBar } from '@/components/win95-titlebar';
+import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { scaleIn } from '@/lib/animations';
+import { ResendVerificationButton } from '@/components/resend-verification-button';
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
+  const [email, setEmail] = useState('');
 
   if (error) {
     return (
       <div className="win95-panel">
-        <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-          <span className="text-sm">FOE FINDER - Error</span>
-        </div>
+        <Win95TitleBar title="FOE FINDER - Error" />
 
         <div className="text-center space-y-4">
           <div className="text-4xl">❌</div>
@@ -23,9 +24,17 @@ function VerifyEmailContent() {
             Verification Failed
           </h2>
           <p className="text-sm text-muted-foreground">
-            This link may have expired or already been used. Try registering again or
-            request a new link from the login page.
+            This link may have expired or already been used. Enter your email and
+            we&apos;ll send you a fresh one.
           </p>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="win95-input w-full"
+            placeholder="you@example.com"
+          />
+          {email.includes('@') && <ResendVerificationButton email={email} />}
           <Link href="/login" className="win95-btn win95-btn-primary inline-block">
             Back to Login
           </Link>
@@ -36,9 +45,7 @@ function VerifyEmailContent() {
 
   return (
     <div className="win95-panel">
-      <div className="win95-titlebar -mx-4 -mt-4 mb-4">
-        <span className="text-sm">FOE FINDER - Verified</span>
-      </div>
+      <Win95TitleBar title="FOE FINDER - Verified" />
 
       <div className="text-center space-y-4">
         <div className="text-4xl">✅</div>

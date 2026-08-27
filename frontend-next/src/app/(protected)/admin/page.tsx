@@ -1,5 +1,6 @@
 'use client';
 
+import { Win95TitleBar } from '@/components/win95-titlebar';
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
@@ -63,9 +64,7 @@ export default function AdminPage() {
     <div className="min-h-screen p-4">
       <div className="max-w-xl mx-auto">
         <motion.div initial="initial" animate="animate" variants={fadeInUp} className="win95-panel">
-          <div className="win95-titlebar -mx-4 -mt-4 mb-6">
-            <span className="text-sm">ADMIN — MATCHING CONTROL</span>
-          </div>
+          <Win95TitleBar title="ADMIN — MATCHING CONTROL" />
 
           {stats && (
             <motion.div

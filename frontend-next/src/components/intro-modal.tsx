@@ -31,12 +31,17 @@ export function IntroModal() {
             {/* Title Bar */}
             <div className="win95-titlebar -mx-4 -mt-4 mb-6 flex items-center justify-between">
               <span className="text-sm">WELCOME TO FOE FINDER</span>
-              <button
-                onClick={markIntroSeen}
-                className="w-5 h-5 win95-outset text-xs font-bold hover:win95-pressed"
-              >
-                ×
-              </button>
+              <span className="flex items-center gap-[2px]">
+                <span className="win95-titlebar-btn" aria-hidden="true">–</span>
+                <span className="win95-titlebar-btn" aria-hidden="true">□</span>
+                <button
+                  onClick={markIntroSeen}
+                  aria-label="Close"
+                  className="win95-titlebar-btn cursor-pointer active:shadow-[inset_1px_1px_#606060]"
+                >
+                  ✕
+                </button>
+              </span>
             </div>
 
             {/* Logo */}
@@ -76,7 +81,6 @@ export function IntroModal() {
               <motion.button
                 onClick={markIntroSeen}
                 className="win95-btn win95-btn-primary px-8 py-3 text-lg"
-                whileTap={{ scale: 0.98 }}
               >
                 FIND MY NEMESIS
               </motion.button>

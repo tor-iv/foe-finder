@@ -78,10 +78,10 @@ export default function ResultsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <h1 className="win95-desktop-label text-2xl md:text-3xl font-display font-black">
-            Your Hot Takes
+          <h1 className="text-2xl md:text-3xl font-display font-black">
+            Your <span className="text-foe-accent">Hot Takes</span>
           </h1>
-          <p className="win95-desktop-label mt-2 text-sm opacity-80">
+          <p className="text-muted-foreground mt-2">
             These are your most extreme opinions
           </p>
         </motion.header>

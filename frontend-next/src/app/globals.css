@@ -204,15 +204,6 @@
   user-select: none;
 }
 
-/* The Win95 desktop: iconic teal, with desktop-icon-style labels */
-.win95-desktop {
-  background-color: #008080;
-}
-
-.win95-desktop-label {
-  color: #ffffff;
-  text-shadow: 1px 1px 0 #004040;
-}
 
 /* Segmented Win95 copy-dialog progress bar, marching indefinitely */
 .win95-progress-blocks {

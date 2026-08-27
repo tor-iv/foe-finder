@@ -113,10 +113,10 @@ export default function HomePage() {
       >
         {/* Welcome Header */}
         <motion.div variants={fadeInUp} className="text-center mb-8">
-          <h1 className="win95-desktop-label font-display font-black text-2xl md:text-3xl mb-2">
+          <h1 className="font-display font-black text-2xl md:text-3xl mb-2">
             {user ? `Welcome back, ${user.displayName}` : 'Welcome back'}
           </h1>
-          <p className="win95-desktop-label text-sm font-mono opacity-80">
+          <p className="text-muted-foreground text-sm font-mono">
             The Algorithm has been watching.
           </p>
         </motion.div>
